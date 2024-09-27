@@ -1,0 +1,1610 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>7.0</version>
+    <template_groups>
+        <template_group>
+            <uuid>46e77e29fa6644fea1eb2386af509d50</uuid>
+            <name>TG_CLIENT_SERVER_OPENSEARCH</name>
+        </template_group>
+    </template_groups>
+    <templates>
+        <template>
+            <uuid>c0728ab685094a9d8d2390dbfddc7671</uuid>
+            <template>OpenSearch-Cluster</template>
+            <name>OpenSearch-Cluster</name>
+            <description>Cluster wide monitoring. Should be only one Zabbix host per-cluster assigned this template.</description>
+            <groups>
+                <group>
+                    <name>TG_CLIENT_SERVER_OPENSEARCH</name>
+                </group>
+            </groups>
+            <items>
+                <item>
+                    <uuid>e154823428e94a0b98dc6638a6b822bc</uuid>
+                    <name>Data Nodes Available</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.data_nodes</key>
+                    <delay>0</delay>
+                    <description>Total nodes available to the cluster for data storage.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.[0].['node.data']</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_health</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>OpenSearch</tag>
+                            <value>Health</value>
+                        </tag>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>ac1dcff52ae14dc39e045f461ac31345</uuid>
+                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.data_nodes,#2)&lt;&gt;last(/OpenSearch-Cluster/opensearch.cluster.data_nodes,#1)</expression>
+                            <name>OpenSearch Cluster data node count changed</name>
+                            <priority>INFO</priority>
+                            <description>Count of available data nodes has changed for the cluster.</description>
+                            <manual_close>YES</manual_close>
+                            <dependencies>
+                                <dependency>
+                                    <name>OpenSearch Cluster node count changed</name>
+                                    <expression>last(/OpenSearch-Cluster/opensearch.cluster.total_nodes,#2)&lt;&gt;last(/OpenSearch-Cluster/opensearch.cluster.total_nodes,#1)</expression>
+                                </dependency>
+                            </dependencies>
+                            <tags>
+                                <tag>
+                                    <tag>Services</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <uuid>42933f12f75347299edc528432d5e75a</uuid>
+                    <name>Discovered Cluster Manager</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.discovered_manager</key>
+                    <delay>0</delay>
+                    <value_type>TEXT</value_type>
+                    <trends>0</trends>
+                    <description>The cluster manager has been discovered.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.[0].['discovered_cluster_manager']</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_health</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>OpenSearch</tag>
+                            <value>Health</value>
+                        </tag>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>31f6056fb67742f59d8a72b9a2ec1b95</uuid>
+                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.discovered_manager)=&quot;false&quot;</expression>
+                            <name>OpenSearch Cluster No Manager</name>
+                            <priority>HIGH</priority>
+                            <description>Cluster does not have an assigned Cluster Manager node.</description>
+                            <manual_close>YES</manual_close>
+                            <tags>
+                                <tag>
+                                    <tag>Services</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <uuid>92aaba3b5eef49aca269e20adbfc25a0</uuid>
+                    <name>Timestamp</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.epoch</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <units>unixtime</units>
+                    <description>Timestamp as reported by the cluster. Pulled from Unix Epoch reported by cluster.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.[0].['epoch']</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_health</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>15d19bf7953d405e8aee93e3c63cef2d</uuid>
+                    <name>Cluster Health</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.health</key>
+                    <delay>0</delay>
+                    <value_type>TEXT</value_type>
+                    <trends>0</trends>
+                    <description>Overall health of cluster.
+ - Green: All primary and secondary shards are online.
+ - Yellow: All primary shards are online, but some secondary shards are offline. Data is still available.
+ - Red: Some primary shards are offline, and data is unavailable.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.[0].['status']</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_health</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>ff1ef340488546b38bd74292199d52a5</uuid>
+                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;red&quot;</expression>
+                            <name>OpenSearch Cluster Health: Red</name>
+                            <priority>HIGH</priority>
+                            <description>Cluster currently has primary shards offline. Some data is unavailable.</description>
+                            <manual_close>YES</manual_close>
+                            <tags>
+                                <tag>
+                                    <tag>Services</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                        <trigger>
+                            <uuid>bcaf1bb7c7f64c2aa99270314fe1212e</uuid>
+                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;yellow&quot;</expression>
+                            <name>OpenSearch Cluster Health: Yellow</name>
+                            <priority>WARNING</priority>
+                            <description>Cluster currently has replica shards offline. All primary shards are still online.</description>
+                            <manual_close>YES</manual_close>
+                            <tags>
+                                <tag>
+                                    <tag>Services</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <uuid>371654eed3bd4098836c81b6e4c48883</uuid>
+                    <name>Name</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.name</key>
+                    <delay>0</delay>
+                    <value_type>TEXT</value_type>
+                    <trends>0</trends>
+                    <description>Name of the cluster, as reported by the cluster.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.[0].['cluster']</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_health</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>b449b5ff10624fc9aa9861940bfefbf1</uuid>
+                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.name,#2)&lt;&gt;last(/OpenSearch-Cluster/opensearch.cluster.name,#1)</expression>
+                            <name>OpenSearch Cluster name has changed</name>
+                            <priority>INFO</priority>
+                            <description>OpenSearch cluster name was changed.</description>
+                            <manual_close>YES</manual_close>
+                            <tags>
+                                <tag>
+                                    <tag>Services</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <uuid>4410396efb434cfda6afe45a3d4e590c</uuid>
+                    <name>Shards Percent Active</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.shards.active_percent</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>Percentage of currently active and available shards in the cluster.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.[0].['active_shards_percent']</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>REGEX</type>
+                            <parameters>
+                                <parameter>(\d|\.)*</parameter>
+                                <parameter>\0</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_health</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>OpenSearch</tag>
+                            <value>Allocation</value>
+                        </tag>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>086bac5731594af09eb880757d19975d</uuid>
+                    <name>Shards Initializing</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.shards.init</key>
+                    <delay>0</delay>
+                    <description>Total number of currently initializing shards in the cluster.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.[0].['init']</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_health</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>OpenSearch</tag>
+                            <value>Allocation</value>
+                        </tag>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>1b7aaac78f1b461a8f14933b3d2659f5</uuid>
+                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.shards.init)&lt;&gt;0</expression>
+                            <name>OpenSearch currently initializing shards: {ITEM.VALUE1}</name>
+                            <priority>INFO</priority>
+                            <description>Cluster is currently initializing shards.
+
+Shards initializing: {ITEM.VALUE1}</description>
+                            <manual_close>YES</manual_close>
+                            <dependencies>
+                                <dependency>
+                                    <name>OpenSearch Cluster Health: Red</name>
+                                    <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;red&quot;</expression>
+                                </dependency>
+                                <dependency>
+                                    <name>OpenSearch Cluster Health: Yellow</name>
+                                    <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;yellow&quot;</expression>
+                                </dependency>
+                            </dependencies>
+                            <tags>
+                                <tag>
+                                    <tag>Services</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                        <trigger>
+                            <uuid>b00993c6c6844b4486bef27eb6b35d53</uuid>
+                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.shards.init)&lt;&gt;0</expression>
+                            <name>OpenSearch currently unassigned shards: {ITEM.VALUE1}</name>
+                            <priority>AVERAGE</priority>
+                            <description>Cluster has unassigned (unavailable) shards.
+
+Shards unassigned (count): {ITEM.VALUE1}</description>
+                            <manual_close>YES</manual_close>
+                            <dependencies>
+                                <dependency>
+                                    <name>OpenSearch Cluster Health: Red</name>
+                                    <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;red&quot;</expression>
+                                </dependency>
+                                <dependency>
+                                    <name>OpenSearch Cluster Health: Yellow</name>
+                                    <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;yellow&quot;</expression>
+                                </dependency>
+                            </dependencies>
+                            <tags>
+                                <tag>
+                                    <tag>Services</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <uuid>093d416ca2374d69b05070b0a59195ac</uuid>
+                    <name>Shards Primary</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.shards.pri</key>
+                    <delay>0</delay>
+                    <description>Total number of primary shards available and online in the cluster.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.[0].['pri']</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_health</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>OpenSearch</tag>
+                            <value>Allocation</value>
+                        </tag>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>1fbc5d9a4c6c4ee5809ea5a14bb8f984</uuid>
+                    <name>Shards Relocating</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.shards.relo</key>
+                    <delay>0</delay>
+                    <description>Total number of currently relocating shards in the cluster.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.[0].['relo']</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_health</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>OpenSearch</tag>
+                            <value>Allocation</value>
+                        </tag>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>e85bce2ba7a341d7bfa1c1173f9eb76e</uuid>
+                    <name>Shards Secondary</name>
+                    <type>CALCULATED</type>
+                    <key>opensearch.cluster.shards.second</key>
+                    <params>last(//opensearch.cluster.shards.total)-last(//opensearch.cluster.shards.pri)</params>
+                    <description>Total number of secondary shards available and online in the cluster.
+
+(Calculated by Zabbix subtracting total available from primary aviailable)</description>
+                    <tags>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                        <tag>
+                            <tag>Source</tag>
+                            <value>Calculated</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>8cb6d38dfde44af8a8fd8e0b335f8686</uuid>
+                    <name>Shards</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.shards.total</key>
+                    <delay>0</delay>
+                    <description>Total number of shards available and online in the cluster.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.[0].['shards']</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_health</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>OpenSearch</tag>
+                            <value>Allocation</value>
+                        </tag>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>405cb57a2596459296adec88fad710e3</uuid>
+                    <name>Shards Unassigned</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.shards.unassign</key>
+                    <delay>0</delay>
+                    <description>Total number of currently unassigned shards in the cluster.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.[0].['unassign']</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_health</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>OpenSearch</tag>
+                            <value>Allocation</value>
+                        </tag>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>addb9a1133254e4a9f8d00d5a1f7b6fb</uuid>
+                    <name>Status</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.status</key>
+                    <delay>0</delay>
+                    <value_type>TEXT</value_type>
+                    <trends>0</trends>
+                    <description>Cluster status.
+Green: All primary and secondary shards are available.
+Yellow: Some secondary shard(s) are offline, but primary are all available.
+Red: Some primary shard(s) are offline.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.[0].['status']</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_health</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>OpenSearch</tag>
+                            <value>Health</value>
+                        </tag>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>6adb3d018eac4536aba82068853412ae</uuid>
+                    <name>Tasks Pending</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.tasks.pending</key>
+                    <delay>0</delay>
+                    <description>Total number of currently pending tasks in the cluster.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.[0].['pending_tasks']</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_health</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>OpenSearch</tag>
+                            <value>Performance</value>
+                        </tag>
+                        <tag>
+                            <tag>OpenSearch</tag>
+                            <value>Tasks</value>
+                        </tag>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>f2fc9e48b61945b4b9be2b0b02ea985c</uuid>
+                    <name>Tasks Max Wait Time</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.tasks.wait_time</key>
+                    <delay>0</delay>
+                    <description>Wait time of longest pending tasks.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.[0].['max_task_wait_time']</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>REGEX</type>
+                            <parameters>
+                                <parameter>\d+</parameter>
+                                <parameter>\0</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>0</error_handler_params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_health</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>OpenSearch</tag>
+                            <value>Performance</value>
+                        </tag>
+                        <tag>
+                            <tag>OpenSearch</tag>
+                            <value>Tasks</value>
+                        </tag>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>645f841c30a84886b00e49641bb2d5a8</uuid>
+                    <name>Nodes Available</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.total_nodes</key>
+                    <delay>0</delay>
+                    <description>Total nodes available to the cluster.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.[0].['node.total']</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_health</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>OpenSearch</tag>
+                            <value>Health</value>
+                        </tag>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>e3f64111fdb74b32af6727ceca542d48</uuid>
+                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.total_nodes,#2)&lt;&gt;last(/OpenSearch-Cluster/opensearch.cluster.total_nodes,#1)</expression>
+                            <name>OpenSearch Cluster node count changed</name>
+                            <priority>INFO</priority>
+                            <description>Count of available nodes has changed for the cluster.</description>
+                            <manual_close>YES</manual_close>
+                            <dependencies>
+                                <dependency>
+                                    <name>OpenSearch Cluster Health: Red</name>
+                                    <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;red&quot;</expression>
+                                </dependency>
+                                <dependency>
+                                    <name>OpenSearch Cluster Health: Yellow</name>
+                                    <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;yellow&quot;</expression>
+                                </dependency>
+                            </dependencies>
+                            <tags>
+                                <tag>
+                                    <tag>Services</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <uuid>5a2bd0a2a19a4ae791e0ba91a08ae8e2</uuid>
+                    <name>OpenSearch Cluster Cat Health</name>
+                    <type>HTTP_AGENT</type>
+                    <key>opensearchcluster.cat_health</key>
+                    <value_type>TEXT</value_type>
+                    <trends>0</trends>
+                    <authtype>BASIC</authtype>
+                    <username>{$OS.USERNAME}</username>
+                    <password>{$OS.PASSWORD}</password>
+                    <description>Gather data from the API endpoint: _cat/health</description>
+                    <url>{$OS.PROTOCOL}://{$OS.CLUSTER.HOSTNAME}:{$OS.PORT}/_cat/health?v&amp;format=json&amp;h=epoch,timestamp,cluster,status,node.total,node.data,discovered_cluster_manager,shards,pri,relo,init,unassign,pending_tasks,max_task_wait_time,active_shards_percent</url>
+                    <verify_peer>YES</verify_peer>
+                    <verify_host>YES</verify_host>
+                </item>
+                <item>
+                    <uuid>f8900d5803a14b92a57697f1a77460fe</uuid>
+                    <name>OpenSearch Cluster Cat Indices</name>
+                    <type>HTTP_AGENT</type>
+                    <key>opensearchcluster.cat_indices</key>
+                    <delay>5m</delay>
+                    <value_type>TEXT</value_type>
+                    <trends>0</trends>
+                    <authtype>BASIC</authtype>
+                    <username>{$OS.USERNAME}</username>
+                    <password>{$OS.PASSWORD}</password>
+                    <description>Gather data from the API endpoint: _cat/indices</description>
+                    <url>{$OS.PROTOCOL}://{$OS.CLUSTER.HOSTNAME}:{$OS.PORT}/_cat/indices?v&amp;format=json&amp;h=health,status,index,pri,rep,docs.count,docs.deleted,store.size,pri.store.size,memory.total,pri.memory.total,search.throttled</url>
+                    <verify_peer>YES</verify_peer>
+                    <verify_host>YES</verify_host>
+                </item>
+                <item>
+                    <uuid>65ab10adff4040d280328cbe0e307fce</uuid>
+                    <name>OpenSearch Cluster Cat Nodes</name>
+                    <type>HTTP_AGENT</type>
+                    <key>opensearchcluster.cat_nodes</key>
+                    <delay>5m</delay>
+                    <value_type>TEXT</value_type>
+                    <trends>0</trends>
+                    <authtype>BASIC</authtype>
+                    <username>{$OS.USERNAME}</username>
+                    <password>{$OS.PASSWORD}</password>
+                    <description>Gather data from the API endpoint: _cat/indices</description>
+                    <url>{$OS.PROTOCOL}://{$OS.CLUSTER.HOSTNAME}:{$OS.PORT}/_cat/nodes?full_id&amp;format=json&amp;h=id,pid,ip,port,http_address,version,type,build,jdk,node.role,node.roles,cluster_manager,name</url>
+                    <verify_peer>YES</verify_peer>
+                    <verify_host>YES</verify_host>
+                </item>
+                <item>
+                    <uuid>7f8522107daf41418dc4c1055534aa80</uuid>
+                    <name>OpenSearch Cluster Cat Tasks</name>
+                    <type>HTTP_AGENT</type>
+                    <key>opensearchcluster.cat_tasks</key>
+                    <value_type>TEXT</value_type>
+                    <trends>0</trends>
+                    <status>DISABLED</status>
+                    <authtype>BASIC</authtype>
+                    <username>{$OS.USERNAME}</username>
+                    <password>{$OS.PASSWORD}</password>
+                    <description>DOES NOT WORK due to tasks being so quick (usually), Zabbix needs multiple checks to complete preprocessing.
+Gather data from the API endpoint: _cat/tasks</description>
+                    <url>{$OS.PROTOCOL}://{$OS.CLUSTER.HOSTNAME}:{$OS.PORT}/_cat/tasks?format=json&amp;h=id,action,task_id,parent_task_id,type,start_time,timestamp,running_time_ns,running_time,node_id,ip,port,node,version,x_opaque_id</url>
+                    <verify_peer>YES</verify_peer>
+                    <verify_host>YES</verify_host>
+                </item>
+                <item>
+                    <uuid>3a0c0f7c254f49479766687a22169a87</uuid>
+                    <name>Current Cluster Manager ID</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearchcluster.cluster_manager-id</key>
+                    <delay>0</delay>
+                    <value_type>TEXT</value_type>
+                    <trends>0</trends>
+                    <description>ID of the current cluster manager</description>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>const Nodes = JSON.parse(value);
+
+for (Count = 0, NodesLength = Nodes.length; Count &lt; NodesLength; Count++) {
+    if (Nodes[Count].cluster_manager === '*') {
+        return Nodes[Count].id;
+    }
+};</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <parameters>
+                                <parameter>1h</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_nodes</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>509071d24cbf4723880c34cf4c39ae71</uuid>
+                    <name>Current Cluster Manager Name</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearchcluster.cluster_manager-name</key>
+                    <delay>0</delay>
+                    <value_type>TEXT</value_type>
+                    <trends>0</trends>
+                    <description>Name of the current cluster manager</description>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>const Nodes = JSON.parse(value);
+
+for (Count = 0, NodesLength = Nodes.length; Count &lt; NodesLength; Count++) {
+    if (Nodes[Count].cluster_manager === '*') {
+        return Nodes[Count].name;
+    }
+};</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <parameters>
+                                <parameter>1h</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_nodes</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>14eaff4879b74217a6f3227f3ebb107a</uuid>
+                    <name>Nodes OpenSearch Versions Match</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearchcluster.nodes.versionsmatch</key>
+                    <delay>0</delay>
+                    <value_type>TEXT</value_type>
+                    <trends>0</trends>
+                    <description>Whether or not all OpenSearch versions are identical on all nodes in the cluster.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>const Nodes = JSON.parse(value);
+
+for (Count = 1, NodesLength = Nodes.length; Count &lt; NodesLength; Count++) {
+    if (Nodes[Count].version !== Nodes[Count - 1].version) {
+        return false;
+    }
+};
+
+return true;</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <parameters>
+                                <parameter>6h</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_nodes</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>72eeca4b15be4f7fad2294f43e23978f</uuid>
+                            <expression>last(/OpenSearch-Cluster/opensearchcluster.nodes.versionsmatch)=&quot;false&quot;</expression>
+                            <name>Nodes OpenSearch Version Mismatch</name>
+                            <priority>HIGH</priority>
+                            <description>OpenSearch nodes version do not match.</description>
+                            <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Health</value>
+                                </tag>
+                                <tag>
+                                    <tag>Services</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <uuid>24cdf05b31cd4d5089202b8a1f25b392</uuid>
+                    <name>OpenSearch Cluster Cat Indices Discovery</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearchcluster.cat_indices-discover</key>
+                    <delay>0</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <uuid>632d9ff2abc24245981c75287c72c9f8</uuid>
+                            <name>Index Docs Count - {#INDEX.NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearchcluster.index.docs_count[{#INDEX.NAME}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <description>Number of available documents.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.index=='{#INDEX.NAME}')].['docs.count']</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>REGEX</type>
+                                    <parameters>
+                                        <parameter>\w+</parameter>
+                                        <parameter>\0</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearchcluster.cat_indices</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Index</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>b748db769eef41e382ff54213bb6c536</uuid>
+                            <name>Index Docs Deleted - {#INDEX.NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearchcluster.index.docs_deleted[{#INDEX.NAME}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <description>Number of deleted documents.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.index=='{#INDEX.NAME}')].['docs.deleted']</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>REGEX</type>
+                                    <parameters>
+                                        <parameter>\w+</parameter>
+                                        <parameter>\0</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearchcluster.cat_indices</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Index</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>a4ed24d8920f404497754f8b1ff88993</uuid>
+                            <name>Index Health - {#INDEX.NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearchcluster.index.health[{#INDEX.NAME}]</key>
+                            <delay>0</delay>
+                            <value_type>TEXT</value_type>
+                            <trends>0</trends>
+                            <description>Health of a specific index.
+ - Green: All shards are online.
+ - Yellow: Some replica shards are offline. All primary shards are online and data is still available.
+ - Red: Some primary shards are offline and data will be missing.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.index=='{#INDEX.NAME}')].['health']</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>REGEX</type>
+                                    <parameters>
+                                        <parameter>\w+</parameter>
+                                        <parameter>\0</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearchcluster.cat_indices</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Health</value>
+                                </tag>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Index</value>
+                                </tag>
+                            </tags>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <uuid>98a14d30b29548e2a29f5c05a55cd036</uuid>
+                                    <expression>last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#1)=&quot;red&quot; and last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#2)=&quot;red&quot; and last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#3)=&quot;red&quot;</expression>
+                                    <name>Index Health is Red - {#INDEX.NAME}</name>
+                                    <priority>AVERAGE</priority>
+                                    <description>Index health is red. Primary and secondary shards are offline. Index data is unavailable.
+
+Index Name: {#INDEX.NAME}</description>
+                                    <dependencies>
+                                        <dependency>
+                                            <name>OpenSearch Cluster Health: Red</name>
+                                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;red&quot;</expression>
+                                        </dependency>
+                                        <dependency>
+                                            <name>OpenSearch Cluster Health: Yellow</name>
+                                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;yellow&quot;</expression>
+                                        </dependency>
+                                    </dependencies>
+                                    <tags>
+                                        <tag>
+                                            <tag>OpenSearch</tag>
+                                            <value>Health</value>
+                                        </tag>
+                                        <tag>
+                                            <tag>OpenSearch</tag>
+                                            <value>Index</value>
+                                        </tag>
+                                    </tags>
+                                </trigger_prototype>
+                                <trigger_prototype>
+                                    <uuid>f9b690d1ea6a417096fa6ee8028e7e40</uuid>
+                                    <expression>last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#1)=&quot;yellow&quot; and last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#2)=&quot;yellow&quot; and last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#3)=&quot;yellow&quot;</expression>
+                                    <name>Index Health is Yellow - {#INDEX.NAME}</name>
+                                    <priority>WARNING</priority>
+                                    <description>Index health is yellow. All primary shards are still online, but secondary shards are unavailable. Data is still accessible.
+
+Index Name: {#INDEX.NAME}</description>
+                                    <dependencies>
+                                        <dependency>
+                                            <name>OpenSearch Cluster Health: Red</name>
+                                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;red&quot;</expression>
+                                        </dependency>
+                                        <dependency>
+                                            <name>OpenSearch Cluster Health: Yellow</name>
+                                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;yellow&quot;</expression>
+                                        </dependency>
+                                    </dependencies>
+                                    <tags>
+                                        <tag>
+                                            <tag>OpenSearch</tag>
+                                            <value>Health</value>
+                                        </tag>
+                                        <tag>
+                                            <tag>OpenSearch</tag>
+                                            <value>Index</value>
+                                        </tag>
+                                    </tags>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>a1dcc84b20064436b8372d4c5ca94829</uuid>
+                            <name>Index Memory Utilization - {#INDEX.NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearchcluster.index.memory[{#INDEX.NAME}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <units>bytes</units>
+                            <description>Total memory utilization for index between all nodes and all primary and replica shards.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.index=='{#INDEX.NAME}')].['memory.total']</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <parameters>
+                                        <parameter>var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+
+var res = regex.exec(value);
+
+return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearchcluster.cat_indices</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Index</value>
+                                </tag>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Performance</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>6db3e4a33df1487c855383c1283922a1</uuid>
+                            <name>Index Memory Utilization (Primary) - {#INDEX.NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearchcluster.index.memory_primary[{#INDEX.NAME}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <units>bytes</units>
+                            <description>Total memory utilization for index between all nodes and all primary shards.
+Replicas are not included.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.index=='{#INDEX.NAME}')].['pri.memory.total']</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <parameters>
+                                        <parameter>var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+
+var res = regex.exec(value);
+
+return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearchcluster.cat_indices</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Index</value>
+                                </tag>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Performance</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>fdb4c228c75a4528a8fa8a446fafbbac</uuid>
+                            <name>Index Memory Utilization (Replica) - {#INDEX.NAME}</name>
+                            <type>CALCULATED</type>
+                            <key>opensearchcluster.index.memory_replica[{#INDEX.NAME}]</key>
+                            <trends>0</trends>
+                            <units>bytes</units>
+                            <params>last(//opensearchcluster.index.memory[{#INDEX.NAME}])-last(//opensearchcluster.index.memory_primary[{#INDEX.NAME}])</params>
+                            <description>Total memory utilization for index between all nodes and all replica shards.
+Primaries are not included. This is calculated by Zabbix.</description>
+                            <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Index</value>
+                                </tag>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Performance</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>1f644ef2980d484f92d2ca41e9e81b42</uuid>
+                            <name>Index Search Throttled - {#INDEX.NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearchcluster.index.search_throttled[{#INDEX.NAME}]</key>
+                            <delay>0</delay>
+                            <value_type>TEXT</value_type>
+                            <trends>0</trends>
+                            <description>Whether or not an index is search throttled.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.index=='{#INDEX.NAME}')].['search.throttled']</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>REGEX</type>
+                                    <parameters>
+                                        <parameter>\w+</parameter>
+                                        <parameter>\0</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearchcluster.cat_indices</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Index</value>
+                                </tag>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Performance</value>
+                                </tag>
+                            </tags>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <uuid>f5cc53b8de484d6cb434b8e505b738dc</uuid>
+                                    <expression>last(/OpenSearch-Cluster/opensearchcluster.index.search_throttled[{#INDEX.NAME}])=&quot;true&quot;</expression>
+                                    <name>Index Search Throttled - {#INDEX.NAME}</name>
+                                    <priority>WARNING</priority>
+                                    <description>Indices search operations have been throttled by the cluster manager. This can indicate a higher than usual request volume.
+
+Index Name: {#INDEX.NAE</description>
+                                    <tags>
+                                        <tag>
+                                            <tag>OpenSearch</tag>
+                                            <value>Index</value>
+                                        </tag>
+                                        <tag>
+                                            <tag>OpenSearch</tag>
+                                            <value>Performance</value>
+                                        </tag>
+                                    </tags>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>9ba6177f87b2486d95499d1c38bbe41c</uuid>
+                            <name>Index Primary Shard Count - {#INDEX.NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearchcluster.index.shards_primary[{#INDEX.NAME}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <description>Number of primary shards</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.index=='{#INDEX.NAME}')].['pri']</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>REGEX</type>
+                                    <parameters>
+                                        <parameter>\w+</parameter>
+                                        <parameter>\0</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearchcluster.cat_indices</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Index</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>54fad4c7a8fc4f6fa8023e705efd9e15</uuid>
+                            <name>Index Replica Shard Count - {#INDEX.NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearchcluster.index.shards_replica[{#INDEX.NAME}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <description>Number of replica shards</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.index=='{#INDEX.NAME}')].['rep']</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>REGEX</type>
+                                    <parameters>
+                                        <parameter>\w+</parameter>
+                                        <parameter>\0</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearchcluster.cat_indices</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Index</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>c9d91686a0ed4e44925601b43ce77582</uuid>
+                            <name>Index Status - {#INDEX.NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearchcluster.index.status[{#INDEX.NAME}]</key>
+                            <delay>0</delay>
+                            <value_type>TEXT</value_type>
+                            <trends>0</trends>
+                            <description>Open or Close
+ - Open: Data (should be) available and accessible
+ - Close: Data is not available and accessible, not using any RAM, but is stored on disk.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.index=='{#INDEX.NAME}')].['status']</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>REGEX</type>
+                                    <parameters>
+                                        <parameter>\w+</parameter>
+                                        <parameter>\0</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearchcluster.cat_indices</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Index</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>dac5c3e04fd24a5a9196e6c89dc8afb6</uuid>
+                            <name>Index Storage Size - {#INDEX.NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearchcluster.index.store_size[{#INDEX.NAME}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <units>bytes</units>
+                            <description>Storage size of primary and replica shards.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.index=='{#INDEX.NAME}')].['store.size']</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <parameters>
+                                        <parameter>var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+
+var res = regex.exec(value);
+
+return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearchcluster.cat_indices</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Index</value>
+                                </tag>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Storage</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>a48e69b6e88f47d0a2d7186d94a8f81b</uuid>
+                            <name>Index Storage Size (Primary) - {#INDEX.NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearchcluster.index.store_size_primary[{#INDEX.NAME}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <units>bytes</units>
+                            <description>Storage size of only primary shards.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.index=='{#INDEX.NAME}')].['pri.store.size']</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <parameters>
+                                        <parameter>var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+
+var res = regex.exec(value);
+
+return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearchcluster.cat_indices</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Index</value>
+                                </tag>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Storage</value>
+                                </tag>
+                            </tags>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <uuid>2f72ca23cf694a939130169c9ebb728e</uuid>
+                                    <expression>last(/OpenSearch-Cluster/opensearchcluster.index.store_size_primary[{#INDEX.NAME}])&gt;=({$OS.INDEX.PRIMARY_MAX} * 1073741824)</expression>
+                                    <name>OpenSearch Primary Shard Size Exceeded {$OS.INDEX.PRIMARY_MAX} GB</name>
+                                    <priority>AVERAGE</priority>
+                                    <description>An indices primary shards have exceeded {$OS.INDEX.PRIMARY_MAX} GB. This can cause lots of performance, and write issues. This index should be rolled over.
+
+Index Name: {#INDEX.NAME}
+Current Size: {ITEM.LASTVALUE1}</description>
+                                    <manual_close>YES</manual_close>
+                                    <tags>
+                                        <tag>
+                                            <tag>OpenSearch</tag>
+                                            <value>Health</value>
+                                        </tag>
+                                        <tag>
+                                            <tag>OpenSearch</tag>
+                                            <value>Index</value>
+                                        </tag>
+                                        <tag>
+                                            <tag>OpenSearch</tag>
+                                            <value>Performance</value>
+                                        </tag>
+                                    </tags>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>a907be27aa62495f9682faeb834c13b5</uuid>
+                            <name>Index Storage Size (Replica) - {#INDEX.NAME}</name>
+                            <type>CALCULATED</type>
+                            <key>opensearchcluster.index.store_size_replica[{#INDEX.NAME}]</key>
+                            <trends>0</trends>
+                            <units>bytes</units>
+                            <params>last(//opensearchcluster.index.store_size[{#INDEX.NAME}])-last(//opensearchcluster.index.store_size_primary[{#INDEX.NAME}])</params>
+                            <description>Storage size of only replica shards. Calculated by Zabbix.</description>
+                            <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Index</value>
+                                </tag>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Storage</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>opensearchcluster.cat_indices</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#INDEX.NAME}</lld_macro>
+                            <path>$.index</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                </discovery_rule>
+            </discovery_rules>
+            <macros>
+                <macro>
+                    <macro>{$OS.CLUSTER.HOSTNAME}</macro>
+                    <value>CHANGE_ME</value>
+                    <description>Shared DNS name to reach the cluster at.</description>
+                </macro>
+                <macro>
+                    <macro>{$OS.INDEX.PRIMARY_MAX}</macro>
+                    <value>60</value>
+                    <description>Throw alert when an Indices primary shard exceeds this size (expressed in GB).</description>
+                </macro>
+                <macro>
+                    <macro>{$OS.PASSWORD}</macro>
+                    <value>CHANGE_ME</value>
+                    <description>Password to authenticate to OpenSearch with.</description>
+                </macro>
+                <macro>
+                    <macro>{$OS.PORT}</macro>
+                    <value>9200</value>
+                    <description>OpenSearch port that is being listened for API requests.</description>
+                </macro>
+                <macro>
+                    <macro>{$OS.PROTOCOL}</macro>
+                    <value>https</value>
+                    <description>OpenSearch protocol being used (http/https)</description>
+                </macro>
+                <macro>
+                    <macro>{$OS.USERNAME}</macro>
+                    <value>CHANGE_ME</value>
+                    <description>Username to authenticate to OpenSearch with.</description>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+    <graphs>
+        <graph>
+            <uuid>d8e9d9481d00448c9f530b6f14fa1a58</uuid>
+            <name>OpenSearch Node Counts</name>
+            <ymin_type_1>FIXED</ymin_type_1>
+            <graph_items>
+                <graph_item>
+                    <color>EC407A</color>
+                    <calc_fnc>ALL</calc_fnc>
+                    <item>
+                        <host>OpenSearch-Cluster</host>
+                        <key>opensearch.cluster.data_nodes</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>388E3C</color>
+                    <calc_fnc>ALL</calc_fnc>
+                    <item>
+                        <host>OpenSearch-Cluster</host>
+                        <key>opensearch.cluster.total_nodes</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <uuid>c5af924ddcdb496a866c12be3b68ebc3</uuid>
+            <name>OpenSearch Primary Secondary Shard Distribution</name>
+            <yaxismax>0</yaxismax>
+            <show_work_period>NO</show_work_period>
+            <show_triggers>NO</show_triggers>
+            <type>PIE</type>
+            <graph_items>
+                <graph_item>
+                    <color>29B6F6</color>
+                    <calc_fnc>LAST</calc_fnc>
+                    <item>
+                        <host>OpenSearch-Cluster</host>
+                        <key>opensearch.cluster.shards.pri</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>43A047</color>
+                    <calc_fnc>LAST</calc_fnc>
+                    <item>
+                        <host>OpenSearch-Cluster</host>
+                        <key>opensearch.cluster.shards.second</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <uuid>8a864a4399b5429785f9cf99b2cd9f40</uuid>
+            <name>OpenSearch Shard Event Counts</name>
+            <ymin_type_1>FIXED</ymin_type_1>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <calc_fnc>ALL</calc_fnc>
+                    <item>
+                        <host>OpenSearch-Cluster</host>
+                        <key>opensearch.cluster.shards.init</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>29B6F6</color>
+                    <calc_fnc>ALL</calc_fnc>
+                    <item>
+                        <host>OpenSearch-Cluster</host>
+                        <key>opensearch.cluster.shards.relo</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>F44336</color>
+                    <calc_fnc>ALL</calc_fnc>
+                    <item>
+                        <host>OpenSearch-Cluster</host>
+                        <key>opensearch.cluster.shards.unassign</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <uuid>6e603ebe18d94a2ba98f9a44f46f66b3</uuid>
+            <name>OpenSearch Shards Percent Active</name>
+            <show_work_period>NO</show_work_period>
+            <show_triggers>NO</show_triggers>
+            <ymin_type_1>FIXED</ymin_type_1>
+            <ymax_type_1>FIXED</ymax_type_1>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <calc_fnc>MIN</calc_fnc>
+                    <item>
+                        <host>OpenSearch-Cluster</host>
+                        <key>opensearch.cluster.shards.active_percent</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <uuid>7be065952cc24b10be94d0b518b3f1ce</uuid>
+            <name>OpenSearch Shard Total Count</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <calc_fnc>ALL</calc_fnc>
+                    <item>
+                        <host>OpenSearch-Cluster</host>
+                        <key>opensearch.cluster.shards.total</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
+</zabbix_export>

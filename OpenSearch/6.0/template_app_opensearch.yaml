@@ -1,0 +1,3478 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: 46e77e29fa6644fea1eb2386af509d50
+      name: TG_CLIENT_SERVER_OPENSEARCH
+  templates:
+    - uuid: 2243fd61f9a04abe99d1873dc6b04435
+      template: OpenSearch
+      name: OpenSearch
+      groups:
+        - name: TG_CLIENT_SERVER_OPENSEARCH
+      items:
+        - uuid: e0560ddbbdf34e04a86b00f196bea3ab
+          name: 'Disk Available'
+          type: DEPENDENT
+          key: opensearch.allocation.disk.avail
+          units: bytes
+          description: 'Total disk available on the node. Not just available to OpenSearch, but the system as a whole.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$.[0].[''disk.avail'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_allocation
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: a6aac55fd6ae4390a7827c9760053e4c
+          name: 'Disk Indices'
+          type: DEPENDENT
+          key: opensearch.allocation.disk.indices
+          units: bytes
+          description: 'Size of indices currently stored on the nodes disk.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$.[0].[''disk.indices'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_allocation
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: beba5d4fbd3649719edb1993407c2554
+          name: 'Disk Percentage Used'
+          type: DEPENDENT
+          key: opensearch.allocation.disk.percent
+          description: 'Percentage of disk storage in use on node. Not just by OpenSearch.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$.[0].[''disk.percent'']'
+            - type: REGEX
+              parameters:
+                - '(\w|\.|:)+'
+                - \0
+          master_item:
+            key: opensearch.cat_allocation
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 51eff34d1b704be9a9792a6cf9556319
+          name: 'Disk Used'
+          type: DEPENDENT
+          key: opensearch.allocation.disk.used
+          units: bytes
+          description: 'Total disk used on server, not just by OpenSearch.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$.[0].[''disk.used'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_allocation
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 84c83de526c342f7a2cde3fbd98e9218
+          name: 'Shard Count'
+          type: DEPENDENT
+          key: opensearch.allocation.shards
+          description: 'Shard count currently stored on the node.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$.[0].[''shards'']'
+            - type: REGEX
+              parameters:
+                - '(\w|\.|:)+'
+                - \0
+          master_item:
+            key: opensearch.cat_allocation
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: de6e0647c38543c08412a70e945f639e
+          name: 'OpenSearch Cat Allocation'
+          type: HTTP_AGENT
+          key: opensearch.cat_allocation
+          delay: 30m
+          value_type: TEXT
+          authtype: BASIC
+          username: '{$OS.USERNAME}'
+          password: '{$OS.PASSWORD}'
+          description: |
+            Gather data from the API endpoint: _cat/allocation
+            
+            https://opensearch.org/docs/latest/api-reference/cat/cat-allocation/
+          url: '{$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_cat/allocation/{$OS.NAME}?v&format=json'
+          verify_peer: 'YES'
+          verify_host: 'YES'
+        - uuid: 6ac1259dabf8427c95b0e9666e2d2b99
+          name: 'OpenSearch Cat Nodes'
+          type: HTTP_AGENT
+          key: opensearch.cat_nodes
+          value_type: TEXT
+          authtype: BASIC
+          username: '{$OS.USERNAME}'
+          password: '{$OS.PASSWORD}'
+          description: 'Gather data from the API endpoint: _cat/nodes'
+          url: '{$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_cat/nodes?h=id,pid,ip,port,http_address,version,type,build,jdk,disk.total,disk.used,disk.avail,disk.used_percent,heap.current,heap.max,heap.percent,ram.current,ram.percent,ram.max,file_desc.current,file_desc.percent,file_desc.max,cpu,load_1m,load_5m,load_15m,uptime,node.role,node.roles,cluster_manager,name,completion.size,fielddata.memory_size,fielddata.evictions,query_cache.memory_size,query_cache.evictions,query_cache.hit_count,query_cache.miss_count,request_cache.memory_size,request_cache.evictions,request_cache.hit_count,request_cache.miss_count,flush.total,flush.total_time,get.current,get.time,get.total,get.exists_time,get.exists_total,get.missing_time,get.missing_total,indexing.delete_current,indexing.delete_time,indexing.delete_total,indexing.index_current,indexing.index_time,indexing.index_total,indexing.index_failed,merges.current,merges.current_docs,merges.current_size,merges.total,merges.total_docs,merges.total_size,merges.total_time,refresh.total,refresh.time,refresh.external_total,refresh.external_time,refresh.listeners,script.compilations,script.cache_evictions,script.compilation_limit_triggered,search.fetch_current,search.fetch_time,search.fetch_total,search.open_contexts,search.query_current,search.query_time,search.query_total,search.concurrent_query_current,search.concurrent_query_time,search.concurrent_query_total,search.concurrent_avg_slice_count,search.scroll_current,search.scroll_time,search.scroll_total,search.point_in_time_current,search.point_in_time_time,search.point_in_time_total,segments.count,segments.memory,segments.index_writer_memory,segments.version_map_memory,segments.fixed_bitset_memory,suggest.current,suggest.time,suggest.total&full_id&format=json'
+          verify_peer: 'YES'
+          verify_host: 'YES'
+          triggers:
+            - uuid: 676d3d78315e44a8afa606dc4223e8a5
+              expression: 'nodata(/OpenSearch/opensearch.cat_nodes,3m)=1'
+              name: 'Node is not responding'
+              priority: HIGH
+              description: |
+                Attempted to reach the API on node, but hasn't been responding for at least 3 minutes.
+                
+                Failing API Endpoint: {$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_cat/nodes
+              tags:
+                - tag: OpenSearch
+                  value: Health
+                - tag: Service
+                  value: OpenSearch
+        - uuid: f97c7d8dbad44811b696ad19d298289e
+          name: 'Package Build Number'
+          type: DEPENDENT
+          key: opensearch.node.build
+          value_type: TEXT
+          description: 'OpenSearch distribution package''s build number.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].build'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 795a4ba9d2fe44b59511cf6735bb20ba
+          name: 'Cluster Manager'
+          type: DEPENDENT
+          key: opensearch.node.cluster_manager
+          value_type: TEXT
+          description: 'True if the node is the cluster manager, False if not.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].cluster_manager'
+            - type: REGEX
+              parameters:
+                - '\*'
+                - 'True'
+              error_handler: CUSTOM_VALUE
+              error_handler_params: 'False'
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: d92b76aff7dc4214b9870984146a671e
+          name: 'Completion Size'
+          type: DEPENDENT
+          key: opensearch.node.completion.size
+          units: bytes
+          description: 'Size of completion'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''completion.size'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 7b458bc842fc4daf8c3ce4a8f54d69ef
+          name: CPU
+          type: DEPENDENT
+          key: opensearch.node.cpu
+          description: 'Recent CPU utilization.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].cpu'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 89a9093d4b764c76b72b207853b9ce8c
+          name: 'Disk Available'
+          type: DEPENDENT
+          key: opensearch.node.disk.avail
+          units: bytes
+          description: 'Total disk space available to the system.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''disk.used'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: bafdf2b42a1844069c6be4016e0b4e54
+          name: 'Disk Used'
+          type: DEPENDENT
+          key: opensearch.node.disk.used
+          units: bytes
+          description: 'Total disk space used in OpenSearch.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''disk.used'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 8b64b2a4bd9e41b5b8cf6f9c9f17d612
+          name: 'Disk Used Percent'
+          type: DEPENDENT
+          key: opensearch.node.disk.used_percent
+          description: 'Total disk space used in OpenSearch (as a percentage of total)'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''disk.used_percent'']'
+            - type: REGEX
+              parameters:
+                - '(\w|\.|:)+'
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 09e9bac897744afa9349871990ec3348
+          name: 'FieldData Evictions'
+          type: DEPENDENT
+          key: opensearch.node.fielddata.evictions
+          description: 'FieldData Evictions'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''fielddata.evictions'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: 1c975791d02d4f9d850a048747e593f1
+              expression: 'last(/OpenSearch/opensearch.node.fielddata.evictions,#1)>={$OS.FIELDDATA.EVICTIONS.MAX}'
+              name: 'OpenSearch FieldData Evictions High'
+              priority: WARNING
+              description: |
+                OpenSearch node's FieldData Eviction operations are higher than configured threshold.
+                Current FieldData Eviction operations: {ITEM.LASTVALUE1}
+                Alert Threshold: {$OS.FIELDDATA.EVICTIONS.MAX}
+                
+                Node Name: {$OS.NAME}
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: 13bbd2dfcf2a46bc8eb3d2151e8d5003
+          name: 'FieldData Memory Size'
+          type: DEPENDENT
+          key: opensearch.node.fielddata.memory_size
+          units: bytes
+          description: 'Used FieldData cache'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''fielddata.memory_size'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: cec8513ee6f64fd3bf0ce35e11022fe0
+          name: 'File Descriptors Current'
+          type: DEPENDENT
+          key: opensearch.node.file_desc.current
+          value_type: TEXT
+          description: 'Currently used file descriptors.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''file_desc.current'']'
+            - type: REGEX
+              parameters:
+                - '(\w|\.|:)+'
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: d2e83f8463c343d88403ce6a9d31fc86
+          name: 'File Descriptors Max'
+          type: DEPENDENT
+          key: opensearch.node.file_desc.max
+          value_type: TEXT
+          description: 'Maximum possible file descriptors.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''file_desc.max'']'
+            - type: REGEX
+              parameters:
+                - '(\w|\.|:)+'
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: c2577b6990eb4db287e14f1f395064ee
+          name: 'File Descriptors Percent'
+          type: DEPENDENT
+          key: opensearch.node.file_desc.percent
+          description: 'Currently used file descriptors expressed as a percentage of maximum file descriptors.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''file_desc.percent'']'
+            - type: REGEX
+              parameters:
+                - '(\w|\.|:)+'
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: 1864144917a74df98a31ec4595a23ad9
+              expression: 'last(/OpenSearch/opensearch.node.file_desc.percent,#1)>={$OS.FILEDESCRIPTORS.MAX}'
+              name: 'OpenSearch File Descriptors Availability Low'
+              priority: WARNING
+              description: |
+                OpenSearch node's available file descriptors have crossed below the defined threshold.
+                Current descriptor utilization: {ITEM.LASTVALUE1}
+                Alert threshold: {$OS.FILEDESCRIPTORS.MAX}
+                
+                Node Name: {$OS.NAME}
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: 33de76098b9a446cb83ef3642eb81bca
+          name: 'Flush Changes'
+          type: DEPENDENT
+          key: opensearch.node.flush.changes
+          description: 'Zabbix calculated difference of last value and current value.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''flush.total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+            - type: SIMPLE_CHANGE
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+            - tag: Source
+              value: Calculated
+        - uuid: 37d5de41c2bd48aa848eb5ccee092161
+          name: 'Flush Total'
+          type: DEPENDENT
+          key: opensearch.node.flush.total
+          description: 'Total number of flushes.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''flush.total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 8a2e71e7ca9046579d486d525f369f47
+          name: 'Flush Total Time'
+          type: DEPENDENT
+          key: opensearch.node.flush.total_time
+          units: uptime
+          description: 'Time spent in flush'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''flush.total_time'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var converter = {'s': 0, 'm': 1, 'h': 2};
+                  var regex = /(\d+(?:\.\d+)?)\s?(ms|s|m|h|d)?b?/i;
+                  
+                  var time = regex.exec(value);
+                  
+                  // Process days into hours
+                  if (time[2].toLowerCase() == 'd'){
+                    time[1] = time[1] * 24;
+                    time[2] = 'h';
+                  }
+                  
+                  var multiplier = converter[time[2].toLowerCase()]
+                  
+                  if (multiplier > 0) {
+                    return time[1] * ( Math.pow(60, multiplier ) );
+                  }
+                  else {
+                    return time[1];
+                  }
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 113ecfc7c83e4a9393b89d27d18c5161
+          name: 'Get Changes'
+          type: DEPENDENT
+          key: opensearch.node.get.changes
+          description: 'Zabbix calculated difference of last value and current value.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''get.total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+            - type: SIMPLE_CHANGE
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+            - tag: Source
+              value: Calculated
+        - uuid: d16d4e715afa43248d204081906196d3
+          name: 'Get Current'
+          type: DEPENDENT
+          key: opensearch.node.get.current
+          description: 'Current number of get operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''get.current'']'
+            - type: REGEX
+              parameters:
+                - (\w|\.)+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: 7c94857e34b244baa266af8efa3316c2
+              expression: 'last(/OpenSearch/opensearch.node.get.current,#1)>={$OS.GET.CURRENT.MAX}'
+              name: 'OpenSearch Get Operations High'
+              priority: WARNING
+              description: |
+                OpenSearch node's get operations are higher than configured threshold.
+                Current Get operations: {ITEM.LASTVALUE1}
+                Alert Threshold: {$OS.GET.CURRENT.MAX}
+                
+                Node Name: {$OS.NAME}
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: 85a47af065704bf995701ef768ea902d
+          name: 'Get Exists Changes'
+          type: DEPENDENT
+          key: opensearch.node.get.exists_changes
+          description: 'Zabbix calculated difference of last value and current value.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''get.exists_total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+            - type: SIMPLE_CHANGE
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+            - tag: Source
+              value: Calculated
+        - uuid: a8c25606cb5e4c109ad689adf5f35a17
+          name: 'Get Exists Time'
+          type: DEPENDENT
+          key: opensearch.node.get.exists_time
+          units: uptime
+          description: 'Time spent in successful get operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''get.exists_time'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var converter = {'s': 0, 'm': 1, 'h': 2};
+                  var regex = /(\d+(?:\.\d+)?)\s?(ms|s|m|h|d)?b?/i;
+                  
+                  var time = regex.exec(value);
+                  
+                  // Process days into hours
+                  if (time[2].toLowerCase() == 'd'){
+                    time[1] = time[1] * 24;
+                    time[2] = 'h';
+                  }
+                  
+                  var multiplier = converter[time[2].toLowerCase()]
+                  
+                  if (multiplier > 0) {
+                    return time[1] * ( Math.pow(60, multiplier ) );
+                  }
+                  else {
+                    return time[1];
+                  }
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 3fbc03632e25494a9355c2e638d39e72
+          name: 'Get Exists Total'
+          type: DEPENDENT
+          key: opensearch.node.get.exists_total
+          description: 'Total number of successful get operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''get.exists_total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: dcf93d4e7cb547408ed08ee11af212b3
+          name: 'Get Missing Changes'
+          type: DEPENDENT
+          key: opensearch.node.get.missing_changes
+          description: 'Zabbix calculated difference of last value and current value.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''get.missing_total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+            - type: SIMPLE_CHANGE
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+            - tag: Source
+              value: Calculated
+        - uuid: fd58aed68ca346b59a86c16be6af841f
+          name: 'Get Missing Time'
+          type: DEPENDENT
+          key: opensearch.node.get.missing_time
+          units: uptime
+          description: 'Time spent in failed get operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''get.missing_time'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var converter = {'s': 0, 'm': 1, 'h': 2};
+                  var regex = /(\d+(?:\.\d+)?)\s?(ms|s|m|h|d)?b?/i;
+                  
+                  var time = regex.exec(value);
+                  
+                  // Process days into hours
+                  if (time[2].toLowerCase() == 'd'){
+                    time[1] = time[1] * 24;
+                    time[2] = 'h';
+                  }
+                  
+                  var multiplier = converter[time[2].toLowerCase()]
+                  
+                  if (multiplier > 0) {
+                    return time[1] * ( Math.pow(60, multiplier ) );
+                  }
+                  else {
+                    return time[1];
+                  }
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: d083e23b68cf4d728cc0a427a65211fd
+          name: 'Get Missing Total'
+          type: DEPENDENT
+          key: opensearch.node.get.missing_total
+          description: 'Total number of failed get operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''get.missing_total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 2bbcd214551d4a66936050b016dea278
+          name: 'Get Time'
+          type: DEPENDENT
+          key: opensearch.node.get.time
+          units: uptime
+          description: 'Time spent in get'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''get.time'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var converter = {'s': 0, 'm': 1, 'h': 2};
+                  var regex = /(\d+(?:\.\d+)?)\s?(ms|s|m|h|d)?b?/i;
+                  
+                  var time = regex.exec(value);
+                  
+                  // Process days into hours
+                  if (time[2].toLowerCase() == 'd'){
+                    time[1] = time[1] * 24;
+                    time[2] = 'h';
+                  }
+                  
+                  var multiplier = converter[time[2].toLowerCase()]
+                  
+                  if (multiplier > 0) {
+                    return time[1] * ( Math.pow(60, multiplier ) );
+                  }
+                  else {
+                    return time[1];
+                  }
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 8f41137843f948c4a7e11939a17161a7
+          name: 'Get Total'
+          type: DEPENDENT
+          key: opensearch.node.get.total
+          description: 'Total number of get operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''get.total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 5fa7886eed0a42e183c13c24acaa3057
+          name: 'Heap Current'
+          type: DEPENDENT
+          key: opensearch.node.heap.current
+          units: bytes
+          description: 'Currently used Java heap. These are Java objects in memory.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''heap.current'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 680f3771f9ea4e4d97a9ed01742f03bf
+          name: 'Heap Max'
+          type: DEPENDENT
+          key: opensearch.node.heap.max
+          units: bytes
+          description: 'Maximum configured Java heap. These are Java objects in memory.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''heap.max'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 63324cd9fd1a45d18bed3904a651ea23
+          name: 'Heap Percent'
+          type: DEPENDENT
+          key: opensearch.node.heap.percent
+          description: 'Currently used Java heap. These are Java objects in memory. (Expressed as a percent of max)'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''heap.percent'']'
+            - type: REGEX
+              parameters:
+                - '(\w|\.|:)+'
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: a541fb644fd9437ba64100aef5aff896
+              expression: 'last(/OpenSearch/opensearch.node.heap.percent,#1)>={$OS.HEAP.MAX}'
+              name: 'OpenSearch JVM Heap Utilization High'
+              priority: WARNING
+              description: |
+                OpenSearch node's JVM heap utilization is higher than configured threshold.
+                Current Heap Utilization: {ITEM.LASTVALUE1}
+                Alert Threshold: {$OS.HEAP.MAX}
+                
+                Node Name: {$OS.NAME}
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: d5a2dcddfeed4711a248ada0b2ba5dc5
+          name: 'HTTP Address'
+          type: DEPENDENT
+          key: opensearch.node.http_address
+          value_type: TEXT
+          description: 'HTTP URL the node is listening on.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].http_address'
+            - type: REGEX
+              parameters:
+                - '(\w|\.|:)+'
+                - \0
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 812764a27132415780daed78aaf5abd5
+          name: ID
+          type: DEPENDENT
+          key: opensearch.node.id
+          value_type: TEXT
+          description: 'Cluster assigned random ID'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].id'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 2cec88341c7f4fb980cb3cbb113c33ee
+          name: 'Delete Current'
+          type: DEPENDENT
+          key: opensearch.node.indexing.delete_current
+          description: 'Current number of deletion operations on indices.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''indexing.delete_current'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: 3048f85f6839422ba01a325a8ae000e5
+              expression: 'last(/OpenSearch/opensearch.node.indexing.delete_current,#1)>={$OS.INDEXING.DELETE.MAX}'
+              name: 'OpenSearch Delete Operations High'
+              priority: WARNING
+              description: |
+                OpenSearch node's deletion operations are higher than configured threshold.
+                Current Delete operations: {ITEM.LASTVALUE1}
+                Alert Threshold: {$OS.INDEXING.DELETE.MAX}
+                
+                Node Name: {$OS.NAME}
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: 2c1471493f5746eb93c7e3c8a923ef59
+          name: 'Delete Time'
+          type: DEPENDENT
+          key: opensearch.node.indexing.delete_time
+          units: uptime
+          description: 'Time spent in index deletion operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''indexing.delete_time'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var converter = {'s': 0, 'm': 1, 'h': 2};
+                  var regex = /(\d+(?:\.\d+)?)\s?(ms|s|m|h|d)?b?/i;
+                  
+                  var time = regex.exec(value);
+                  
+                  // Process days into hours
+                  if (time[2].toLowerCase() == 'd'){
+                    time[1] = time[1] * 24;
+                    time[2] = 'h';
+                  }
+                  
+                  var multiplier = converter[time[2].toLowerCase()]
+                  
+                  if (multiplier > 0) {
+                    return time[1] * ( Math.pow(60, multiplier ) );
+                  }
+                  else {
+                    return time[1];
+                  }
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 32e7f6735b9842b593d985f1410bee36
+          name: 'Indexing Current'
+          type: DEPENDENT
+          key: opensearch.node.indexing.index_current
+          description: 'Current number of indexing operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''indexing.index_current'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: 2d47c6714d384246825cd255ef4ecdf7
+              expression: 'last(/OpenSearch/opensearch.node.indexing.index_current,#1)>={$OS.INDEXING.INDEX.MAX}'
+              name: 'OpenSearch Indexing Operations High'
+              priority: WARNING
+              description: |
+                OpenSearch node's indexing operations are higher than configured threshold.
+                Current Indexing operations: {ITEM.LASTVALUE1}
+                Alert Threshold: {$OS.INDEXING.INDEX.MAX}
+                
+                Node Name: {$OS.NAME}
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: 882b8f1d1d134c3e823038f8e2d471b1
+          name: 'Indexing Total Failed'
+          type: DEPENDENT
+          key: opensearch.node.indexing.index_failed
+          description: 'Total number of failed indexing operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''indexing.index_failed'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: e7c72866178e41118436a77c28112192
+          name: 'Indexing Time'
+          type: DEPENDENT
+          key: opensearch.node.indexing.index_time
+          units: uptime
+          description: 'Time spent in indexing operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''indexing.index_time'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var converter = {'s': 0, 'm': 1, 'h': 2};
+                  var regex = /(\d+(?:\.\d+)?)\s?(ms|s|m|h)?b?/i;
+                  
+                  var time = regex.exec(value);
+                  var multiplier = converter[time[2].toLowerCase()]
+                  
+                  if (multiplier > 0) {
+                      return time[1] * ( Math.pow(60, multiplier ) );
+                  }
+                  else {
+                      return time[1];
+                  }
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 90e271084bf845c5b63d5ee954d78245
+          name: 'Indexing Total'
+          type: DEPENDENT
+          key: opensearch.node.indexing.index_total
+          description: 'Total number of indexing operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''indexing.index_total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 1486f7478e174028b2b283c2092933c1
+          name: IP
+          type: DEPENDENT
+          key: opensearch.node.ip
+          value_type: TEXT
+          description: 'IP the node is listening on'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].ip'
+            - type: REGEX
+              parameters:
+                - '(\d|\.|,)+'
+                - \0
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 26ac6ce46eb7422ca338c3744600283e
+          name: 'Package JDK'
+          type: DEPENDENT
+          key: opensearch.node.jdk
+          value_type: TEXT
+          description: 'Node''s running OpenSearch Java Development Kit (JDK) version number.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].jdk'
+            - type: REGEX
+              parameters:
+                - (\d|\.)+
+                - \0
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 82e776565a4a418e81302035f218a62a
+          name: load_1m
+          type: DEPENDENT
+          key: opensearch.node.load_1m
+          history: 1d
+          trends: '0'
+          description: 'CPU load for the last 1 minute.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].load_1m'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 23032efb1b014625903ba9cba5e281a3
+          name: load_5m
+          type: DEPENDENT
+          key: opensearch.node.load_5m
+          history: 1d
+          trends: '0'
+          description: 'CPU load for the last 5 minutes.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].load_5m'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 8771055e17cc44209b2a9f771c8a9596
+          name: load_15m
+          type: DEPENDENT
+          key: opensearch.node.load_15m
+          history: 1d
+          trends: '0'
+          description: 'CPU load for the last 15 minutes.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].load_15m'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 1c31b520ffec4e68a0bec40a7544d75e
+          name: 'Merges Current'
+          type: DEPENDENT
+          key: opensearch.node.merges.current
+          description: 'Number of current merge operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''merges.current'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 350215bd180d4d86a259b4239e081b86
+          name: 'Merges Current Docs'
+          type: DEPENDENT
+          key: opensearch.node.merges.current_docs
+          description: 'Current number of merging docs operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''merges.current_docs'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 49675497141541c0940df212b0a164b3
+          name: 'Merges Current Size'
+          type: DEPENDENT
+          key: opensearch.node.merges.current_size
+          units: bytes
+          description: 'Size of current merge operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''merges.current_size'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: bde0be50d7f445da83c73adead018b5c
+          name: 'Merges Total'
+          type: DEPENDENT
+          key: opensearch.node.merges.total
+          description: 'Total number of completed merge operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''merges.total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 2204d3afdd6f466bab1e7f0524d6a36d
+          name: 'Merges Total Docs'
+          type: DEPENDENT
+          key: opensearch.node.merges.total_docs
+          description: 'Total number of completed merged documents.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''merges.total_docs'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 8bd92a8276d3454484530bdc79c7407d
+          name: 'Merges Total Size'
+          type: DEPENDENT
+          key: opensearch.node.merges.total_size
+          units: bytes
+          description: 'Total size of merged operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''merges.total_size'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: b193fb432fc346338735120025b2be75
+          name: 'Merges Total Time'
+          type: DEPENDENT
+          key: opensearch.node.merges.total_time
+          units: uptime
+          description: 'Time spent in merge operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''merges.total_time'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var converter = {'s': 0, 'm': 1, 'h': 2};
+                  var regex = /(\d+(?:\.\d+)?)\s?(ms|s|m|h|d)?b?/i;
+                  
+                  var time = regex.exec(value);
+                  // Process days into hours
+                  if (time[2].toLowerCase() == 'd'){
+                    time[1] = time[1] * 24;
+                    time[2] = 'h';
+                  }
+                  
+                  var multiplier = converter[time[2].toLowerCase()]
+                  
+                  if (multiplier > 0) {
+                    return time[1] * ( Math.pow(60, multiplier ) );
+                  }
+                  else {
+                    return time[1];
+                  }
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: ebb0846160bb459db4f252d1babdd303
+          name: Name
+          type: DEPENDENT
+          key: opensearch.node.name
+          value_type: TEXT
+          description: 'Admin determined node name.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''name'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 7108a2adace44599b2d3271389757589
+          name: 'Node Role (Letters)'
+          type: DEPENDENT
+          key: opensearch.node.node.role
+          value_type: TEXT
+          description: |
+            Roles assigned to the node in the 'single letter form'.
+            m:master eligible node, d:data node, i:ingest node, -:coordinating node only, r:remote cluster client
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''node.role'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: 9d7493b7deda49b9b693c60470fccab9
+              expression: 'last(/OpenSearch/opensearch.node.node.role,#2)<>last(/OpenSearch/opensearch.node.node.role,#1)'
+              recovery_mode: NONE
+              name: 'OpenSearch Node Roles Changed'
+              priority: INFO
+              description: |
+                OpenSearch node's assigned cluster roles have changed. 
+                New roles: {ITEM.LASTVALUE2}
+                Old roles: {ITEM.VALUE1}
+                
+                Node Name: {$OS.NAME}
+              manual_close: 'YES'
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: 8fe593e508644b459667a61b61f1b85c
+          name: 'Node Roles'
+          type: DEPENDENT
+          key: opensearch.node.node.roles
+          value_type: TEXT
+          description: 'Roles assigned to the node.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''node.roles'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 7765df434c2a4f0d827e17840bece58a
+          name: PID
+          type: DEPENDENT
+          key: opensearch.node.pid
+          value_type: TEXT
+          description: 'Process ID of OpenSearch Service'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].pid'
+            - type: REGEX
+              parameters:
+                - \d+
+                - \0
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 0cf70c34d64b4ac69bb631d6bd551575
+          name: Port
+          type: DEPENDENT
+          key: opensearch.node.port
+          value_type: TEXT
+          description: 'Process ID of OpenSearch Service'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].port'
+            - type: REGEX
+              parameters:
+                - \d+
+                - \0
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: edae02dfbf8048869a80b5eab422294a
+              expression: 'last(/OpenSearch/opensearch.node.port,#2)<>last(/OpenSearch/opensearch.node.port,#1)'
+              recovery_mode: NONE
+              name: 'OpenSearch Node Port Changed'
+              priority: INFO
+              description: |
+                OpenSearch node's service port has changed:
+                New port: {ITEM.LASTVALUE2}
+                Old port: {ITEM.VALUE1}
+                
+                Node Name: {$OS.NAME}
+              manual_close: 'YES'
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: aaf8c06606db4efea632eb2cc59dc55c
+          name: 'Query Cache Evictions'
+          type: DEPENDENT
+          key: opensearch.node.query_cache.evictions
+          description: 'Query Cache Evictions'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''query_cache.evictions'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: f64a406c54ed4f25959ab32ed2b290ae
+          name: 'Query Cache Hit Count'
+          type: DEPENDENT
+          key: opensearch.node.query_cache.hit_count
+          description: 'Query Cache Hit Count'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''query_cache.hit_count'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 1733274635484012a7ec544c1ba43448
+          name: 'Query Cache Memory Size'
+          type: DEPENDENT
+          key: opensearch.node.query_cache.memory_size
+          units: bytes
+          description: 'Used Query Cache'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''query_cache.memory_size'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: ca7abaeecf034a5e9be9ac948caf8778
+          name: 'Query Cache Miss Count'
+          type: DEPENDENT
+          key: opensearch.node.query_cache.miss_count
+          description: 'Query Cache Miss Count'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''query_cache.miss_count'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: f7ef7516e1a64af1bb9ae6148ab17f8e
+          name: 'Ram Current'
+          type: DEPENDENT
+          key: opensearch.node.ram.current
+          units: bytes
+          description: 'Currently used system memory.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''ram.current'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: b9d1414c7e094a38b64a5797547f4909
+          name: 'Ram Max'
+          type: DEPENDENT
+          key: opensearch.node.ram.max
+          units: bytes
+          description: 'Total system memory.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''ram.max'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 8bfa8c037a4241cd97fcd1f71fe521ca
+          name: 'Ram Percent'
+          type: DEPENDENT
+          key: opensearch.node.ram.percent
+          description: 'Currently used system memory expressed as a percentage of total system memory.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''ram.percent'']'
+            - type: REGEX
+              parameters:
+                - '(\w|\.|:)+'
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 6167f3ba6a704209b2ddf7df2c3643b2
+          name: 'Refresh Changes'
+          type: DEPENDENT
+          key: opensearch.node.refresh.changes
+          description: 'Zabbix calculated difference of last value and current value.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''refresh.total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+            - type: SIMPLE_CHANGE
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+            - tag: Source
+              value: Calculated
+        - uuid: 0251d1c93af045208cd4a945ac53a77d
+          name: 'Refresh External Changes'
+          type: DEPENDENT
+          key: opensearch.node.refresh.external_changes
+          description: 'Zabbix calculated difference of last value and current value.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''refresh.external_totall'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+            - type: SIMPLE_CHANGE
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+            - tag: Source
+              value: Calculated
+        - uuid: 5871d51145d940e0a80de19681f3e714
+          name: 'Refresh External Total Time'
+          type: DEPENDENT
+          key: opensearch.node.refresh.external_time
+          units: uptime
+          description: 'Time spent in external refresh operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''refresh.external_time'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var converter = {'s': 0, 'm': 1, 'h': 2};
+                  var regex = /(\d+(?:\.\d+)?)\s?(ms|s|m|h|d)?b?/i;
+                  
+                  var time = regex.exec(value);
+                  
+                  // Process days into hours
+                  if (time[2].toLowerCase() == 'd'){
+                    time[1] = time[1] * 24;
+                    time[2] = 'h';
+                  }
+                  
+                  var multiplier = converter[time[2].toLowerCase()]
+                  
+                  if (multiplier > 0) {
+                    return time[1] * ( Math.pow(60, multiplier ) );
+                  }
+                  else {
+                    return time[1];
+                  }
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: cb92022cab80439ab0ee930f01128a91
+          name: 'Refresh External Total'
+          type: DEPENDENT
+          key: opensearch.node.refresh.external_total
+          description: 'Total number of external refreshes.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''refresh.external_total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 4519a6c9379641418a1bbbdd33c45928
+          name: 'Refresh Listeners'
+          type: DEPENDENT
+          key: opensearch.node.refresh.listeners
+          description: 'Total number of pending refresh listeners.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''refresh.listeners'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 21401e44234f451ab72ff74216f93a2a
+          name: 'Refresh Time'
+          type: DEPENDENT
+          key: opensearch.node.refresh.time
+          units: uptime
+          description: 'Time spent in refresh operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''refresh.time'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var converter = {'s': 0, 'm': 1, 'h': 2};
+                  var regex = /(\d+(?:\.\d+)?)\s?(ms|s|m|h|d)?b?/i;
+                  
+                  var time = regex.exec(value);
+                  
+                  // Process days into hours
+                  if (time[2].toLowerCase() == 'd'){
+                    time[1] = time[1] * 24;
+                    time[2] = 'h';
+                  }
+                  
+                  var multiplier = converter[time[2].toLowerCase()]
+                  
+                  if (multiplier > 0) {
+                    return time[1] * ( Math.pow(60, multiplier ) );
+                  }
+                  else {
+                    return time[1];
+                  }
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 10d2a163342542ee92639b0d4a681558
+          name: 'Refresh Total'
+          type: DEPENDENT
+          key: opensearch.node.refresh.total
+          description: 'Total number of refresh operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''refresh.total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: bff36524fc784366a5f43e8d04a3635c
+          name: 'Request Cache Evictions'
+          type: DEPENDENT
+          key: opensearch.node.request_cache.evictions
+          description: 'Request Cache Evictions count'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''request_cache.evictions'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: 07c3f57e76924d45bf3b8af75c17122e
+              expression: 'last(/OpenSearch/opensearch.node.request_cache.evictions,#1)>={$OS.REQUESTCACHE.EVICTIONS.MAX}'
+              name: 'OpenSearch Request Cache Evictions High'
+              priority: WARNING
+              description: |
+                OpenSearch node's Request Cache Eviction operations are higher than configured threshold.
+                Current Request Cache Evictions: {ITEM.LASTVALUE1}
+                Alert Threshold: {$OS.REQUESTCACHE.EVICTIONS.MAX}
+                
+                Node Name: {$OS.NAME}
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: 7224f8ca13d04541aa01018dd4faed87
+          name: 'Request Cache Hit Count'
+          type: DEPENDENT
+          key: opensearch.node.request_cache.hit_count
+          description: 'Request Cache Hit Count'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''request_cache.hit_count'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: df7eff748d664872a10bd1fa26f33690
+          name: 'Request Cache Memory Size'
+          type: DEPENDENT
+          key: opensearch.node.request_cache.memory_size
+          units: bytes
+          description: 'Used Request Cache'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''request_cache.memory_size'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: ad39f6e3b1f04b5db43e7bfa4e925e93
+          name: 'Request Cache Miss Count'
+          type: DEPENDENT
+          key: opensearch.node.request_cache.miss_count
+          description: 'Request Cache Miss Counter.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''request_cache.miss_count'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: 5dae922c65094d448c9cfcc4c96a943f
+              expression: 'last(/OpenSearch/opensearch.node.request_cache.miss_count,#1)>={$OS.REQUESTCACHE.MISSCOUNT.MAX}'
+              name: 'OpenSearch Request Cache Miss Count High'
+              priority: WARNING
+              description: |
+                OpenSearch node's request cache miss count is higher than configured threshold.
+                Current Request Cache Miss Count: {ITEM.LASTVALUE1}
+                Alert Threshold: {$OS.REQUESTCACHE.MISSCOUNT.MAX}
+                
+                Node Name: {$OS.NAME}
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: 5058a156e8e64fc29e9fa2aa5352dc04
+          name: 'Cache Evictions'
+          type: DEPENDENT
+          key: opensearch.node.script.cache_evictions
+          description: 'Number of script cache evictions.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''script.cache_evictions'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: da0684491ec14fdea13ac3855303c688
+          name: 'Script Compilations'
+          type: DEPENDENT
+          key: opensearch.node.script.compilations
+          description: 'Number of script compilations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''script.compilations'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 79c29a1767c44dde9fab67df305425a0
+          name: 'Script Compilations Changes'
+          type: DEPENDENT
+          key: opensearch.node.script.compilations_changes
+          description: 'Zabbix calculated difference of last value and current value.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''script.compilations'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+            - type: SIMPLE_CHANGE
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+            - tag: Source
+              value: Calculated
+        - uuid: 4df467ec9c01437c99c4ded7580a7cf5
+          name: 'Script Compilation Limit Triggered'
+          type: DEPENDENT
+          key: opensearch.node.script.compilation_limit_triggered
+          description: 'Number of script cache compilation limits triggered.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''script.compilation_limit_triggered'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: ad7342a6a8494f2f9e84111a1735820a
+              expression: 'last(/OpenSearch/opensearch.node.script.compilation_limit_triggered,#1)>0'
+              name: 'OpenSearch Script Compilation Limit Reached'
+              priority: WARNING
+              description: |
+                OpenSearch's script compilation limit was reached.
+                
+                Node Name: {$OS.NAME}
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: ff653f2a25704721951493341f27500d
+          name: 'Search Concurrent Average Slice Count'
+          type: DEPENDENT
+          key: opensearch.node.search.concurrent_avg_slice_count
+          description: 'Average query concurrency.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.concurrent_avg_slice_count'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: 7edef1063c8543f399bb212ce001770a
+              expression: 'last(/OpenSearch/opensearch.node.search.concurrent_avg_slice_count,#1)>={$OS.SEARCH.CONCURRENT_AVG_SLICE_COUNT.MAX}'
+              name: 'OpenSearch Concurrent Average Slices High'
+              priority: WARNING
+              description: |
+                OpenSearch node's concurrent average slice counter is higher than configured threshold.
+                Current Concurrent Average Slice counter: {ITEM.LASTVALUE1}
+                Alert Threshold: {$OS.SEARCH.CONCURRENT_AVG_SLICE_COUNT.MAX}
+                
+                Node Name: {$OS.NAME}
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: ce7c4799631948128cb2ce4b84bca96f
+          name: 'Search Concurrent Query Current'
+          type: DEPENDENT
+          key: opensearch.node.search.concurrent_query_current
+          description: 'Current number of concurrent query phase operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.concurrent_query_current'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: 7108d22bd1fb417eb8d230690092d29b
+              expression: 'last(/OpenSearch/opensearch.node.search.concurrent_query_current,#1)>={$OS.SEARCH.CONCURRENT_QUERY.MAX}'
+              name: 'OpenSearch Concurrent Query High'
+              priority: WARNING
+              description: |
+                OpenSearch node's concurrent query's are higher than configured threshold.
+                Current Concurrent Query's: {ITEM.LASTVALUE1}
+                Alert Threshold: {$OS.SEARCH.CONCURRENT_QUERY.MAX}
+                
+                Node Name: {$OS.NAME}
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: bd51d33eae564f85bba266634da196af
+          name: 'Search Concurrent Query Time'
+          type: DEPENDENT
+          key: opensearch.node.search.concurrent_query_time
+          units: uptime
+          description: 'Time spent in concurrent query phase.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.concurrent_query_time'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var converter = {'s': 0, 'm': 1, 'h': 2};
+                  var regex = /(\d+(?:\.\d+)?)\s?(ms|s|m|h|d)?b?/i;
+                  
+                  var time = regex.exec(value);
+                  
+                  // Process days into hours
+                  if (time[2].toLowerCase() == 'd'){
+                    time[1] = time[1] * 24;
+                    time[2] = 'h';
+                  }
+                  
+                  var multiplier = converter[time[2].toLowerCase()]
+                  
+                  if (multiplier > 0) {
+                    return time[1] * ( Math.pow(60, multiplier ) );
+                  }
+                  else {
+                    return time[1];
+                  }
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: cddd30cad9424645b48f4e8f33124cb8
+          name: 'Search Concurrent Query Total'
+          type: DEPENDENT
+          key: opensearch.node.search.concurrent_query_total
+          description: 'Total concurrent query phase operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.concurrent_query_total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 07042912aa9449c397c4a04fbf4341d7
+          name: 'Search Fetch Changes'
+          type: DEPENDENT
+          key: opensearch.node.search.fetch_changes
+          description: 'Zabbix calculated difference of last value and current value.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.fetch_total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+            - type: SIMPLE_CHANGE
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+            - tag: Source
+              value: Calculated
+        - uuid: 0cf4e6f881874111b9ac1d011001d179
+          name: 'Search Fetch Current'
+          type: DEPENDENT
+          key: opensearch.node.search.fetch_current
+          description: 'Current number of fetch phase operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.fetch_current'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: 385f9bc74eb54f1c8a887a5abd5e4e34
+              expression: 'last(/OpenSearch/opensearch.node.search.fetch_current,#1)>={$OS.SEARCH.FETCH_CURRENT.MAX}'
+              name: 'OpenSearch Fetch Operations High'
+              priority: WARNING
+              description: |
+                OpenSearch node's Fetch Phase operations are higher than configured threshold.
+                Current Fetch operations: {ITEM.LASTVALUE1}
+                Alert Threshold: {$OS.SEARCH.FETCH_CURRENT.MAX}
+                
+                Node Name: {$OS.NAME}
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: 1f4d2bfcec3640bb91170adb88e418a3
+          name: 'Search Fetch Time'
+          type: DEPENDENT
+          key: opensearch.node.search.fetch_time
+          units: uptime
+          description: 'Time spent in fetch phase.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.fetch_time'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var converter = {'s': 0, 'm': 1, 'h': 2};
+                  var regex = /(\d+(?:\.\d+)?)\s?(ms|s|m|h|d)?b?/i;
+                  
+                  var time = regex.exec(value);
+                  
+                  // Process days into hours
+                  if (time[2].toLowerCase() == 'd'){
+                    time[1] = time[1] * 24;
+                    time[2] = 'h';
+                  }
+                  
+                  var multiplier = converter[time[2].toLowerCase()]
+                  
+                  if (multiplier > 0) {
+                    return time[1] * ( Math.pow(60, multiplier ) );
+                  }
+                  else {
+                    return time[1];
+                  }
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 2ccf78985f7a49769eb6c1179d68f8ad
+          name: 'Search Fetch Total'
+          type: DEPENDENT
+          key: opensearch.node.search.fetch_total
+          description: 'Total number of fetch operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.fetch_total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 18f4d91e22d949739f84ec767d55f68c
+          name: 'Search Open Contexts'
+          type: DEPENDENT
+          key: opensearch.node.search.open_contexts
+          description: 'Number of open search contexts.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.open_contexts'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: ce790a159c9c476c9b5bccb3bbb5a281
+              expression: 'last(/OpenSearch/opensearch.node.search.open_contexts,#1)>={$OS.SEARCH.OPEN_CONTEXTS.MAX}'
+              name: 'OpenSearch Search Open Contexts High'
+              priority: WARNING
+              description: |
+                OpenSearch node's open search context counter is higher than configured threshold.
+                Current Open Search Contexts: {ITEM.LASTVALUE1}
+                Alert Threshold: {$OS.SEARCH.OPEN_CONTEXTS.MAX}
+                
+                Node Name: {$OS.NAME}
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: f0eeb4b22fd24c8ba5208e9a9a831fd1
+          name: 'Search Point in Time Current'
+          type: DEPENDENT
+          key: opensearch.node.search.point_in_time_current
+          description: 'Current number of open point in time contexts.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.point_in_time_current'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: adf8c161a0af4bc49353c43236bb8d42
+          name: 'Search Point in Time Time'
+          type: DEPENDENT
+          key: opensearch.node.search.point_in_time_time
+          units: uptime
+          description: 'Time spent with point in time contexts held open.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.point_in_time_time'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var converter = {'s': 0, 'm': 1, 'h': 2};
+                  var regex = /(\d+(?:\.\d+)?)\s?(ms|s|m|h)?b?/i;
+                  
+                  var time = regex.exec(value);
+                  var multiplier = converter[time[2].toLowerCase()]
+                  
+                  if (multiplier > 0) {
+                      return time[1] * ( Math.pow(60, multiplier ) );
+                  }
+                  else {
+                      return time[1];
+                  }
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 87d26b8220fd4cc5bfeb593b369ba8a8
+          name: 'Search Point in Time Total'
+          type: DEPENDENT
+          key: opensearch.node.search.point_in_time_total
+          description: 'Total number of completed point in time contexts.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.point_in_time_total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 436f81d9bbef4c7e93fb51bc36f82667
+          name: 'Search Query Changes'
+          type: DEPENDENT
+          key: opensearch.node.search.query_changes
+          description: 'Zabbix calculated difference of last value and current value.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.query_total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+            - type: SIMPLE_CHANGE
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+            - tag: Source
+              value: Calculated
+        - uuid: 36474ea1c04a48cd8159e2456bf5b14c
+          name: 'Query Current'
+          type: DEPENDENT
+          key: opensearch.node.search.query_current
+          description: 'Current number of query phase operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.query_current'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: 888d928883b5402a9a1d36832f9ccf09
+              expression: 'last(/OpenSearch/opensearch.node.search.query_current,#1)>={$OS.SEARCH.QUERY.MAX}'
+              name: 'OpenSearch Query Operations High'
+              priority: WARNING
+              description: |
+                OpenSearch node's Search Query operations are higher than configured threshold.
+                Current Query operations: {ITEM.LASTVALUE1}
+                Alert Threshold: {$OS.SEARCH.QUERY.MAX}
+                
+                Node Name: {$OS.NAME}
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: b2d8c7475f1f49ecb4366fd6b35ab076
+          name: 'Search Query Time'
+          type: DEPENDENT
+          key: opensearch.node.search.query_time
+          units: uptime
+          description: 'Time spent in query phase.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.query_time'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var converter = {'s': 0, 'm': 1, 'h': 2};
+                  var regex = /(\d+(?:\.\d+)?)\s?(ms|s|m|h|d)?b?/i;
+                  
+                  var time = regex.exec(value);
+                  
+                  // Process days into hours
+                  if (time[2].toLowerCase() == 'd'){
+                    time[1] = time[1] * 24;
+                    time[2] = 'h';
+                  }
+                  
+                  var multiplier = converter[time[2].toLowerCase()]
+                  
+                  if (multiplier > 0) {
+                    return time[1] * ( Math.pow(60, multiplier ) );
+                  }
+                  else {
+                    return time[1];
+                  }
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 7b2a1ff02eea4bbf98b2526b262315dc
+          name: 'Search Query Total'
+          type: DEPENDENT
+          key: opensearch.node.search.query_total
+          description: 'Total number of query phase operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.query_total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 0dea30c3d27947d386d9abd237d60764
+          name: 'Search Scroll Current'
+          type: DEPENDENT
+          key: opensearch.node.search.scroll_current
+          description: 'Current number of open scroll contexts.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.scroll_current'']'
+            - type: REGEX
+              parameters:
+                - (\w|\.)+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 2e7454b8230943b99f14862fb5ae7db5
+          name: 'Search Scroll Time'
+          type: DEPENDENT
+          key: opensearch.node.search.scroll_time
+          units: uptime
+          description: 'Time spent with scroll contexts held open.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.scroll_time'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var converter = {'s': 0, 'm': 1, 'h': 2};
+                  var regex = /(\d+(?:\.\d+)?)\s?(ms|s|m|h|d)?b?/i;
+                  
+                  var time = regex.exec(value);
+                  
+                  // Process days into hours
+                  if (time[2].toLowerCase() == 'd'){
+                    time[1] = time[1] * 24;
+                    time[2] = 'h';
+                  }
+                  
+                  var multiplier = converter[time[2].toLowerCase()]
+                  
+                  if (multiplier > 0) {
+                    return time[1] * ( Math.pow(60, multiplier ) );
+                  }
+                  else {
+                    return time[1];
+                  }
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 7dee3d5477cc497fa2dd4f9a54322f57
+          name: 'Search Scroll Total'
+          type: DEPENDENT
+          key: opensearch.node.search.scroll_total
+          description: 'Total number of completed scroll contexts'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''search.scroll_total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 539ebfc91c80480eb454da6451179496
+          name: 'Segments Count'
+          type: DEPENDENT
+          key: opensearch.node.segments.count
+          description: 'Number of segments.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''segments.count'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 5f64f17cb47d416ca9de4a376a69e62a
+          name: 'Segments Fixed Bitset Memory Size'
+          type: DEPENDENT
+          key: opensearch.node.segments.fixed_bitset_memory
+          units: bytes
+          description: 'Memory used by fixed bit sets for nested object field types and type filters for types referred in _parent fields.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''segments.fixed_bitset_memory'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 954095cc1f4c4885a1a69b556f7135e5
+          name: 'Segments Index Writer Memory Size'
+          type: DEPENDENT
+          key: opensearch.node.segments.index_writer_memory
+          units: bytes
+          description: 'Amount of memory used by index writer.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''segments.index_writer_memory'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: d3322e144d664b53bf566934ed578a06
+          name: 'Segments Memory Size'
+          type: DEPENDENT
+          key: opensearch.node.segments.memory
+          units: bytes
+          description: 'Memory used by segments.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''segments.memory'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 4fad844e2e7746db9ea0f244f57d41a4
+          name: 'Segments Version Map Memory Size'
+          type: DEPENDENT
+          key: opensearch.node.segments.version_map_memory
+          units: bytes
+          description: 'Amount of memory used by version map.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''segments.version_map_memory'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: a48c6504298e47f7a3f452e50d1f27f9
+          name: 'Suggest Current'
+          type: DEPENDENT
+          key: opensearch.node.suggest.current
+          description: 'Current number of suggest operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''suggest.current'']'
+            - type: REGEX
+              parameters:
+                - (\w|\.)+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 111fe26841c445c6be4885a688c44638
+          name: 'Suggest Total Time'
+          type: DEPENDENT
+          key: opensearch.node.suggest.time
+          units: uptime
+          description: 'Time spent in suggest.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''suggest.time'']'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var converter = {'s': 0, 'm': 1, 'h': 2};
+                  var regex = /(\d+(?:\.\d+)?)\s?(ms|s|m|h|d)?b?/i;
+                  
+                  var time = regex.exec(value);
+                  
+                  // Process days into hours
+                  if (time[2].toLowerCase() == 'd'){
+                    time[1] = time[1] * 24;
+                    time[2] = 'h';
+                  }
+                  
+                  var multiplier = converter[time[2].toLowerCase()]
+                  
+                  if (multiplier > 0) {
+                    return time[1] * ( Math.pow(60, multiplier ) );
+                  }
+                  else {
+                    return time[1];
+                  }
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: 85546517322a40c5a17ae99231c610c6
+          name: 'Suggest Total'
+          type: DEPENDENT
+          key: opensearch.node.suggest.total
+          description: 'Total number of suggest operations.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''suggest.total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: a363a3d4a93a4e118111fc63cad48289
+          name: 'Package Type'
+          type: DEPENDENT
+          key: opensearch.node.type
+          value_type: TEXT
+          description: 'OpenSearch distribution package type.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].type'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: f220acb218604e8ca1ecb5153309f6fd
+          name: Uptime
+          type: DEPENDENT
+          key: opensearch.node.uptime
+          value_type: TEXT
+          description: 'Node uptime.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].uptime'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+        - uuid: b1c01c6d52a44c3ba2462b6ee5866500
+          name: 'Package Version'
+          type: DEPENDENT
+          key: opensearch.node.version
+          value_type: TEXT
+          description: 'Node''s running OpenSearch version number.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].version'
+            - type: REGEX
+              parameters:
+                - (\d|\.)+
+                - \0
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: 2debc382db374fe1b89c0d28e565a637
+              expression: 'last(/OpenSearch/opensearch.node.version,#2)<>last(/OpenSearch/opensearch.node.version,#1)'
+              recovery_mode: NONE
+              name: 'OpenSearch Node Version Changed'
+              priority: INFO
+              description: |
+                OpenSearch node's package version has changed:
+                New version: {ITEM.LASTVALUE2}
+                Old version: {ITEM.VALUE1}
+                
+                Node Name: {$OS.NAME}
+              manual_close: 'YES'
+              tags:
+                - tag: Services
+                  value: OpenSearch
+        - uuid: 10e489c1f1fa484a9535466dc49ae11e
+          name: 'OpenSearch Node Stats Adaptive Selection'
+          type: HTTP_AGENT
+          key: opensearch.node_stats.adaptive_selection
+          delay: 5m
+          value_type: TEXT
+          authtype: BASIC
+          username: '{$OS.USERNAME}'
+          password: '{$OS.PASSWORD}'
+          description: 'Gather data from the API endpoint: _nodes/stats/adaptive_selection'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$.nodes.[''{$OS.ID}''].adaptive_selection'
+          url: '{$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_nodes/stats/adaptive_selection'
+          verify_peer: 'YES'
+          verify_host: 'YES'
+      discovery_rules:
+        - uuid: 63f9a17511c24a3d8521b9e8008a480d
+          name: 'Node Discovery'
+          type: DEPENDENT
+          key: opensearch.nodes
+          lifetime: 30d
+          description: 'Make Zabbix host aware of all other nodes for additional processing and alerts.'
+          item_prototypes:
+            - uuid: a308214e2a11427c8dc84341e74c5f8d
+              name: 'Adaptive Selection Average Queue Size - {#NODE.NAME}'
+              type: DEPENDENT
+              key: 'opensearch.node_stats.adaptive_selection.avg_queue_size[{#NODE.ID}]'
+              description: |
+                The rolling average queue size of search requests for the node (exponentially weighted for adaptive selection rank).
+                
+                Target node Name: {#NODE.NAME}
+                Target node ID: {#NODE.ID}
+                Target node IP: {#NODE.IP}
+                
+                Note: Adaptive Selection will only be used if Adaptive Selection is enabled (default is enabled).
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.[''{#NODE.ID}''].avg_queue_size'
+              master_item:
+                key: opensearch.node_stats.adaptive_selection
+              tags:
+                - tag: OpenSearch
+                  value: Routing
+                - tag: Service
+                  value: OpenSearch
+            - uuid: 769329449273467091ca5f219f368d0c
+              name: 'Adaptive Selection Average Response Time (ns) - {#NODE.NAME}'
+              type: DEPENDENT
+              key: 'opensearch.node_stats.adaptive_selection.avg_response_time_ns[{#NODE.ID}]'
+              description: |
+                The rolling average response time for search requests, in nanoseconds (exponentially weighted for adaptive selection rank).
+                
+                Target node Name: {#NODE.NAME}
+                Target node ID: {#NODE.ID}
+                Target node IP: {#NODE.IP}
+                
+                Note: Adaptive Selection will only be used if Adaptive Selection is enabled (default is enabled).
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.[''{#NODE.ID}''].avg_response_time_ns'
+              master_item:
+                key: opensearch.node_stats.adaptive_selection
+              tags:
+                - tag: OpenSearch
+                  value: Routing
+                - tag: Service
+                  value: OpenSearch
+            - uuid: 3e6bc0a263154d41ac0d86d53f2a02da
+              name: 'Adaptive Selection Average Service Time (ns) - {#NODE.NAME}'
+              type: DEPENDENT
+              key: 'opensearch.node_stats.adaptive_selection.avg_service_time_ns[{#NODE.ID}]'
+              value_type: FLOAT
+              description: |
+                The rolling average service time for search requests, in nanoseconds (exponentially weighted for adaptive selection rank).
+                
+                Target node Name: {#NODE.NAME}
+                Target node ID: {#NODE.ID}
+                Target node IP: {#NODE.IP}
+                
+                Note: Adaptive Selection will only be used if Adaptive Selection is enabled (default is enabled).
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.[''{#NODE.ID}''].avg_service_time_ns'
+              master_item:
+                key: opensearch.node_stats.adaptive_selection
+              tags:
+                - tag: OpenSearch
+                  value: Routing
+                - tag: Service
+                  value: OpenSearch
+            - uuid: 78923969b1ca4e69b5dc5f5474fac2fd
+              name: 'Adaptive Selection Outgoing Searches - {#NODE.NAME}'
+              type: DEPENDENT
+              key: 'opensearch.node_stats.adaptive_selection.outgoing_searches[{#NODE.ID}]'
+              description: |
+                Number of outgoing search requests for the node.
+                
+                Target node Name: {#NODE.NAME}
+                Target node ID: {#NODE.ID}
+                Target node IP: {#NODE.IP}
+                
+                Note: Adaptive Selection will only be used if Adaptive Selection is enabled (default is enabled).
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.[''{#NODE.ID}''].outgoing_searches'
+              master_item:
+                key: opensearch.node_stats.adaptive_selection
+              tags:
+                - tag: OpenSearch
+                  value: Routing
+                - tag: Service
+                  value: OpenSearch
+            - uuid: 66b9a40dd06d4debb6cbe229bf25defa
+              name: 'Adaptive Selection Rank - {#NODE.NAME}'
+              type: DEPENDENT
+              key: 'opensearch.node_stats.adaptive_selection.rank[{#NODE.ID}]'
+              value_type: FLOAT
+              description: |
+                When a request goes to the node this Zabbix item is under, it will choose to route it to the node with a matching shard with the lowest rank.
+                Ranks are determined by the relative response time, service time, queue size, and outgoing searches.
+                
+                Target node Name: {#NODE.NAME}
+                Target node ID: {#NODE.ID}
+                Target node IP: {#NODE.IP}
+                
+                Note: Adaptive Selection will only be used if Adaptive Selection is enabled (default is enabled).
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.[''{#NODE.ID}''].rank'
+              master_item:
+                key: opensearch.node_stats.adaptive_selection
+              tags:
+                - tag: OpenSearch
+                  value: Routing
+                - tag: Service
+                  value: OpenSearch
+          graph_prototypes:
+            - uuid: e564f158e25c497f89ce145e0c147927
+              name: 'Adaptive Selection Rank'
+              ymin_type_1: FIXED
+              graph_items:
+                - color: 199C0D
+                  calc_fnc: ALL
+                  item:
+                    host: OpenSearch
+                    key: 'opensearch.node_stats.adaptive_selection.rank[{#NODE.ID}]'
+          master_item:
+            key: opensearch.cat_nodes
+          lld_macro_paths:
+            - lld_macro: '{#NODE.HTTP_ADDRESS}'
+              path: '$.[''http_address'']'
+            - lld_macro: '{#NODE.ID}'
+              path: '$.[''id'']'
+            - lld_macro: '{#NODE.INSTALL.BUILD}'
+              path: '$.[''build'']'
+            - lld_macro: '{#NODE.INSTALL.TYPE}'
+              path: '$.[''type'']'
+            - lld_macro: '{#NODE.INSTALL.VERSION}'
+              path: '$.[''version'']'
+            - lld_macro: '{#NODE.IP}'
+              path: '$.[''ip'']'
+            - lld_macro: '{#NODE.NAME}'
+              path: '$.[''name'']'
+            - lld_macro: '{#NODE.PID}'
+              path: '$.[''pid'']'
+            - lld_macro: '{#NODE.PORT}'
+              path: '$.[''port'']'
+            - lld_macro: '{#NODE.ROLES}'
+              path: '$.[''node.role'']'
+      macros:
+        - macro: '{$OS.FIELDDATA.EVICTIONS.MAX}'
+          value: CUSTOMIZE
+          description: 'Maximum FieldData eviction operations on node to throw alert at.'
+        - macro: '{$OS.FILEDESCRIPTORS.MAX}'
+          value: '85'
+          description: 'File Descriptor utilization percentage to throw alert at.'
+        - macro: '{$OS.GET.CURRENT.MAX}'
+          value: CUSTOMIZE
+          description: 'Maximum Get operations on node to throw alert at.'
+        - macro: '{$OS.HEAP.MAX}'
+          value: '85'
+          description: 'JVM Heap utilization percentage to throw alert at.'
+        - macro: '{$OS.HOSTNAME}'
+          value: CHANGE_ME
+          description: 'Hostname of the OpenSearch cluster to make API requests to.'
+        - macro: '{$OS.ID}'
+          value: CHANGE_ME
+          description: 'OpenSearch automatically assigned ID for the node.'
+        - macro: '{$OS.INDEXING.DELETE.MAX}'
+          value: CUSTOMIZE
+          description: 'Maximum Deletion operations on node to throw alert at.'
+        - macro: '{$OS.INDEXING.INDEX.MAX}'
+          value: CUSTOMIZE
+          description: 'Maximum Indexing operations on node to throw alert at.'
+        - macro: '{$OS.NAME}'
+          value: CHANGE_ME
+          description: 'Name of node (case sensitive)'
+        - macro: '{$OS.PASSWORD}'
+          type: SECRET_TEXT
+          description: 'Password to authenticate to OpenSearch with.'
+        - macro: '{$OS.PORT}'
+          value: '9200'
+          description: 'OpenSearch port that is being listened for API requests.'
+        - macro: '{$OS.PROTOCOL}'
+          value: https
+          description: 'OpenSearch protocol being used (http/https)'
+        - macro: '{$OS.REQUESTCACHE.EVICTIONS.MAX}'
+          value: CUSTOMIZE
+          description: 'Maximum Request Cache Eviction operations on node to throw alert at.'
+        - macro: '{$OS.REQUESTCACHE.MISSCOUNT.MAX}'
+          value: CUSTOMIZE
+          description: 'Maximum Request Cache Miss Count on node to throw alert at.'
+        - macro: '{$OS.SEARCH.CONCURRENT_AVG_SLICE_COUNT.MAX}'
+          value: CUSTOMIZE
+          description: 'Maximum Concurrent Average Slice counter on node to throw alert at.'
+        - macro: '{$OS.SEARCH.CONCURRENT_QUERY.MAX}'
+          value: CUSTOMIZE
+          description: 'Maximum Search Concurrent Query operations on node to throw alert at.'
+        - macro: '{$OS.SEARCH.FETCH_CURRENT.MAX}'
+          value: CUSTOMIZE
+          description: 'Maximum Fetch Phase operations on node to throw alert at.'
+        - macro: '{$OS.SEARCH.OPEN_CONTEXTS.MAX}'
+          value: CUSTOMIZE
+          description: 'Maximum Open Search Contexts on node to throw alert at.'
+        - macro: '{$OS.SEARCH.QUERY.MAX}'
+          value: CUSTOMIZE
+          description: 'Maximum Search Query operations on node to throw alert at.'
+        - macro: '{$OS.USERNAME}'
+          value: CHANGE_ME
+          description: 'Username to authenticate to OpenSearch with.'
+      dashboards:
+        - uuid: 819e5323c7814fbfae3fcab307a4c933
+          name: OpenSearch
+          auto_start: 'NO'
+          pages:
+            - widgets:
+                - type: graph
+                  name: Operations
+                  width: '45'
+                  height: '6'
+                  fields:
+                    - type: INTEGER
+                      name: columns
+                      value: '1'
+                    - type: GRAPH
+                      name: graphid.0
+                      value:
+                        host: OpenSearch
+                        name: 'OpenSearch Node Operations'
+                    - type: STRING
+                      name: reference
+                      value: XDESE
+                - type: graph
+                  name: 'JVM Heap'
+                  'y': '6'
+                  width: '27'
+                  height: '6'
+                  fields:
+                    - type: INTEGER
+                      name: columns
+                      value: '1'
+                    - type: GRAPH
+                      name: graphid.0
+                      value:
+                        host: OpenSearch
+                        name: 'OpenSearch Node Heap Utilization'
+                    - type: STRING
+                      name: reference
+                      value: LYVAS
+                - type: graph
+                  name: 'Merges Size'
+                  x: '27'
+                  'y': '6'
+                  width: '24'
+                  height: '6'
+                  fields:
+                    - type: INTEGER
+                      name: columns
+                      value: '1'
+                    - type: GRAPH
+                      name: graphid.0
+                      value:
+                        host: OpenSearch
+                        name: 'OpenSearch Node Merges Size'
+                    - type: STRING
+                      name: reference
+                      value: RHLUC
+                - type: graph
+                  name: 'Operations Memory'
+                  x: '45'
+                  width: '27'
+                  height: '6'
+                  fields:
+                    - type: INTEGER
+                      name: columns
+                      value: '1'
+                    - type: GRAPH
+                      name: graphid.0
+                      value:
+                        host: OpenSearch
+                        name: 'OpenSearch Node Services Memory'
+                    - type: STRING
+                      name: reference
+                      value: LXTZT
+                - type: graph
+                  name: 'Merges Doc Count'
+                  x: '51'
+                  'y': '6'
+                  width: '21'
+                  height: '6'
+                  fields:
+                    - type: INTEGER
+                      name: columns
+                      value: '1'
+                    - type: GRAPH
+                      name: graphid.0
+                      value:
+                        host: OpenSearch
+                        name: 'OpenSearch Node Merges Docs'
+                    - type: STRING
+                      name: reference
+                      value: LSXBA
+            - name: 'Page 2'
+              widgets:
+                - type: graph
+                  name: 'Query Cache Hit/Miss/Evictions'
+                  width: '36'
+                  height: '6'
+                  fields:
+                    - type: INTEGER
+                      name: columns
+                      value: '1'
+                    - type: GRAPH
+                      name: graphid.0
+                      value:
+                        host: OpenSearch
+                        name: 'OpenSearch Node Query Cache Hit/Miss/Evictions'
+                    - type: STRING
+                      name: reference
+                      value: HHGGN
+                - type: graph
+                  name: 'Search Metrics'
+                  'y': '6'
+                  width: '36'
+                  height: '6'
+                  fields:
+                    - type: INTEGER
+                      name: columns
+                      value: '1'
+                    - type: GRAPH
+                      name: graphid.0
+                      value:
+                        host: OpenSearch
+                        name: 'OpenSearch Node Search Metrics'
+                    - type: STRING
+                      name: reference
+                      value: BIYZI
+                - type: graph
+                  name: 'Request Cache Hit/Miss/Evictions'
+                  x: '36'
+                  width: '36'
+                  height: '6'
+                  fields:
+                    - type: INTEGER
+                      name: columns
+                      value: '1'
+                    - type: GRAPH
+                      name: graphid.0
+                      value:
+                        host: OpenSearch
+                        name: 'OpenSearch Node Request Cache Hit/Miss/Evictions'
+                    - type: STRING
+                      name: reference
+                      value: RQJAL
+                - type: graph
+                  name: 'Script Compilations'
+                  x: '36'
+                  'y': '6'
+                  width: '36'
+                  height: '6'
+                  fields:
+                    - type: INTEGER
+                      name: columns
+                      value: '1'
+                    - type: GRAPH
+                      name: graphid.0
+                      value:
+                        host: OpenSearch
+                        name: 'OpenSearch Node Script Compilations'
+                    - type: STRING
+                      name: reference
+                      value: CJDXA
+            - name: 'Page 3'
+              widgets:
+                - type: graph
+                  name: 'Search Metrics'
+                  width: '37'
+                  height: '6'
+                  fields:
+                    - type: INTEGER
+                      name: columns
+                      value: '1'
+                    - type: GRAPH
+                      name: graphid.0
+                      value:
+                        host: OpenSearch
+                        name: 'OpenSearch Node Search Metrics'
+                    - type: STRING
+                      name: reference
+                      value: HLTVF
+  graphs:
+    - uuid: 32e91f6b9ac44d11b6e845b419d590d2
+      name: 'OpenSearch Node Heap Utilization'
+      ymin_type_1: FIXED
+      ymax_type_1: FIXED
+      graph_items:
+        - color: 80DEEA
+          calc_fnc: MIN
+          item:
+            host: OpenSearch
+            key: opensearch.node.heap.percent
+    - uuid: 9d620bc52fab48159121f5ee08dd3df6
+      name: 'OpenSearch Node Merges Docs'
+      ymin_type_1: FIXED
+      graph_items:
+        - color: 4DD0E1
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.merges.current_docs
+    - uuid: e08d69b4ee81457bb3c028110d1b0511
+      name: 'OpenSearch Node Merges Size'
+      ymin_type_1: FIXED
+      graph_items:
+        - color: 4DD0E1
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.merges.current_size
+    - uuid: 956eaaaf80c84d2f93c8ed87b5160e4a
+      name: 'OpenSearch Node Operations'
+      ymin_type_1: FIXED
+      graph_items:
+        - color: 4CAF50
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.indexing.index_current
+        - sortorder: '1'
+          color: F44336
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.indexing.delete_current
+        - sortorder: '2'
+          color: FC6EA3
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.merges.current
+        - sortorder: '3'
+          color: 2774A4
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.get.current
+        - sortorder: '4'
+          color: FFF59D
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.search.fetch_current
+        - sortorder: '5'
+          color: C7A72D
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.search.concurrent_query_current
+        - sortorder: '6'
+          color: 6C59DC
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.search.query_current
+        - sortorder: '7'
+          color: BA2A5D
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.suggest.current
+    - uuid: b74c986950ff4fafae15f843f0ff5b26
+      name: 'OpenSearch Node Query Cache Hit/Miss/Evictions'
+      ymin_type_1: FIXED
+      graph_items:
+        - color: 4CAF50
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.query_cache.hit_count
+        - sortorder: '1'
+          color: F44336
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.query_cache.miss_count
+        - sortorder: '2'
+          color: FFF176
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.query_cache.evictions
+    - uuid: 2dc6ff70841e49be998ae1666ac37cd2
+      name: 'OpenSearch Node Refreshes'
+      ymin_type_1: FIXED
+      graph_items:
+        - color: FFF176
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.refresh.changes
+        - sortorder: '1'
+          color: 2774A4
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.refresh.listeners
+    - uuid: c36192892f9f4f05bf1f921a1364a74f
+      name: 'OpenSearch Node Request Cache Hit/Miss/Evictions'
+      ymin_type_1: FIXED
+      graph_items:
+        - color: 388E3C
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.request_cache.hit_count
+        - sortorder: '1'
+          color: F44336
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.request_cache.miss_count
+        - sortorder: '2'
+          color: FFF176
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.request_cache.evictions
+    - uuid: aa209f82f4124ec4bd8c670cd6987d03
+      name: 'OpenSearch Node Script Compilations'
+      ymin_type_1: FIXED
+      graph_items:
+        - color: F44336
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.script.compilations_changes
+    - uuid: d60a7a6b69644939848e6eaa6c765133
+      name: 'OpenSearch Node Search Metrics'
+      ymin_type_1: FIXED
+      graph_items:
+        - color: 199C0D
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.search.concurrent_avg_slice_count
+        - sortorder: '1'
+          color: F63100
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.search.concurrent_query_current
+        - sortorder: '2'
+          color: 2774A4
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.search.fetch_changes
+        - sortorder: '3'
+          color: F7941D
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.search.open_contexts
+        - sortorder: '4'
+          color: FC6EA3
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.search.point_in_time_current
+        - sortorder: '5'
+          color: 6C59DC
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.search.query_changes
+        - sortorder: '6'
+          color: C7A72D
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.search.scroll_current
+    - uuid: 3bf43d2dbef44ad88dfdbff84bdf9605
+      name: 'OpenSearch Node Segment Sizes'
+      ymin_type_1: FIXED
+      graph_items:
+        - color: 199C0D
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.segments.fixed_bitset_memory
+        - sortorder: '1'
+          color: 2774A4
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.segments.memory
+        - sortorder: '2'
+          color: F7941D
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.segments.version_map_memory
+        - sortorder: '3'
+          color: F63100
+          calc_fnc: ALL
+          item:
+            host: OpenSearch
+            key: opensearch.node.segments.index_writer_memory
+    - uuid: 3bf519f007af43419c5432b4d54736d0
+      name: 'OpenSearch Node Services Memory'
+      show_triggers: 'NO'
+      ymin_type_1: FIXED
+      graph_items:
+        - color: 199C0D
+          calc_fnc: MIN
+          item:
+            host: OpenSearch
+            key: opensearch.node.fielddata.memory_size
+        - sortorder: '1'
+          color: 2774A4
+          calc_fnc: MIN
+          item:
+            host: OpenSearch
+            key: opensearch.node.query_cache.memory_size
+        - sortorder: '2'
+          color: C7A72D
+          calc_fnc: MIN
+          item:
+            host: OpenSearch
+            key: opensearch.node.segments.memory
+        - sortorder: '3'
+          color: BA2A5D
+          calc_fnc: MIN
+          item:
+            host: OpenSearch
+            key: opensearch.node.segments.version_map_memory
+        - sortorder: '4'
+          color: FC6EA3
+          calc_fnc: MIN
+          item:
+            host: OpenSearch
+            key: opensearch.node.segments.fixed_bitset_memory
+        - sortorder: '5'
+          color: F7941D
+          calc_fnc: MIN
+          item:
+            host: OpenSearch
+            key: opensearch.node.request_cache.memory_size
+        - sortorder: '6'
+          color: 6C59DC
+          calc_fnc: MIN
+          item:
+            host: OpenSearch
+            key: opensearch.node.segments.index_writer_memory
+    - uuid: 65c1932b01fe44869980a174cd7f3fe4
+      name: 'OpenSearch Node Services Memory (Pie)'
+      yaxismax: '0'
+      show_work_period: 'NO'
+      show_triggers: 'NO'
+      type: PIE
+      graph_items:
+        - color: 199C0D
+          calc_fnc: LAST
+          item:
+            host: OpenSearch
+            key: opensearch.node.fielddata.memory_size
+        - sortorder: '1'
+          color: 2774A4
+          calc_fnc: LAST
+          item:
+            host: OpenSearch
+            key: opensearch.node.query_cache.memory_size
+        - sortorder: '2'
+          color: C7A72D
+          calc_fnc: LAST
+          item:
+            host: OpenSearch
+            key: opensearch.node.segments.memory
+        - sortorder: '3'
+          color: BA2A5D
+          calc_fnc: LAST
+          item:
+            host: OpenSearch
+            key: opensearch.node.segments.version_map_memory
+        - sortorder: '4'
+          color: FC6EA3
+          calc_fnc: LAST
+          item:
+            host: OpenSearch
+            key: opensearch.node.segments.fixed_bitset_memory
+        - sortorder: '5'
+          color: F7941D
+          calc_fnc: LAST
+          item:
+            host: OpenSearch
+            key: opensearch.node.request_cache.memory_size
+        - sortorder: '6'
+          color: 6C59DC
+          calc_fnc: LAST
+          item:
+            host: OpenSearch
+            key: opensearch.node.segments.index_writer_memory
