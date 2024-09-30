@@ -19,6 +19,9 @@ On your Zabbix host, configure at a minimum the following Macros:
  - `{$OS.NAME}` - Can be found in your nodes `opensearch.yml` file under `node.name`
  - `{$OS.ID}` - Can be found by running `GET _nodes` in OpenSearch Dashboards Dev tools. It is the random ID under the `"nodes": {}` section in the response.
 
+You will need to configure the other Macros for certain triggers to function, since the thresholds are very specific to your environment. 
+I recommend letting Zabbix gather data for a week or so, then updating the Macros to your desired thresholds based on the past performance.
+
 # Macros used
 
 | Name                                        | Description                                                           | Default   |
@@ -69,9 +72,6 @@ This template has a rule for Node discovery. This is to allow for gathering Adap
 | Cluster Manager           | True if the node is the cluster manager, False if not.                                         | DEPENDENT  | opensearch.node.cluster_manager         |
 | Completion Size           | Size of completion                                                                             | DEPENDENT  | opensearch.node.completion.size         |
 | CPU                       | Recent CPU utilization.                                                                        | DEPENDENT  | opensearch.node.cpu                     |
-| Disk Available            | Total disk space available to the system.                                                      | DEPENDENT  | opensearch.node.disk.avail              |
-| Disk Used                 | Total disk space used in OpenSearch.                                                           | DEPENDENT  | opensearch.node.disk.used               |
-| Disk Used Percent         | Total disk space used in OpenSearch (as a percentage of total)                                 | DEPENDENT  | opensearch.node.disk.used_percent       |
 | FieldData Evictions       | FieldData Evictions                                                                            | DEPENDENT  | opensearch.node.fielddata.evictions     |
 | FieldData Memory Size     | Used FieldData cache                                                                           | DEPENDENT  | opensearch.node.fielddata.memory_size   |
 | File Descriptors Current  | Currently used file descriptors.                                                               | DEPENDENT  | opensearch.node.file_desc.current       |
@@ -114,9 +114,6 @@ This template has a rule for Node discovery. This is to allow for gathering Adap
 | OpenSearch Indexing Operations High          | OpenSearch node's indexing operations are higher than configured threshold.            | last(/OpenSearch/opensearch.node.indexing.index_current,#1)>={$OS.INDEXING.INDEX.MAX}   | WARNING  |              |
 
 # Feedback
-
-# Demo
+Please provide feedback on the template's [GitHub](https://github.com/landon-lengyel/Zabbix-OpenSearch)
 
 # Known issues
-
-# References
