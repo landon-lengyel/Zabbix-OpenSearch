@@ -2911,7 +2911,7 @@ else {
                     <type>DEPENDENT</type>
                     <key>opensearch.node.request_cache.evictions</key>
                     <delay>0</delay>
-                    <description>Request Cache Evictions count</description>
+                    <description>Request Cache Evictions</description>
                     <preprocessing>
                         <step>
                             <type>JSONPATH</type>
@@ -2957,10 +2957,35 @@ Node Name: {$OS.NAME}</description>
                     </triggers>
                 </item>
                 <item>
-                    <uuid>7224f8ca13d04541aa01018dd4faed87</uuid>
-                    <name>Request Cache Hit Count</name>
+                    <uuid>fe297b48b73c4e3da5a690fa0965cd2b</uuid>
+                    <name>Request Cache Hits</name>
                     <type>DEPENDENT</type>
-                    <key>opensearch.node.request_cache.hit_count</key>
+                    <key>opensearch.node.request_cache.hit_count-change</key>
+                    <delay>0</delay>
+                    <description>Request Cache Hits - change calculated from previous value</description>
+                    <preprocessing>
+                        <step>
+                            <type>SIMPLE_CHANGE</type>
+                            <parameters>
+                                <parameter/>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node.request_cache.hit_count-total</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>7224f8ca13d04541aa01018dd4faed87</uuid>
+                    <name>Request Cache Hits Total</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.node.request_cache.hit_count-total</key>
                     <delay>0</delay>
                     <description>Request Cache Hit Count</description>
                     <preprocessing>
@@ -3027,9 +3052,9 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                 </item>
                 <item>
                     <uuid>ad39f6e3b1f04b5db43e7bfa4e925e93</uuid>
-                    <name>Request Cache Miss Count</name>
+                    <name>Request Cache Miss Total</name>
                     <type>DEPENDENT</type>
-                    <key>opensearch.node.request_cache.miss_count</key>
+                    <key>opensearch.node.request_cache.miss-total</key>
                     <delay>0</delay>
                     <description>Request Cache Miss Counter.</description>
                     <preprocessing>
@@ -3056,10 +3081,35 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                             <value>OpenSearch</value>
                         </tag>
                     </tags>
+                </item>
+                <item>
+                    <uuid>d87d574b998541a890f0fa5be89d2751</uuid>
+                    <name>Request Cache Misses</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.node.request_cache.miss_count-change</key>
+                    <delay>0</delay>
+                    <description>Request Cache Miss Counter - calculated change since previous value.</description>
+                    <preprocessing>
+                        <step>
+                            <type>SIMPLE_CHANGE</type>
+                            <parameters>
+                                <parameter/>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node.request_cache.miss-total</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
                     <triggers>
                         <trigger>
                             <uuid>5dae922c65094d448c9cfcc4c96a943f</uuid>
-                            <expression>last(/OpenSearch/opensearch.node.request_cache.miss_count,#1)&gt;={$OS.REQUESTCACHE.MISSCOUNT.MAX}</expression>
+                            <expression>last(/OpenSearch/opensearch.node.request_cache.miss_count-change,#1)&gt;={$OS.REQUESTCACHE.MISSCOUNT.MAX}</expression>
                             <name>OpenSearch Request Cache Miss Count High</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's request cache miss count is higher than configured threshold.
@@ -5339,7 +5389,7 @@ Note: Adaptive Selection will only be used if Adaptive Selection is enabled (def
                     <calc_fnc>ALL</calc_fnc>
                     <item>
                         <host>OpenSearch</host>
-                        <key>opensearch.node.request_cache.hit_count</key>
+                        <key>opensearch.node.request_cache.hit_count-total</key>
                     </item>
                 </graph_item>
                 <graph_item>
@@ -5348,7 +5398,7 @@ Note: Adaptive Selection will only be used if Adaptive Selection is enabled (def
                     <calc_fnc>ALL</calc_fnc>
                     <item>
                         <host>OpenSearch</host>
-                        <key>opensearch.node.request_cache.miss_count</key>
+                        <key>opensearch.node.request_cache.miss-total</key>
                     </item>
                 </graph_item>
                 <graph_item>
