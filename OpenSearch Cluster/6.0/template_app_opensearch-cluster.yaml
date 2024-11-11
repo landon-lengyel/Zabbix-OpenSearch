@@ -904,10 +904,10 @@ zabbix_export:
               trigger_prototypes:
                 - uuid: 2f72ca23cf694a939130169c9ebb728e
                   expression: 'last(/OpenSearch-Cluster/opensearchcluster.index.store_size_primary[{#INDEX.NAME}])>=({$OS.INDEX.PRIMARY_MAX} / 1073741824)'
-                  name: 'OpenSearch Primary Shard Size Exceeded {$OS.INDEX.PRIMARY_MAX} GB'
+                  name: 'OpenSearch Primary Shard Size Exceeded {$OS.INDEX.PRIMARY_MAX} GiB'
                   priority: AVERAGE
                   description: |
-                    An indices primary shards have exceeded {$OS.INDEX.PRIMARY_MAX} GB. This can cause lots of performance, and write issues. This index should be rolled over.
+                    An indices primary shards have exceeded {$OS.INDEX.PRIMARY_MAX} GiB. This can cause lots of performance, and write issues. This index should be rolled over.
                     
                     Index Name: {#INDEX.NAME}
                     Current Size: {ITEM.LASTVALUE1}
