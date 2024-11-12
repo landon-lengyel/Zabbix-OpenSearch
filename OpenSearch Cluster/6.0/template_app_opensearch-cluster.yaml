@@ -413,6 +413,7 @@ zabbix_export:
           name: 'OpenSearch Cluster Cat Health'
           type: HTTP_AGENT
           key: opensearchcluster.cat_health
+          history: '0'
           value_type: TEXT
           trends: '0'
           authtype: BASIC
@@ -427,6 +428,7 @@ zabbix_export:
           type: HTTP_AGENT
           key: opensearchcluster.cat_indices
           delay: 5m
+          history: '0'
           value_type: TEXT
           trends: '0'
           authtype: BASIC
@@ -441,6 +443,7 @@ zabbix_export:
           type: HTTP_AGENT
           key: opensearchcluster.cat_nodes
           delay: 5m
+          history: '0'
           value_type: TEXT
           trends: '0'
           authtype: BASIC
@@ -450,10 +453,25 @@ zabbix_export:
           url: '{$OS.PROTOCOL}://{$OS.CLUSTER.HOSTNAME}:{$OS.PORT}/_cat/nodes?full_id&format=json&h=id,pid,ip,port,http_address,version,type,build,jdk,node.role,node.roles,cluster_manager,name'
           verify_peer: 'YES'
           verify_host: 'YES'
+        - uuid: 944cd11d70614adf9cbce292701d88f4
+          name: 'OpenSearch Cluster Cat Shards'
+          type: HTTP_AGENT
+          key: opensearchcluster.cat_shards
+          history: '0'
+          value_type: TEXT
+          trends: '0'
+          authtype: BASIC
+          username: '{$OS.USERNAME}'
+          password: '{$OS.PASSWORD}'
+          description: 'Gather data from the API endpoint: _cat/shards'
+          url: '{$OS.PROTOCOL}://{$OS.CLUSTER.HOSTNAME}:{$OS.PORT}/_cat/shards?v&format=json&h=index,shard,prirep,state,docs,store,ip,id,node,unassigned.reason,unassigned.at,unassigned.for,unassigned.details,path.data,path.state,docs.deleted'
+          verify_peer: 'YES'
+          verify_host: 'YES'
         - uuid: 7f8522107daf41418dc4c1055534aa80
           name: 'OpenSearch Cluster Cat Tasks'
           type: HTTP_AGENT
           key: opensearchcluster.cat_tasks
+          history: '0'
           value_type: TEXT
           trends: '0'
           status: DISABLED
@@ -585,6 +603,8 @@ zabbix_export:
               master_item:
                 key: opensearchcluster.cat_indices
               tags:
+                - tag: 'Index Name'
+                  value: '{#INDEX.NAME}'
                 - tag: OpenSearch
                   value: Index
             - uuid: b748db769eef41e382ff54213bb6c536
@@ -605,6 +625,8 @@ zabbix_export:
               master_item:
                 key: opensearchcluster.cat_indices
               tags:
+                - tag: 'Index Name'
+                  value: '{#INDEX.NAME}'
                 - tag: OpenSearch
                   value: Index
             - uuid: a4ed24d8920f404497754f8b1ff88993
@@ -630,6 +652,8 @@ zabbix_export:
               master_item:
                 key: opensearchcluster.cat_indices
               tags:
+                - tag: 'Index Name'
+                  value: '{#INDEX.NAME}'
                 - tag: OpenSearch
                   value: Health
                 - tag: OpenSearch
@@ -649,6 +673,8 @@ zabbix_export:
                     - name: 'OpenSearch Cluster Health: Yellow'
                       expression: 'last(/OpenSearch-Cluster/opensearch.cluster.health)="yellow"'
                   tags:
+                    - tag: 'Index Name'
+                      value: '{#INDEX.NAME}'
                     - tag: OpenSearch
                       value: Health
                     - tag: OpenSearch
@@ -667,6 +693,8 @@ zabbix_export:
                     - name: 'OpenSearch Cluster Health: Yellow'
                       expression: 'last(/OpenSearch-Cluster/opensearch.cluster.health)="yellow"'
                   tags:
+                    - tag: 'Index Name'
+                      value: '{#INDEX.NAME}'
                     - tag: OpenSearch
                       value: Health
                     - tag: OpenSearch
@@ -695,6 +723,8 @@ zabbix_export:
               master_item:
                 key: opensearchcluster.cat_indices
               tags:
+                - tag: 'Index Name'
+                  value: '{#INDEX.NAME}'
                 - tag: OpenSearch
                   value: Index
                 - tag: OpenSearch
@@ -725,6 +755,8 @@ zabbix_export:
               master_item:
                 key: opensearchcluster.cat_indices
               tags:
+                - tag: 'Index Name'
+                  value: '{#INDEX.NAME}'
                 - tag: OpenSearch
                   value: Index
                 - tag: OpenSearch
@@ -740,6 +772,8 @@ zabbix_export:
                 Total memory utilization for index between all nodes and all replica shards.
                 Primaries are not included. This is calculated by Zabbix.
               tags:
+                - tag: 'Index Name'
+                  value: '{#INDEX.NAME}'
                 - tag: OpenSearch
                   value: Index
                 - tag: OpenSearch
@@ -763,6 +797,8 @@ zabbix_export:
               master_item:
                 key: opensearchcluster.cat_indices
               tags:
+                - tag: 'Index Name'
+                  value: '{#INDEX.NAME}'
                 - tag: OpenSearch
                   value: Index
                 - tag: OpenSearch
@@ -777,6 +813,8 @@ zabbix_export:
                     
                     Index Name: {#INDEX.NAE
                   tags:
+                    - tag: 'Index Name'
+                      value: '{#INDEX.NAME}'
                     - tag: OpenSearch
                       value: Index
                     - tag: OpenSearch
@@ -799,6 +837,8 @@ zabbix_export:
               master_item:
                 key: opensearchcluster.cat_indices
               tags:
+                - tag: 'Index Name'
+                  value: '{#INDEX.NAME}'
                 - tag: OpenSearch
                   value: Index
             - uuid: 54fad4c7a8fc4f6fa8023e705efd9e15
@@ -819,6 +859,8 @@ zabbix_export:
               master_item:
                 key: opensearchcluster.cat_indices
               tags:
+                - tag: 'Index Name'
+                  value: '{#INDEX.NAME}'
                 - tag: OpenSearch
                   value: Index
             - uuid: c9d91686a0ed4e44925601b43ce77582
@@ -843,6 +885,8 @@ zabbix_export:
               master_item:
                 key: opensearchcluster.cat_indices
               tags:
+                - tag: 'Index Name'
+                  value: '{#INDEX.NAME}'
                 - tag: OpenSearch
                   value: Index
             - uuid: dac5c3e04fd24a5a9196e6c89dc8afb6
@@ -869,6 +913,8 @@ zabbix_export:
               master_item:
                 key: opensearchcluster.cat_indices
               tags:
+                - tag: 'Index Name'
+                  value: '{#INDEX.NAME}'
                 - tag: OpenSearch
                   value: Index
                 - tag: OpenSearch
@@ -897,6 +943,8 @@ zabbix_export:
               master_item:
                 key: opensearchcluster.cat_indices
               tags:
+                - tag: 'Index Name'
+                  value: '{#INDEX.NAME}'
                 - tag: OpenSearch
                   value: Index
                 - tag: OpenSearch
@@ -913,12 +961,16 @@ zabbix_export:
                     Current Size: {ITEM.LASTVALUE1}
                   manual_close: 'YES'
                   tags:
+                    - tag: 'Index Name'
+                      value: '{#INDEX.NAME}'
                     - tag: OpenSearch
                       value: Health
                     - tag: OpenSearch
                       value: Index
                     - tag: OpenSearch
                       value: Performance
+                    - tag: OpenSearch
+                      value: Storage
             - uuid: a907be27aa62495f9682faeb834c13b5
               name: 'Index Storage Size (Replica) - {#INDEX.NAME}'
               type: CALCULATED
@@ -928,6 +980,8 @@ zabbix_export:
               params: 'last(//opensearchcluster.index.store_size[{#INDEX.NAME}])-last(//opensearchcluster.index.store_size_primary[{#INDEX.NAME}])'
               description: 'Storage size of only replica shards. Calculated by Zabbix.'
               tags:
+                - tag: 'Index Name'
+                  value: '{#INDEX.NAME}'
                 - tag: OpenSearch
                   value: Index
                 - tag: OpenSearch
@@ -937,6 +991,132 @@ zabbix_export:
           lld_macro_paths:
             - lld_macro: '{#INDEX.NAME}'
               path: $.index
+            - lld_macro: '{#INDEX.UUID}'
+              path: $.uuid
+        - uuid: 033e08864a7445bc82d20cd8777f0a25
+          name: 'OpenSearch Cluster Cat Shards - Primary Discovery'
+          type: DEPENDENT
+          key: opensearchcluster.cat_shards-primary-discover
+          delay: '0'
+          description: 'Discover primary shards'
+          item_prototypes:
+            - uuid: 3eba4b938be74d58a4008bf4357bd17f
+              name: 'Shard State (Primary) - {#INDEX.NAME}-{#SHARD.ID_NUM}'
+              type: DEPENDENT
+              key: 'opensearchcluster.shard.state[{#INDEX.NAME}-{#SHARD.ID_NUM}]'
+              delay: '0'
+              value_type: TEXT
+              trends: '0'
+              description: |
+                State of this shard.
+                
+                - INITIALIZING: Shard is preparing for use.
+                - STARTED: Shard is active and available.
+                - RELOCATING: Shard is in the process of being moved to a different node.
+                - UNASSIGNED: Shard has failed to be assigned to a node.
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$[?(@.index==''{#INDEX.NAME}'' && @.shard==''{#SHARD.ID_NUM}'')].[''state'']'
+                - type: REGEX
+                  parameters:
+                    - \w+
+                    - \0
+              master_item:
+                key: opensearchcluster.cat_shards
+              tags:
+                - tag: 'Index Name'
+                  value: '{#INDEX.NAME}'
+                - tag: 'Node ID'
+                  value: '{#NODE.ID}'
+                - tag: 'Node Name'
+                  value: '{#NODE.NAME}'
+                - tag: OpenSearch
+                  value: Shard
+                - tag: OpenSearch
+                  value: Storage
+              trigger_prototypes:
+                - uuid: dd7f98e3b6a34dae8e6084e88e54458f
+                  expression: 'last(/OpenSearch-Cluster/opensearchcluster.shard.state[{#INDEX.NAME}-{#SHARD.ID_NUM}])<>"STARTED"'
+                  name: 'Primary Shard Status is not Started - {#INDEX.NAME}-{#SHARD.ID_NUM}'
+                  priority: WARNING
+                  description: |
+                    Shard has status not STARTED, meaning it is unavailable for use.
+                    
+                    Last status: {ITEM.LASTVALUE1}
+                    
+                    Statuses explained:
+                    - INITIALIZING: Shard is preparing for use.
+                    - STARTED: Shard is active and available.
+                    - RELOCATING: Shard is in the process of being moved to a different node.
+                    - UNASSIGNED: Shard has failed to be assigned to a node.
+                  tags:
+                    - tag: 'Index Name'
+                      value: '{#INDEX.NAME}'
+                    - tag: 'Node ID'
+                      value: '{#NODE.ID}'
+                    - tag: 'Node Name'
+                      value: '{#NODE.NAME}'
+                    - tag: OpenSearch
+                      value: Shard
+            - uuid: 346fb5358da34e11b773b2a219fa5088
+              name: 'Shard Storage Size (Primary) - {#INDEX.NAME}-{#SHARD.ID_NUM}'
+              type: DEPENDENT
+              key: 'opensearchcluster.shard.store_size[{#INDEX.NAME}-{#SHARD.ID_NUM}]'
+              delay: '0'
+              units: bytes
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$[?(@.index==''{#INDEX.NAME}'' && @.shard==''{#SHARD.ID_NUM}'')].[''store'']'
+                - type: MATCHES_REGEX
+                  parameters:
+                    - \d+
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0 b'
+                - type: JAVASCRIPT
+                  parameters:
+                    - |
+                      var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                      var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                      
+                      var res = regex.exec(value);
+                      
+                      return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
+              master_item:
+                key: opensearchcluster.cat_shards
+              tags:
+                - tag: 'Index Name'
+                  value: '{#INDEX.NAME}'
+                - tag: 'Node ID'
+                  value: '{#NODE.ID}'
+                - tag: 'Node Name'
+                  value: '{#NODE.NAME}'
+                - tag: OpenSearch
+                  value: Shard
+                - tag: OpenSearch
+                  value: Storage
+          master_item:
+            key: opensearchcluster.cat_shards
+          lld_macro_paths:
+            - lld_macro: '{#INDEX.NAME}'
+              path: $.index
+            - lld_macro: '{#NODE.ID}'
+              path: $.id
+            - lld_macro: '{#NODE.IP}'
+              path: $.ip
+            - lld_macro: '{#NODE.NAME}'
+              path: $.node
+            - lld_macro: '{#SHARD.ID_NUM}'
+              path: $.shard
+            - lld_macro: '{#SHARD.PRIREP}'
+              path: $.prirep
+            - lld_macro: '{#SHARD.STATE}'
+              path: $.state
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.prirep==''p'')]'
       macros:
         - macro: '{$OS.CLUSTER.HOSTNAME}'
           value: CHANGE_ME

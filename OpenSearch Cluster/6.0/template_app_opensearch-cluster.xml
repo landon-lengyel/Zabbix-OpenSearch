@@ -672,6 +672,7 @@ Red: Some primary shard(s) are offline.</description>
                     <name>OpenSearch Cluster Cat Health</name>
                     <type>HTTP_AGENT</type>
                     <key>opensearchcluster.cat_health</key>
+                    <history>0</history>
                     <value_type>TEXT</value_type>
                     <trends>0</trends>
                     <authtype>BASIC</authtype>
@@ -688,6 +689,7 @@ Red: Some primary shard(s) are offline.</description>
                     <type>HTTP_AGENT</type>
                     <key>opensearchcluster.cat_indices</key>
                     <delay>5m</delay>
+                    <history>0</history>
                     <value_type>TEXT</value_type>
                     <trends>0</trends>
                     <authtype>BASIC</authtype>
@@ -704,6 +706,7 @@ Red: Some primary shard(s) are offline.</description>
                     <type>HTTP_AGENT</type>
                     <key>opensearchcluster.cat_nodes</key>
                     <delay>5m</delay>
+                    <history>0</history>
                     <value_type>TEXT</value_type>
                     <trends>0</trends>
                     <authtype>BASIC</authtype>
@@ -715,10 +718,27 @@ Red: Some primary shard(s) are offline.</description>
                     <verify_host>YES</verify_host>
                 </item>
                 <item>
+                    <uuid>944cd11d70614adf9cbce292701d88f4</uuid>
+                    <name>OpenSearch Cluster Cat Shards</name>
+                    <type>HTTP_AGENT</type>
+                    <key>opensearchcluster.cat_shards</key>
+                    <history>0</history>
+                    <value_type>TEXT</value_type>
+                    <trends>0</trends>
+                    <authtype>BASIC</authtype>
+                    <username>{$OS.USERNAME}</username>
+                    <password>{$OS.PASSWORD}</password>
+                    <description>Gather data from the API endpoint: _cat/shards</description>
+                    <url>{$OS.PROTOCOL}://{$OS.CLUSTER.HOSTNAME}:{$OS.PORT}/_cat/shards?v&amp;format=json&amp;h=index,shard,prirep,state,docs,store,ip,id,node,unassigned.reason,unassigned.at,unassigned.for,unassigned.details,path.data,path.state,docs.deleted</url>
+                    <verify_peer>YES</verify_peer>
+                    <verify_host>YES</verify_host>
+                </item>
+                <item>
                     <uuid>7f8522107daf41418dc4c1055534aa80</uuid>
                     <name>OpenSearch Cluster Cat Tasks</name>
                     <type>HTTP_AGENT</type>
                     <key>opensearchcluster.cat_tasks</key>
+                    <history>0</history>
                     <value_type>TEXT</value_type>
                     <trends>0</trends>
                     <status>DISABLED</status>
@@ -906,6 +926,10 @@ return true;</parameter>
                             </master_item>
                             <tags>
                                 <tag>
+                                    <tag>Index Name</tag>
+                                    <value>{#INDEX.NAME}</value>
+                                </tag>
+                                <tag>
                                     <tag>OpenSearch</tag>
                                     <value>Index</value>
                                 </tag>
@@ -938,6 +962,10 @@ return true;</parameter>
                                 <key>opensearchcluster.cat_indices</key>
                             </master_item>
                             <tags>
+                                <tag>
+                                    <tag>Index Name</tag>
+                                    <value>{#INDEX.NAME}</value>
+                                </tag>
                                 <tag>
                                     <tag>OpenSearch</tag>
                                     <value>Index</value>
@@ -976,6 +1004,10 @@ return true;</parameter>
                             </master_item>
                             <tags>
                                 <tag>
+                                    <tag>Index Name</tag>
+                                    <value>{#INDEX.NAME}</value>
+                                </tag>
+                                <tag>
                                     <tag>OpenSearch</tag>
                                     <value>Health</value>
                                 </tag>
@@ -1005,6 +1037,10 @@ Index Name: {#INDEX.NAME}</description>
                                     </dependencies>
                                     <tags>
                                         <tag>
+                                            <tag>Index Name</tag>
+                                            <value>{#INDEX.NAME}</value>
+                                        </tag>
+                                        <tag>
                                             <tag>OpenSearch</tag>
                                             <value>Health</value>
                                         </tag>
@@ -1033,6 +1069,10 @@ Index Name: {#INDEX.NAME}</description>
                                         </dependency>
                                     </dependencies>
                                     <tags>
+                                        <tag>
+                                            <tag>Index Name</tag>
+                                            <value>{#INDEX.NAME}</value>
+                                        </tag>
                                         <tag>
                                             <tag>OpenSearch</tag>
                                             <value>Health</value>
@@ -1078,6 +1118,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                             </master_item>
                             <tags>
                                 <tag>
+                                    <tag>Index Name</tag>
+                                    <value>{#INDEX.NAME}</value>
+                                </tag>
+                                <tag>
                                     <tag>OpenSearch</tag>
                                     <value>Index</value>
                                 </tag>
@@ -1121,6 +1165,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                             </master_item>
                             <tags>
                                 <tag>
+                                    <tag>Index Name</tag>
+                                    <value>{#INDEX.NAME}</value>
+                                </tag>
+                                <tag>
                                     <tag>OpenSearch</tag>
                                     <value>Index</value>
                                 </tag>
@@ -1141,6 +1189,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                             <description>Total memory utilization for index between all nodes and all replica shards.
 Primaries are not included. This is calculated by Zabbix.</description>
                             <tags>
+                                <tag>
+                                    <tag>Index Name</tag>
+                                    <value>{#INDEX.NAME}</value>
+                                </tag>
                                 <tag>
                                     <tag>OpenSearch</tag>
                                     <value>Index</value>
@@ -1180,6 +1232,10 @@ Primaries are not included. This is calculated by Zabbix.</description>
                             </master_item>
                             <tags>
                                 <tag>
+                                    <tag>Index Name</tag>
+                                    <value>{#INDEX.NAME}</value>
+                                </tag>
+                                <tag>
                                     <tag>OpenSearch</tag>
                                     <value>Index</value>
                                 </tag>
@@ -1198,6 +1254,10 @@ Primaries are not included. This is calculated by Zabbix.</description>
 
 Index Name: {#INDEX.NAE</description>
                                     <tags>
+                                        <tag>
+                                            <tag>Index Name</tag>
+                                            <value>{#INDEX.NAME}</value>
+                                        </tag>
                                         <tag>
                                             <tag>OpenSearch</tag>
                                             <value>Index</value>
@@ -1238,6 +1298,10 @@ Index Name: {#INDEX.NAE</description>
                             </master_item>
                             <tags>
                                 <tag>
+                                    <tag>Index Name</tag>
+                                    <value>{#INDEX.NAME}</value>
+                                </tag>
+                                <tag>
                                     <tag>OpenSearch</tag>
                                     <value>Index</value>
                                 </tag>
@@ -1270,6 +1334,10 @@ Index Name: {#INDEX.NAE</description>
                                 <key>opensearchcluster.cat_indices</key>
                             </master_item>
                             <tags>
+                                <tag>
+                                    <tag>Index Name</tag>
+                                    <value>{#INDEX.NAME}</value>
+                                </tag>
                                 <tag>
                                     <tag>OpenSearch</tag>
                                     <value>Index</value>
@@ -1306,6 +1374,10 @@ Index Name: {#INDEX.NAE</description>
                                 <key>opensearchcluster.cat_indices</key>
                             </master_item>
                             <tags>
+                                <tag>
+                                    <tag>Index Name</tag>
+                                    <value>{#INDEX.NAME}</value>
+                                </tag>
                                 <tag>
                                     <tag>OpenSearch</tag>
                                     <value>Index</value>
@@ -1344,6 +1416,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                                 <key>opensearchcluster.cat_indices</key>
                             </master_item>
                             <tags>
+                                <tag>
+                                    <tag>Index Name</tag>
+                                    <value>{#INDEX.NAME}</value>
+                                </tag>
                                 <tag>
                                     <tag>OpenSearch</tag>
                                     <value>Index</value>
@@ -1387,6 +1463,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                             </master_item>
                             <tags>
                                 <tag>
+                                    <tag>Index Name</tag>
+                                    <value>{#INDEX.NAME}</value>
+                                </tag>
+                                <tag>
                                     <tag>OpenSearch</tag>
                                     <value>Index</value>
                                 </tag>
@@ -1408,6 +1488,10 @@ Current Size: {ITEM.LASTVALUE1}</description>
                                     <manual_close>YES</manual_close>
                                     <tags>
                                         <tag>
+                                            <tag>Index Name</tag>
+                                            <value>{#INDEX.NAME}</value>
+                                        </tag>
+                                        <tag>
                                             <tag>OpenSearch</tag>
                                             <value>Health</value>
                                         </tag>
@@ -1418,6 +1502,10 @@ Current Size: {ITEM.LASTVALUE1}</description>
                                         <tag>
                                             <tag>OpenSearch</tag>
                                             <value>Performance</value>
+                                        </tag>
+                                        <tag>
+                                            <tag>OpenSearch</tag>
+                                            <value>Storage</value>
                                         </tag>
                                     </tags>
                                 </trigger_prototype>
@@ -1433,6 +1521,10 @@ Current Size: {ITEM.LASTVALUE1}</description>
                             <params>last(//opensearchcluster.index.store_size[{#INDEX.NAME}])-last(//opensearchcluster.index.store_size_primary[{#INDEX.NAME}])</params>
                             <description>Storage size of only replica shards. Calculated by Zabbix.</description>
                             <tags>
+                                <tag>
+                                    <tag>Index Name</tag>
+                                    <value>{#INDEX.NAME}</value>
+                                </tag>
                                 <tag>
                                     <tag>OpenSearch</tag>
                                     <value>Index</value>
@@ -1452,7 +1544,212 @@ Current Size: {ITEM.LASTVALUE1}</description>
                             <lld_macro>{#INDEX.NAME}</lld_macro>
                             <path>$.index</path>
                         </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#INDEX.UUID}</lld_macro>
+                            <path>$.uuid</path>
+                        </lld_macro_path>
                     </lld_macro_paths>
+                </discovery_rule>
+                <discovery_rule>
+                    <uuid>033e08864a7445bc82d20cd8777f0a25</uuid>
+                    <name>OpenSearch Cluster Cat Shards - Primary Discovery</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearchcluster.cat_shards-primary-discover</key>
+                    <delay>0</delay>
+                    <description>Discover primary shards</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <uuid>3eba4b938be74d58a4008bf4357bd17f</uuid>
+                            <name>Shard State (Primary) - {#INDEX.NAME}-{#SHARD.ID_NUM}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearchcluster.shard.state[{#INDEX.NAME}-{#SHARD.ID_NUM}]</key>
+                            <delay>0</delay>
+                            <value_type>TEXT</value_type>
+                            <trends>0</trends>
+                            <description>State of this shard.
+
+- INITIALIZING: Shard is preparing for use.
+- STARTED: Shard is active and available.
+- RELOCATING: Shard is in the process of being moved to a different node.
+- UNASSIGNED: Shard has failed to be assigned to a node.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.index=='{#INDEX.NAME}' &amp;&amp; @.shard=='{#SHARD.ID_NUM}')].['state']</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>REGEX</type>
+                                    <parameters>
+                                        <parameter>\w+</parameter>
+                                        <parameter>\0</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearchcluster.cat_shards</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Index Name</tag>
+                                    <value>{#INDEX.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Node ID</tag>
+                                    <value>{#NODE.ID}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{#NODE.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Shard</value>
+                                </tag>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Storage</value>
+                                </tag>
+                            </tags>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <uuid>dd7f98e3b6a34dae8e6084e88e54458f</uuid>
+                                    <expression>last(/OpenSearch-Cluster/opensearchcluster.shard.state[{#INDEX.NAME}-{#SHARD.ID_NUM}])&lt;&gt;&quot;STARTED&quot;</expression>
+                                    <name>Primary Shard Status is not Started - {#INDEX.NAME}-{#SHARD.ID_NUM}</name>
+                                    <priority>WARNING</priority>
+                                    <description>Shard has status not STARTED, meaning it is unavailable for use.
+
+Last status: {ITEM.LASTVALUE1}
+
+Statuses explained:
+- INITIALIZING: Shard is preparing for use.
+- STARTED: Shard is active and available.
+- RELOCATING: Shard is in the process of being moved to a different node.
+- UNASSIGNED: Shard has failed to be assigned to a node.</description>
+                                    <tags>
+                                        <tag>
+                                            <tag>Index Name</tag>
+                                            <value>{#INDEX.NAME}</value>
+                                        </tag>
+                                        <tag>
+                                            <tag>Node ID</tag>
+                                            <value>{#NODE.ID}</value>
+                                        </tag>
+                                        <tag>
+                                            <tag>Node Name</tag>
+                                            <value>{#NODE.NAME}</value>
+                                        </tag>
+                                        <tag>
+                                            <tag>OpenSearch</tag>
+                                            <value>Shard</value>
+                                        </tag>
+                                    </tags>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>346fb5358da34e11b773b2a219fa5088</uuid>
+                            <name>Shard Storage Size (Primary) - {#INDEX.NAME}-{#SHARD.ID_NUM}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearchcluster.shard.store_size[{#INDEX.NAME}-{#SHARD.ID_NUM}]</key>
+                            <delay>0</delay>
+                            <units>bytes</units>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.index=='{#INDEX.NAME}' &amp;&amp; @.shard=='{#SHARD.ID_NUM}')].['store']</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>MATCHES_REGEX</type>
+                                    <parameters>
+                                        <parameter>\d+</parameter>
+                                    </parameters>
+                                    <error_handler>CUSTOM_VALUE</error_handler>
+                                    <error_handler_params>0 b</error_handler_params>
+                                </step>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <parameters>
+                                        <parameter>var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+
+var res = regex.exec(value);
+
+return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearchcluster.cat_shards</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Index Name</tag>
+                                    <value>{#INDEX.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Node ID</tag>
+                                    <value>{#NODE.ID}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{#NODE.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Shard</value>
+                                </tag>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Storage</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>opensearchcluster.cat_shards</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#INDEX.NAME}</lld_macro>
+                            <path>$.index</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#NODE.ID}</lld_macro>
+                            <path>$.id</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#NODE.IP}</lld_macro>
+                            <path>$.ip</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#NODE.NAME}</lld_macro>
+                            <path>$.node</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#SHARD.ID_NUM}</lld_macro>
+                            <path>$.shard</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#SHARD.PRIREP}</lld_macro>
+                            <path>$.prirep</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#SHARD.STATE}</lld_macro>
+                            <path>$.state</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.prirep=='p')]</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
                 </discovery_rule>
             </discovery_rules>
             <macros>
