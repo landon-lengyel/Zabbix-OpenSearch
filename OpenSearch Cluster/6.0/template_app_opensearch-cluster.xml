@@ -722,6 +722,7 @@ Red: Some primary shard(s) are offline.</description>
                     <name>OpenSearch Cluster Cat Shards</name>
                     <type>HTTP_AGENT</type>
                     <key>opensearchcluster.cat_shards</key>
+                    <delay>5m</delay>
                     <history>0</history>
                     <value_type>TEXT</value_type>
                     <trends>0</trends>
@@ -1556,6 +1557,8 @@ Current Size: {ITEM.LASTVALUE1}</description>
                     <type>DEPENDENT</type>
                     <key>opensearchcluster.cat_shards-primary-discover</key>
                     <delay>0</delay>
+                    <lifetime_type>DELETE_IMMEDIATELY</lifetime_type>
+                    <lifetime>0</lifetime>
                     <description>Discover primary shards</description>
                     <item_prototypes>
                         <item_prototype>

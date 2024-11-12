@@ -457,6 +457,7 @@ zabbix_export:
           name: 'OpenSearch Cluster Cat Shards'
           type: HTTP_AGENT
           key: opensearchcluster.cat_shards
+          delay: 5m
           history: '0'
           value_type: TEXT
           trends: '0'
@@ -998,6 +999,8 @@ zabbix_export:
           type: DEPENDENT
           key: opensearchcluster.cat_shards-primary-discover
           delay: '0'
+          lifetime_type: DELETE_IMMEDIATELY
+          lifetime: '0'
           description: 'Discover primary shards'
           item_prototypes:
             - uuid: 3eba4b938be74d58a4008bf4357bd17f
