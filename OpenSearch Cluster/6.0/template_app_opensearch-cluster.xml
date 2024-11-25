@@ -286,9 +286,9 @@
                 </item>
                 <item>
                     <uuid>086bac5731594af09eb880757d19975d</uuid>
-                    <name>Shards Initializing</name>
+                    <name>Shards Initializing Count</name>
                     <type>DEPENDENT</type>
-                    <key>opensearch.cluster.shards.init</key>
+                    <key>opensearch.cluster.shards.init-count</key>
                     <delay>0</delay>
                     <description>Total number of currently initializing shards in the cluster.</description>
                     <preprocessing>
@@ -312,52 +312,76 @@
                             <value>OpenSearch</value>
                         </tag>
                     </tags>
+                </item>
+                <item>
+                    <uuid>2a8d985c6092489685aa39d69ce83f73</uuid>
+                    <name>Shards Initializing List</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.shards.initializing-list</key>
+                    <delay>0</delay>
+                    <history>10d</history>
+                    <value_type>TEXT</value_type>
+                    <trends>0</trends>
+                    <description>List of shards currently initializing in the cluster</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.state == 'INITIALIZING')].index</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                        </step>
+                        <step>
+                            <type>STR_REPLACE</type>
+                            <parameters>
+                                <parameter>[</parameter>
+                                <parameter/>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>STR_REPLACE</type>
+                            <parameters>
+                                <parameter>]</parameter>
+                                <parameter/>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>STR_REPLACE</type>
+                            <parameters>
+                                <parameter>&quot;</parameter>
+                                <parameter/>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>STR_REPLACE</type>
+                            <parameters>
+                                <parameter>,</parameter>
+                                <parameter>\n</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_shards</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>OpenSearch</tag>
+                            <value>Allocation</value>
+                        </tag>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
                     <triggers>
                         <trigger>
-                            <uuid>1b7aaac78f1b461a8f14933b3d2659f5</uuid>
-                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.shards.init)&lt;&gt;0</expression>
-                            <name>OpenSearch currently initializing shards: {ITEM.VALUE1}</name>
+                            <uuid>3ac9426cd1ac46a692882a8fbd2cded2</uuid>
+                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.shards.initializing-list)&lt;&gt;&quot;&quot;</expression>
+                            <name>OpenSearch has initializing shards</name>
                             <priority>INFO</priority>
-                            <description>Cluster is currently initializing shards.
-
-Shards initializing: {ITEM.VALUE1}</description>
+                            <description>List of initializing shards: 
+{ITEM.VALUE1}</description>
                             <manual_close>YES</manual_close>
-                            <dependencies>
-                                <dependency>
-                                    <name>OpenSearch Cluster Health: Red</name>
-                                    <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;red&quot;</expression>
-                                </dependency>
-                                <dependency>
-                                    <name>OpenSearch Cluster Health: Yellow</name>
-                                    <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;yellow&quot;</expression>
-                                </dependency>
-                            </dependencies>
-                            <tags>
-                                <tag>
-                                    <tag>Services</tag>
-                                    <value>OpenSearch</value>
-                                </tag>
-                            </tags>
-                        </trigger>
-                        <trigger>
-                            <uuid>b00993c6c6844b4486bef27eb6b35d53</uuid>
-                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.shards.init)&lt;&gt;0</expression>
-                            <name>OpenSearch currently unassigned shards: {ITEM.VALUE1}</name>
-                            <priority>AVERAGE</priority>
-                            <description>Cluster has unassigned (unavailable) shards.
-
-Shards unassigned (count): {ITEM.VALUE1}</description>
-                            <manual_close>YES</manual_close>
-                            <dependencies>
-                                <dependency>
-                                    <name>OpenSearch Cluster Health: Red</name>
-                                    <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;red&quot;</expression>
-                                </dependency>
-                                <dependency>
-                                    <name>OpenSearch Cluster Health: Yellow</name>
-                                    <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;yellow&quot;</expression>
-                                </dependency>
-                            </dependencies>
                             <tags>
                                 <tag>
                                     <tag>Services</tag>
@@ -369,9 +393,9 @@ Shards unassigned (count): {ITEM.VALUE1}</description>
                 </item>
                 <item>
                     <uuid>093d416ca2374d69b05070b0a59195ac</uuid>
-                    <name>Shards Primary</name>
+                    <name>Shards Primary Count</name>
                     <type>DEPENDENT</type>
-                    <key>opensearch.cluster.shards.pri</key>
+                    <key>opensearch.cluster.shards.pri-count</key>
                     <delay>0</delay>
                     <description>Total number of primary shards available and online in the cluster.</description>
                     <preprocessing>
@@ -398,9 +422,9 @@ Shards unassigned (count): {ITEM.VALUE1}</description>
                 </item>
                 <item>
                     <uuid>1fbc5d9a4c6c4ee5809ea5a14bb8f984</uuid>
-                    <name>Shards Relocating</name>
+                    <name>Shards Relocating Count</name>
                     <type>DEPENDENT</type>
-                    <key>opensearch.cluster.shards.relo</key>
+                    <key>opensearch.cluster.shards.relocating-count</key>
                     <delay>0</delay>
                     <description>Total number of currently relocating shards in the cluster.</description>
                     <preprocessing>
@@ -427,9 +451,9 @@ Shards unassigned (count): {ITEM.VALUE1}</description>
                 </item>
                 <item>
                     <uuid>e85bce2ba7a341d7bfa1c1173f9eb76e</uuid>
-                    <name>Shards Secondary</name>
+                    <name>Shards Secondary Count</name>
                     <type>CALCULATED</type>
-                    <key>opensearch.cluster.shards.second</key>
+                    <key>opensearch.cluster.shards.secondary-count</key>
                     <params>last(//opensearch.cluster.shards.total)-last(//opensearch.cluster.shards.pri)</params>
                     <description>Total number of secondary shards available and online in the cluster.
 
@@ -447,9 +471,9 @@ Shards unassigned (count): {ITEM.VALUE1}</description>
                 </item>
                 <item>
                     <uuid>8cb6d38dfde44af8a8fd8e0b335f8686</uuid>
-                    <name>Shards</name>
+                    <name>Shards Total Count</name>
                     <type>DEPENDENT</type>
-                    <key>opensearch.cluster.shards.total</key>
+                    <key>opensearch.cluster.shards.total-count</key>
                     <delay>0</delay>
                     <description>Total number of shards available and online in the cluster.</description>
                     <preprocessing>
@@ -476,9 +500,9 @@ Shards unassigned (count): {ITEM.VALUE1}</description>
                 </item>
                 <item>
                     <uuid>405cb57a2596459296adec88fad710e3</uuid>
-                    <name>Shards Unassigned</name>
+                    <name>Shards Unassigned Count</name>
                     <type>DEPENDENT</type>
-                    <key>opensearch.cluster.shards.unassign</key>
+                    <key>opensearch.cluster.shards.unassigned-count</key>
                     <delay>0</delay>
                     <description>Total number of currently unassigned shards in the cluster.</description>
                     <preprocessing>
@@ -502,6 +526,84 @@ Shards unassigned (count): {ITEM.VALUE1}</description>
                             <value>OpenSearch</value>
                         </tag>
                     </tags>
+                </item>
+                <item>
+                    <uuid>f9eff6fba70442b0b489246e26294831</uuid>
+                    <name>Shards Unassigned List</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.cluster.shards.unassigned-list</key>
+                    <delay>0</delay>
+                    <history>10d</history>
+                    <value_type>TEXT</value_type>
+                    <trends>0</trends>
+                    <description>List of shards currently unassigned in the cluster</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.state == 'UNASSIGNED')].index</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                        </step>
+                        <step>
+                            <type>STR_REPLACE</type>
+                            <parameters>
+                                <parameter>[</parameter>
+                                <parameter/>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>STR_REPLACE</type>
+                            <parameters>
+                                <parameter>]</parameter>
+                                <parameter/>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>STR_REPLACE</type>
+                            <parameters>
+                                <parameter>&quot;</parameter>
+                                <parameter/>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>STR_REPLACE</type>
+                            <parameters>
+                                <parameter>,</parameter>
+                                <parameter>\n</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearchcluster.cat_shards</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>OpenSearch</tag>
+                            <value>Allocation</value>
+                        </tag>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>b00993c6c6844b4486bef27eb6b35d53</uuid>
+                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.shards.unassigned-list)&lt;&gt;&quot;&quot;</expression>
+                            <name>OpenSearch has unassigned shards</name>
+                            <priority>INFO</priority>
+                            <description>List of unassigned shards: 
+{ITEM.VALUE1}</description>
+                            <manual_close>YES</manual_close>
+                            <tags>
+                                <tag>
+                                    <tag>Services</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>addb9a1133254e4a9f8d00d5a1f7b6fb</uuid>
@@ -1618,10 +1720,11 @@ Current Size: {ITEM.LASTVALUE1}</description>
                             <trigger_prototypes>
                                 <trigger_prototype>
                                     <uuid>dd7f98e3b6a34dae8e6084e88e54458f</uuid>
-                                    <expression>last(/OpenSearch-Cluster/opensearchcluster.shard.state[{#INDEX.NAME}-{#SHARD.ID_NUM}])&lt;&gt;&quot;STARTED&quot;</expression>
+                                    <expression>last(/OpenSearch-Cluster/opensearchcluster.shard.state[{#INDEX.NAME}-{#SHARD.ID_NUM}])&lt;&gt;&quot;STARTED&quot; and last(/OpenSearch-Cluster/opensearchcluster.shard.state[{#INDEX.NAME}-{#SHARD.ID_NUM}])&lt;&gt;&quot;INITIALIZING&quot;</expression>
                                     <name>Primary Shard Status is not Started - {#INDEX.NAME}-{#SHARD.ID_NUM}</name>
+                                    <status>DISABLED</status>
                                     <priority>WARNING</priority>
-                                    <description>Shard has status not STARTED, meaning it is unavailable for use.
+                                    <description>Shard has status not STARTED or INITIALIZING, meaning it is unavailable for use.
 
 Last status: {ITEM.LASTVALUE1}
 
@@ -1827,7 +1930,7 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <calc_fnc>LAST</calc_fnc>
                     <item>
                         <host>OpenSearch-Cluster</host>
-                        <key>opensearch.cluster.shards.pri</key>
+                        <key>opensearch.cluster.shards.pri-count</key>
                     </item>
                 </graph_item>
                 <graph_item>
@@ -1836,7 +1939,7 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <calc_fnc>LAST</calc_fnc>
                     <item>
                         <host>OpenSearch-Cluster</host>
-                        <key>opensearch.cluster.shards.second</key>
+                        <key>opensearch.cluster.shards.secondary-count</key>
                     </item>
                 </graph_item>
             </graph_items>
@@ -1851,7 +1954,7 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <calc_fnc>ALL</calc_fnc>
                     <item>
                         <host>OpenSearch-Cluster</host>
-                        <key>opensearch.cluster.shards.init</key>
+                        <key>opensearch.cluster.shards.init-count</key>
                     </item>
                 </graph_item>
                 <graph_item>
@@ -1860,7 +1963,7 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <calc_fnc>ALL</calc_fnc>
                     <item>
                         <host>OpenSearch-Cluster</host>
-                        <key>opensearch.cluster.shards.relo</key>
+                        <key>opensearch.cluster.shards.relocating-count</key>
                     </item>
                 </graph_item>
                 <graph_item>
@@ -1869,7 +1972,7 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <calc_fnc>ALL</calc_fnc>
                     <item>
                         <host>OpenSearch-Cluster</host>
-                        <key>opensearch.cluster.shards.unassign</key>
+                        <key>opensearch.cluster.shards.unassigned-count</key>
                     </item>
                 </graph_item>
             </graph_items>
@@ -1901,7 +2004,7 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <calc_fnc>ALL</calc_fnc>
                     <item>
                         <host>OpenSearch-Cluster</host>
-                        <key>opensearch.cluster.shards.total</key>
+                        <key>opensearch.cluster.shards.total-count</key>
                     </item>
                 </graph_item>
             </graph_items>

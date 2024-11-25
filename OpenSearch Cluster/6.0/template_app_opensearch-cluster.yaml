@@ -177,9 +177,9 @@ zabbix_export:
             - tag: Services
               value: OpenSearch
         - uuid: 086bac5731594af09eb880757d19975d
-          name: 'Shards Initializing'
+          name: 'Shards Initializing Count'
           type: DEPENDENT
-          key: opensearch.cluster.shards.init
+          key: opensearch.cluster.shards.init-count
           delay: '0'
           description: 'Total number of currently initializing shards in the cluster.'
           preprocessing:
@@ -193,45 +193,59 @@ zabbix_export:
               value: Allocation
             - tag: Services
               value: OpenSearch
+        - uuid: 2a8d985c6092489685aa39d69ce83f73
+          name: 'Shards Initializing List'
+          type: DEPENDENT
+          key: opensearch.cluster.shards.initializing-list
+          delay: '0'
+          history: 10d
+          value_type: TEXT
+          trends: '0'
+          description: 'List of shards currently initializing in the cluster'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.state == ''INITIALIZING'')].index'
+              error_handler: CUSTOM_VALUE
+            - type: STR_REPLACE
+              parameters:
+                - '['
+                - ''
+            - type: STR_REPLACE
+              parameters:
+                - ']'
+                - ''
+            - type: STR_REPLACE
+              parameters:
+                - '"'
+                - ''
+            - type: STR_REPLACE
+              parameters:
+                - ','
+                - \n
+          master_item:
+            key: opensearchcluster.cat_shards
+          tags:
+            - tag: OpenSearch
+              value: Allocation
+            - tag: Services
+              value: OpenSearch
           triggers:
-            - uuid: 1b7aaac78f1b461a8f14933b3d2659f5
-              expression: last(/OpenSearch-Cluster/opensearch.cluster.shards.init)<>0
-              name: 'OpenSearch currently initializing shards: {ITEM.VALUE1}'
+            - uuid: 3ac9426cd1ac46a692882a8fbd2cded2
+              expression: 'last(/OpenSearch-Cluster/opensearch.cluster.shards.initializing-list)<>""'
+              name: 'OpenSearch has initializing shards'
               priority: INFO
               description: |
-                Cluster is currently initializing shards.
-                
-                Shards initializing: {ITEM.VALUE1}
+                List of initializing shards: 
+                {ITEM.VALUE1}
               manual_close: 'YES'
-              dependencies:
-                - name: 'OpenSearch Cluster Health: Red'
-                  expression: 'last(/OpenSearch-Cluster/opensearch.cluster.health)="red"'
-                - name: 'OpenSearch Cluster Health: Yellow'
-                  expression: 'last(/OpenSearch-Cluster/opensearch.cluster.health)="yellow"'
-              tags:
-                - tag: Services
-                  value: OpenSearch
-            - uuid: b00993c6c6844b4486bef27eb6b35d53
-              expression: last(/OpenSearch-Cluster/opensearch.cluster.shards.init)<>0
-              name: 'OpenSearch currently unassigned shards: {ITEM.VALUE1}'
-              priority: AVERAGE
-              description: |
-                Cluster has unassigned (unavailable) shards.
-                
-                Shards unassigned (count): {ITEM.VALUE1}
-              manual_close: 'YES'
-              dependencies:
-                - name: 'OpenSearch Cluster Health: Red'
-                  expression: 'last(/OpenSearch-Cluster/opensearch.cluster.health)="red"'
-                - name: 'OpenSearch Cluster Health: Yellow'
-                  expression: 'last(/OpenSearch-Cluster/opensearch.cluster.health)="yellow"'
               tags:
                 - tag: Services
                   value: OpenSearch
         - uuid: 093d416ca2374d69b05070b0a59195ac
-          name: 'Shards Primary'
+          name: 'Shards Primary Count'
           type: DEPENDENT
-          key: opensearch.cluster.shards.pri
+          key: opensearch.cluster.shards.pri-count
           delay: '0'
           description: 'Total number of primary shards available and online in the cluster.'
           preprocessing:
@@ -246,9 +260,9 @@ zabbix_export:
             - tag: Services
               value: OpenSearch
         - uuid: 1fbc5d9a4c6c4ee5809ea5a14bb8f984
-          name: 'Shards Relocating'
+          name: 'Shards Relocating Count'
           type: DEPENDENT
-          key: opensearch.cluster.shards.relo
+          key: opensearch.cluster.shards.relocating-count
           delay: '0'
           description: 'Total number of currently relocating shards in the cluster.'
           preprocessing:
@@ -263,9 +277,9 @@ zabbix_export:
             - tag: Services
               value: OpenSearch
         - uuid: e85bce2ba7a341d7bfa1c1173f9eb76e
-          name: 'Shards Secondary'
+          name: 'Shards Secondary Count'
           type: CALCULATED
-          key: opensearch.cluster.shards.second
+          key: opensearch.cluster.shards.secondary-count
           params: last(//opensearch.cluster.shards.total)-last(//opensearch.cluster.shards.pri)
           description: |
             Total number of secondary shards available and online in the cluster.
@@ -277,9 +291,9 @@ zabbix_export:
             - tag: Source
               value: Calculated
         - uuid: 8cb6d38dfde44af8a8fd8e0b335f8686
-          name: Shards
+          name: 'Shards Total Count'
           type: DEPENDENT
-          key: opensearch.cluster.shards.total
+          key: opensearch.cluster.shards.total-count
           delay: '0'
           description: 'Total number of shards available and online in the cluster.'
           preprocessing:
@@ -294,9 +308,9 @@ zabbix_export:
             - tag: Services
               value: OpenSearch
         - uuid: 405cb57a2596459296adec88fad710e3
-          name: 'Shards Unassigned'
+          name: 'Shards Unassigned Count'
           type: DEPENDENT
-          key: opensearch.cluster.shards.unassign
+          key: opensearch.cluster.shards.unassigned-count
           delay: '0'
           description: 'Total number of currently unassigned shards in the cluster.'
           preprocessing:
@@ -310,6 +324,55 @@ zabbix_export:
               value: Allocation
             - tag: Services
               value: OpenSearch
+        - uuid: f9eff6fba70442b0b489246e26294831
+          name: 'Shards Unassigned List'
+          type: DEPENDENT
+          key: opensearch.cluster.shards.unassigned-list
+          delay: '0'
+          history: 10d
+          value_type: TEXT
+          trends: '0'
+          description: 'List of shards currently unassigned in the cluster'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.state == ''UNASSIGNED'')].index'
+              error_handler: CUSTOM_VALUE
+            - type: STR_REPLACE
+              parameters:
+                - '['
+                - ''
+            - type: STR_REPLACE
+              parameters:
+                - ']'
+                - ''
+            - type: STR_REPLACE
+              parameters:
+                - '"'
+                - ''
+            - type: STR_REPLACE
+              parameters:
+                - ','
+                - \n
+          master_item:
+            key: opensearchcluster.cat_shards
+          tags:
+            - tag: OpenSearch
+              value: Allocation
+            - tag: Services
+              value: OpenSearch
+          triggers:
+            - uuid: b00993c6c6844b4486bef27eb6b35d53
+              expression: 'last(/OpenSearch-Cluster/opensearch.cluster.shards.unassigned-list)<>""'
+              name: 'OpenSearch has unassigned shards'
+              priority: INFO
+              description: |
+                List of unassigned shards: 
+                {ITEM.VALUE1}
+              manual_close: 'YES'
+              tags:
+                - tag: Services
+                  value: OpenSearch
         - uuid: addb9a1133254e4a9f8d00d5a1f7b6fb
           name: Status
           type: DEPENDENT
@@ -1040,11 +1103,12 @@ zabbix_export:
                   value: Storage
               trigger_prototypes:
                 - uuid: dd7f98e3b6a34dae8e6084e88e54458f
-                  expression: 'last(/OpenSearch-Cluster/opensearchcluster.shard.state[{#INDEX.NAME}-{#SHARD.ID_NUM}])<>"STARTED"'
+                  expression: 'last(/OpenSearch-Cluster/opensearchcluster.shard.state[{#INDEX.NAME}-{#SHARD.ID_NUM}])<>"STARTED" and last(/OpenSearch-Cluster/opensearchcluster.shard.state[{#INDEX.NAME}-{#SHARD.ID_NUM}])<>"INITIALIZING"'
                   name: 'Primary Shard Status is not Started - {#INDEX.NAME}-{#SHARD.ID_NUM}'
+                  status: DISABLED
                   priority: WARNING
                   description: |
-                    Shard has status not STARTED, meaning it is unavailable for use.
+                    Shard has status not STARTED or INITIALIZING, meaning it is unavailable for use.
                     
                     Last status: {ITEM.LASTVALUE1}
                     
@@ -1166,13 +1230,13 @@ zabbix_export:
           calc_fnc: LAST
           item:
             host: OpenSearch-Cluster
-            key: opensearch.cluster.shards.pri
+            key: opensearch.cluster.shards.pri-count
         - sortorder: '1'
           color: 43A047
           calc_fnc: LAST
           item:
             host: OpenSearch-Cluster
-            key: opensearch.cluster.shards.second
+            key: opensearch.cluster.shards.secondary-count
     - uuid: 8a864a4399b5429785f9cf99b2cd9f40
       name: 'OpenSearch Shard Event Counts'
       ymin_type_1: FIXED
@@ -1181,19 +1245,19 @@ zabbix_export:
           calc_fnc: ALL
           item:
             host: OpenSearch-Cluster
-            key: opensearch.cluster.shards.init
+            key: opensearch.cluster.shards.init-count
         - sortorder: '1'
           color: 29B6F6
           calc_fnc: ALL
           item:
             host: OpenSearch-Cluster
-            key: opensearch.cluster.shards.relo
+            key: opensearch.cluster.shards.relocating-count
         - sortorder: '2'
           color: F44336
           calc_fnc: ALL
           item:
             host: OpenSearch-Cluster
-            key: opensearch.cluster.shards.unassign
+            key: opensearch.cluster.shards.unassigned-count
     - uuid: 6e603ebe18d94a2ba98f9a44f46f66b3
       name: 'OpenSearch Shards Percent Active'
       show_work_period: 'NO'
@@ -1213,4 +1277,4 @@ zabbix_export:
           calc_fnc: ALL
           item:
             host: OpenSearch-Cluster
-            key: opensearch.cluster.shards.total
+            key: opensearch.cluster.shards.total-count
