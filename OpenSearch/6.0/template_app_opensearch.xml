@@ -50,6 +50,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -87,6 +91,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -118,6 +126,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <key>opensearch.cat_allocation</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -156,6 +168,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -188,6 +204,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -199,6 +219,7 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <type>HTTP_AGENT</type>
                     <key>opensearch.cat_allocation</key>
                     <delay>30m</delay>
+                    <history>0</history>
                     <value_type>TEXT</value_type>
                     <trends>0</trends>
                     <authtype>BASIC</authtype>
@@ -210,12 +231,19 @@ https://opensearch.org/docs/latest/api-reference/cat/cat-allocation/</descriptio
                     <url>{$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_cat/allocation/{$OS.NAME}?v&amp;format=json</url>
                     <verify_peer>YES</verify_peer>
                     <verify_host>YES</verify_host>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                    </tags>
                 </item>
                 <item>
                     <uuid>6ac1259dabf8427c95b0e9666e2d2b99</uuid>
                     <name>OpenSearch Cat Nodes</name>
                     <type>HTTP_AGENT</type>
                     <key>opensearch.cat_nodes</key>
+                    <history>0</history>
                     <value_type>TEXT</value_type>
                     <trends>0</trends>
                     <authtype>BASIC</authtype>
@@ -225,6 +253,12 @@ https://opensearch.org/docs/latest/api-reference/cat/cat-allocation/</descriptio
                     <url>{$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_cat/nodes?h=id,pid,ip,port,http_address,version,type,build,jdk,disk.total,disk.used,disk.avail,disk.used_percent,heap.current,heap.max,heap.percent,ram.current,ram.percent,ram.max,file_desc.current,file_desc.percent,file_desc.max,cpu,load_1m,load_5m,load_15m,uptime,node.role,node.roles,cluster_manager,name,completion.size,fielddata.memory_size,fielddata.evictions,query_cache.memory_size,query_cache.evictions,query_cache.hit_count,query_cache.miss_count,request_cache.memory_size,request_cache.evictions,request_cache.hit_count,request_cache.miss_count,flush.total,flush.total_time,get.current,get.time,get.total,get.exists_time,get.exists_total,get.missing_time,get.missing_total,indexing.delete_current,indexing.delete_time,indexing.delete_total,indexing.index_current,indexing.index_time,indexing.index_total,indexing.index_failed,merges.current,merges.current_docs,merges.current_size,merges.total,merges.total_docs,merges.total_size,merges.total_time,refresh.total,refresh.time,refresh.external_total,refresh.external_time,refresh.listeners,script.compilations,script.cache_evictions,script.compilation_limit_triggered,search.fetch_current,search.fetch_time,search.fetch_total,search.open_contexts,search.query_current,search.query_time,search.query_total,search.concurrent_query_current,search.concurrent_query_time,search.concurrent_query_total,search.concurrent_avg_slice_count,search.scroll_current,search.scroll_time,search.scroll_total,search.point_in_time_current,search.point_in_time_time,search.point_in_time_total,segments.count,segments.memory,segments.index_writer_memory,segments.version_map_memory,segments.fixed_bitset_memory,suggest.current,suggest.time,suggest.total&amp;full_id&amp;format=json</url>
                     <verify_peer>YES</verify_peer>
                     <verify_host>YES</verify_host>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                    </tags>
                     <triggers>
                         <trigger>
                             <uuid>676d3d78315e44a8afa606dc4223e8a5</uuid>
@@ -282,6 +316,10 @@ Failing API Endpoint: {$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_cat/nodes</des
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -324,6 +362,10 @@ Failing API Endpoint: {$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_cat/nodes</des
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -361,6 +403,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -392,6 +438,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -430,6 +480,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -467,6 +521,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -499,6 +557,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -530,6 +592,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -587,6 +653,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -620,6 +690,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -655,6 +729,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -686,6 +764,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -744,6 +826,10 @@ Node Name: {$OS.NAME}</description>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -779,6 +865,10 @@ Node Name: {$OS.NAME}</description>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -830,6 +920,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -868,6 +962,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -903,6 +1001,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -961,6 +1063,10 @@ Node Name: {$OS.NAME}</description>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -1015,6 +1121,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -1046,6 +1156,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -1084,6 +1198,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -1139,6 +1257,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -1170,6 +1292,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -1221,6 +1347,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -1252,6 +1382,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -1290,6 +1424,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -1327,6 +1465,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -1358,6 +1500,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -1418,6 +1564,10 @@ Node Name: {$OS.NAME}</description>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -1458,6 +1608,10 @@ Node Name: {$OS.NAME}</description>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -1489,6 +1643,10 @@ Node Name: {$OS.NAME}</description>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -1559,6 +1717,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -1590,6 +1752,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -1642,6 +1808,10 @@ Node Name: {$OS.NAME}</description>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -1685,6 +1855,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -1716,6 +1890,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -1757,6 +1935,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -1797,6 +1979,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -1830,6 +2016,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -1865,6 +2055,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -1899,6 +2093,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -1931,6 +2129,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -1962,6 +2164,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -2000,6 +2206,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -2032,6 +2242,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -2063,6 +2277,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -2100,6 +2318,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -2150,6 +2372,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -2190,6 +2416,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -2224,6 +2454,10 @@ m:master eligible node, d:data node, i:ingest node, -:coordinating node only, r:
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -2280,6 +2514,10 @@ Node Name: {$OS.NAME}</description>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -2320,6 +2558,10 @@ Node Name: {$OS.NAME}</description>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -2359,6 +2601,10 @@ Node Name: {$OS.NAME}</description>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -2413,6 +2659,10 @@ Node Name: {$OS.NAME}</description>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -2444,6 +2694,10 @@ Node Name: {$OS.NAME}</description>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -2482,6 +2736,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -2513,6 +2771,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -2551,6 +2813,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -2588,6 +2854,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -2619,6 +2889,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -2657,6 +2931,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -2699,6 +2977,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -2754,6 +3036,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -2786,6 +3072,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -2817,6 +3107,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -2868,6 +3162,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -2900,6 +3198,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -2931,6 +3233,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -2976,6 +3282,10 @@ Node Name: {$OS.NAME}</description>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -3007,6 +3317,10 @@ Node Name: {$OS.NAME}</description>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -3045,6 +3359,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -3077,6 +3395,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -3101,6 +3423,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <key>opensearch.node.request_cache.miss-total</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -3153,6 +3479,10 @@ Node Name: {$OS.NAME}</description>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -3184,6 +3514,10 @@ Node Name: {$OS.NAME}</description>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -3223,6 +3557,10 @@ Node Name: {$OS.NAME}</description>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -3258,6 +3596,10 @@ Node Name: {$OS.NAME}</description>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -3307,6 +3649,10 @@ Node Name: {$OS.NAME}</description>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -3358,6 +3704,10 @@ Node Name: {$OS.NAME}</description>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -3428,6 +3778,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -3459,6 +3813,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -3498,6 +3856,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -3533,6 +3895,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -3603,6 +3969,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -3635,6 +4005,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -3666,6 +4040,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -3718,6 +4096,10 @@ Node Name: {$OS.NAME}</description>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -3761,6 +4143,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -3792,6 +4178,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -3831,6 +4221,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -3866,6 +4260,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -3936,6 +4334,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -3968,6 +4370,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -3999,6 +4405,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -4050,6 +4460,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -4082,6 +4496,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -4113,6 +4531,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -4151,6 +4573,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -4187,6 +4613,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -4225,6 +4655,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -4262,6 +4696,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -4293,6 +4731,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -4344,6 +4786,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -4375,6 +4821,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -4416,6 +4866,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -4456,6 +4910,10 @@ else {
                     </master_item>
                     <tags>
                         <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
                         </tag>
@@ -4495,6 +4953,10 @@ else {
                         <key>opensearch.cat_nodes</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
@@ -4542,9 +5004,15 @@ Node Name: {$OS.NAME}</description>
                             </parameters>
                         </step>
                     </preprocessing>
-                    <url>{$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_nodes/stats/adaptive_selection</url>
+                    <url>{$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_nodes/_local/stats/adaptive_selection</url>
                     <verify_peer>YES</verify_peer>
                     <verify_host>YES</verify_host>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                    </tags>
                 </item>
             </items>
             <discovery_rules>
