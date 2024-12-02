@@ -68,6 +68,8 @@ zabbix_export:
               description: 'Cluster does not have an assigned Cluster Manager node.'
               manual_close: 'YES'
               tags:
+                - tag: OpenSearch
+                  value: Health
                 - tag: Services
                   value: OpenSearch
         - uuid: 92aaba3b5eef49aca269e20adbfc25a0
@@ -116,6 +118,8 @@ zabbix_export:
               description: 'Cluster currently has primary shards offline. Some data is unavailable.'
               manual_close: 'YES'
               tags:
+                - tag: OpenSearch
+                  value: Health
                 - tag: Services
                   value: OpenSearch
             - uuid: bcaf1bb7c7f64c2aa99270314fe1212e
@@ -125,6 +129,8 @@ zabbix_export:
               description: 'Cluster currently has replica shards offline. All primary shards are still online.'
               manual_close: 'YES'
               tags:
+                - tag: OpenSearch
+                  value: Health
                 - tag: Services
                   value: OpenSearch
         - uuid: 371654eed3bd4098836c81b6e4c48883
@@ -240,6 +246,8 @@ zabbix_export:
                 {ITEM.VALUE1}
               manual_close: 'YES'
               tags:
+                - tag: OpenSearch
+                  value: Data
                 - tag: Services
                   value: OpenSearch
         - uuid: 093d416ca2374d69b05070b0a59195ac
@@ -371,6 +379,8 @@ zabbix_export:
                 {ITEM.VALUE1}
               manual_close: 'YES'
               tags:
+                - tag: OpenSearch
+                  value: Data
                 - tag: Services
                   value: OpenSearch
         - uuid: addb9a1133254e4a9f8d00d5a1f7b6fb
@@ -602,6 +612,53 @@ zabbix_export:
           tags:
             - tag: Service
               value: OpenSearch
+        - uuid: 17d93f20ee094c14a5788dbadb2d734a
+          name: 'OpenSearch Cluster Dangling Indices'
+          type: HTTP_AGENT
+          key: opensearchcluster.dangling_indices
+          delay: 6h
+          history: 1d
+          value_type: TEXT
+          trends: '0'
+          authtype: BASIC
+          username: '{$OS.USERNAME}'
+          password: '{$OS.PASSWORD}'
+          description: |
+            Gather data from the API endpoint: _dangling
+            Checks for indices that exist on a node before it joined the cluster.
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.dangling_indices
+            - type: STR_REPLACE
+              parameters:
+                - '['
+                - ''
+            - type: STR_REPLACE
+              parameters:
+                - ']'
+                - ''
+          url: '{$OS.PROTOCOL}://{$OS.CLUSTER.HOSTNAME}:{$OS.PORT}/_dangling'
+          verify_peer: 'YES'
+          verify_host: 'YES'
+          tags:
+            - tag: Services
+              value: OpenSearch
+          triggers:
+            - uuid: c91232ec960c42568820a0bc5cae489e
+              expression: 'last(/OpenSearch-Cluster/opensearchcluster.dangling_indices)<>""'
+              name: 'Dangling Indices detected'
+              priority: WARNING
+              description: |
+                One node has dangling indices. These are indices that exist on (at least) one node, but the larger cluster is unaware of them.
+                Usually they are caused by a new node having indices in it's storage before joining the cluster.
+                
+                See instructions here to import or delete them: https://opensearch.org/docs/latest/api-reference/index-apis/dangling-index/
+              tags:
+                - tag: OpenSearch
+                  value: Data
+                - tag: Services
+                  value: OpenSearch
         - uuid: 14eaff4879b74217a6f3227f3ebb107a
           name: 'Nodes OpenSearch Versions Match'
           type: DEPENDENT
@@ -1016,6 +1073,7 @@ zabbix_export:
               trigger_prototypes:
                 - uuid: 2f72ca23cf694a939130169c9ebb728e
                   expression: '(last(/OpenSearch-Cluster/opensearchcluster.index.store_size_primary[{#INDEX.NAME}]) / 1073741824)>={$OS.INDEX.PRIMARY_MAX}'
+                  recovery_mode: NONE
                   name: 'OpenSearch Primary Shard Size Exceeded {$OS.INDEX.PRIMARY_MAX} GiB'
                   priority: WARNING
                   description: |

@@ -110,6 +110,10 @@
                             <manual_close>YES</manual_close>
                             <tags>
                                 <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Health</value>
+                                </tag>
+                                <tag>
                                     <tag>Services</tag>
                                     <value>OpenSearch</value>
                                 </tag>
@@ -183,6 +187,10 @@
                             <manual_close>YES</manual_close>
                             <tags>
                                 <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Health</value>
+                                </tag>
+                                <tag>
                                     <tag>Services</tag>
                                     <value>OpenSearch</value>
                                 </tag>
@@ -196,6 +204,10 @@
                             <description>Cluster currently has replica shards offline. All primary shards are still online.</description>
                             <manual_close>YES</manual_close>
                             <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Health</value>
+                                </tag>
                                 <tag>
                                     <tag>Services</tag>
                                     <value>OpenSearch</value>
@@ -383,6 +395,10 @@
 {ITEM.VALUE1}</description>
                             <manual_close>YES</manual_close>
                             <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Data</value>
+                                </tag>
                                 <tag>
                                     <tag>Services</tag>
                                     <value>OpenSearch</value>
@@ -597,6 +613,10 @@
 {ITEM.VALUE1}</description>
                             <manual_close>YES</manual_close>
                             <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Data</value>
+                                </tag>
                                 <tag>
                                     <tag>Services</tag>
                                     <value>OpenSearch</value>
@@ -931,6 +951,74 @@ for (Count = 0, NodesLength = Nodes.length; Count &lt; NodesLength; Count++) {
                             <value>OpenSearch</value>
                         </tag>
                     </tags>
+                </item>
+                <item>
+                    <uuid>17d93f20ee094c14a5788dbadb2d734a</uuid>
+                    <name>OpenSearch Cluster Dangling Indices</name>
+                    <type>HTTP_AGENT</type>
+                    <key>opensearchcluster.dangling_indices</key>
+                    <delay>6h</delay>
+                    <history>1d</history>
+                    <value_type>TEXT</value_type>
+                    <trends>0</trends>
+                    <authtype>BASIC</authtype>
+                    <username>{$OS.USERNAME}</username>
+                    <password>{$OS.PASSWORD}</password>
+                    <description>Gather data from the API endpoint: _dangling
+Checks for indices that exist on a node before it joined the cluster.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.dangling_indices</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>STR_REPLACE</type>
+                            <parameters>
+                                <parameter>[</parameter>
+                                <parameter/>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>STR_REPLACE</type>
+                            <parameters>
+                                <parameter>]</parameter>
+                                <parameter/>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <url>{$OS.PROTOCOL}://{$OS.CLUSTER.HOSTNAME}:{$OS.PORT}/_dangling</url>
+                    <verify_peer>YES</verify_peer>
+                    <verify_host>YES</verify_host>
+                    <tags>
+                        <tag>
+                            <tag>Services</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>c91232ec960c42568820a0bc5cae489e</uuid>
+                            <expression>last(/OpenSearch-Cluster/opensearchcluster.dangling_indices)&lt;&gt;&quot;&quot;</expression>
+                            <name>Dangling Indices detected</name>
+                            <priority>WARNING</priority>
+                            <description>One node has dangling indices. These are indices that exist on (at least) one node, but the larger cluster is unaware of them.
+Usually they are caused by a new node having indices in it's storage before joining the cluster.
+
+See instructions here to import or delete them: https://opensearch.org/docs/latest/api-reference/index-apis/dangling-index/</description>
+                            <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Data</value>
+                                </tag>
+                                <tag>
+                                    <tag>Services</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>14eaff4879b74217a6f3227f3ebb107a</uuid>
@@ -1582,6 +1670,7 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                                 <trigger_prototype>
                                     <uuid>2f72ca23cf694a939130169c9ebb728e</uuid>
                                     <expression>(last(/OpenSearch-Cluster/opensearchcluster.index.store_size_primary[{#INDEX.NAME}]) / 1073741824)&gt;={$OS.INDEX.PRIMARY_MAX}</expression>
+                                    <recovery_mode>NONE</recovery_mode>
                                     <name>OpenSearch Primary Shard Size Exceeded {$OS.INDEX.PRIMARY_MAX} GiB</name>
                                     <priority>WARNING</priority>
                                     <description>An indices primary shards have exceeded {$OS.INDEX.PRIMARY_MAX} GiB. This can cause lots of performance, and write issues. This index should be rolled over.
