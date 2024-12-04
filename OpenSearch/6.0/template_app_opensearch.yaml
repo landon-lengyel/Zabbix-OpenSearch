@@ -171,20 +171,6 @@ zabbix_export:
           tags:
             - tag: 'Node Name'
               value: '{$OS.NAME}'
-          triggers:
-            - uuid: 676d3d78315e44a8afa606dc4223e8a5
-              expression: 'nodata(/OpenSearch/opensearch.cat_nodes,3m)=1'
-              name: 'Node is not responding'
-              priority: HIGH
-              description: |
-                Attempted to reach the API on node, but hasn't been responding for at least 3 minutes.
-                
-                Failing API Endpoint: {$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_cat/nodes
-              tags:
-                - tag: OpenSearch
-                  value: Health
-                - tag: Service
-                  value: OpenSearch
         - uuid: f97c7d8dbad44811b696ad19d298289e
           name: 'Package Build Number'
           type: DEPENDENT
@@ -287,6 +273,20 @@ zabbix_export:
               value: '{$OS.NAME}'
             - tag: Service
               value: OpenSearch
+          triggers:
+            - uuid: 676d3d78315e44a8afa606dc4223e8a5
+              expression: 'nodata(/OpenSearch/opensearch.node.cpu,3m)=1'
+              name: 'Node is not responding'
+              priority: HIGH
+              description: |
+                Attempted to reach the API on node, but hasn't been responding for at least 3 minutes.
+                
+                Failing API Endpoint: {$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_cat/nodes
+              tags:
+                - tag: OpenSearch
+                  value: Health
+                - tag: Service
+                  value: OpenSearch
         - uuid: 89a9093d4b764c76b72b207853b9ce8c
           name: 'Disk Available'
           type: DEPENDENT
@@ -531,31 +531,10 @@ zabbix_export:
               value: OpenSearch
             - tag: Source
               value: Calculated
-        - uuid: 37d5de41c2bd48aa848eb5ccee092161
-          name: 'Flush Total'
-          type: DEPENDENT
-          key: opensearch.node.flush.total
-          delay: '0'
-          description: 'Total number of flushes.'
-          preprocessing:
-            - type: JSONPATH
-              parameters:
-                - '$[?(@.name==''{$OS.NAME}'')].[''flush.total'']'
-            - type: REGEX
-              parameters:
-                - \w+
-                - \0
-          master_item:
-            key: opensearch.cat_nodes
-          tags:
-            - tag: 'Node Name'
-              value: '{$OS.NAME}'
-            - tag: Service
-              value: OpenSearch
         - uuid: 8a2e71e7ca9046579d486d525f369f47
-          name: 'Flush Total Time'
+          name: 'Flush Time'
           type: DEPENDENT
-          key: opensearch.node.flush.total_time
+          key: opensearch.node.flush.time
           delay: '0'
           units: uptime
           description: 'Time spent in flush'
@@ -585,6 +564,27 @@ zabbix_export:
                   else {
                     return time[1];
                   }
+          master_item:
+            key: opensearch.cat_nodes
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 37d5de41c2bd48aa848eb5ccee092161
+          name: 'Flush Total'
+          type: DEPENDENT
+          key: opensearch.node.flush.total
+          delay: '0'
+          description: 'Total number of flushes.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.name==''{$OS.NAME}'')].[''flush.total'']'
+            - type: REGEX
+              parameters:
+                - \w+
+                - \0
           master_item:
             key: opensearch.cat_nodes
           tags:
@@ -1405,7 +1405,7 @@ zabbix_export:
             - tag: Service
               value: OpenSearch
         - uuid: bde0be50d7f445da83c73adead018b5c
-          name: 'Merges Total'
+          name: 'Merges Total Count'
           type: DEPENDENT
           key: opensearch.node.merges.total
           delay: '0'
@@ -1474,7 +1474,7 @@ zabbix_export:
             - tag: Service
               value: OpenSearch
         - uuid: b193fb432fc346338735120025b2be75
-          name: 'Merges Total Time'
+          name: 'Merges Time'
           type: DEPENDENT
           key: opensearch.node.merges.total_time
           delay: '0'

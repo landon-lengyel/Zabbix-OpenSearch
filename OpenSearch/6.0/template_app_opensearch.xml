@@ -259,27 +259,6 @@ https://opensearch.org/docs/latest/api-reference/cat/cat-allocation/</descriptio
                             <value>{$OS.NAME}</value>
                         </tag>
                     </tags>
-                    <triggers>
-                        <trigger>
-                            <uuid>676d3d78315e44a8afa606dc4223e8a5</uuid>
-                            <expression>nodata(/OpenSearch/opensearch.cat_nodes,3m)=1</expression>
-                            <name>Node is not responding</name>
-                            <priority>HIGH</priority>
-                            <description>Attempted to reach the API on node, but hasn't been responding for at least 3 minutes.
-
-Failing API Endpoint: {$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_cat/nodes</description>
-                            <tags>
-                                <tag>
-                                    <tag>OpenSearch</tag>
-                                    <value>Health</value>
-                                </tag>
-                                <tag>
-                                    <tag>Service</tag>
-                                    <value>OpenSearch</value>
-                                </tag>
-                            </tags>
-                        </trigger>
-                    </triggers>
                 </item>
                 <item>
                     <uuid>f97c7d8dbad44811b696ad19d298289e</uuid>
@@ -447,6 +426,27 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                             <value>OpenSearch</value>
                         </tag>
                     </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>676d3d78315e44a8afa606dc4223e8a5</uuid>
+                            <expression>nodata(/OpenSearch/opensearch.node.cpu,3m)=1</expression>
+                            <name>Node is not responding</name>
+                            <priority>HIGH</priority>
+                            <description>Attempted to reach the API on node, but hasn't been responding for at least 3 minutes.
+
+Failing API Endpoint: {$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_cat/nodes</description>
+                            <tags>
+                                <tag>
+                                    <tag>OpenSearch</tag>
+                                    <value>Health</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>89a9093d4b764c76b72b207853b9ce8c</uuid>
@@ -840,46 +840,10 @@ Node Name: {$OS.NAME}</description>
                     </tags>
                 </item>
                 <item>
-                    <uuid>37d5de41c2bd48aa848eb5ccee092161</uuid>
-                    <name>Flush Total</name>
-                    <type>DEPENDENT</type>
-                    <key>opensearch.node.flush.total</key>
-                    <delay>0</delay>
-                    <description>Total number of flushes.</description>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <parameters>
-                                <parameter>$[?(@.name=='{$OS.NAME}')].['flush.total']</parameter>
-                            </parameters>
-                        </step>
-                        <step>
-                            <type>REGEX</type>
-                            <parameters>
-                                <parameter>\w+</parameter>
-                                <parameter>\0</parameter>
-                            </parameters>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>opensearch.cat_nodes</key>
-                    </master_item>
-                    <tags>
-                        <tag>
-                            <tag>Node Name</tag>
-                            <value>{$OS.NAME}</value>
-                        </tag>
-                        <tag>
-                            <tag>Service</tag>
-                            <value>OpenSearch</value>
-                        </tag>
-                    </tags>
-                </item>
-                <item>
                     <uuid>8a2e71e7ca9046579d486d525f369f47</uuid>
-                    <name>Flush Total Time</name>
+                    <name>Flush Time</name>
                     <type>DEPENDENT</type>
-                    <key>opensearch.node.flush.total_time</key>
+                    <key>opensearch.node.flush.time</key>
                     <delay>0</delay>
                     <units>uptime</units>
                     <description>Time spent in flush</description>
@@ -912,6 +876,42 @@ if (multiplier &gt; 0) {
 else {
   return time[1];
 }</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.cat_nodes</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>37d5de41c2bd48aa848eb5ccee092161</uuid>
+                    <name>Flush Total</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.node.flush.total</key>
+                    <delay>0</delay>
+                    <description>Total number of flushes.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.name=='{$OS.NAME}')].['flush.total']</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>REGEX</type>
+                            <parameters>
+                                <parameter>\w+</parameter>
+                                <parameter>\0</parameter>
                             </parameters>
                         </step>
                     </preprocessing>
@@ -2217,7 +2217,7 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                 </item>
                 <item>
                     <uuid>bde0be50d7f445da83c73adead018b5c</uuid>
-                    <name>Merges Total</name>
+                    <name>Merges Total Count</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.merges.total</key>
                     <delay>0</delay>
@@ -2330,7 +2330,7 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                 </item>
                 <item>
                     <uuid>b193fb432fc346338735120025b2be75</uuid>
-                    <name>Merges Total Time</name>
+                    <name>Merges Time</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.merges.total_time</key>
                     <delay>0</delay>
