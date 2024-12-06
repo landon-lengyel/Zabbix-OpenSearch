@@ -180,7 +180,9 @@
                     <triggers>
                         <trigger>
                             <uuid>ff1ef340488546b38bd74292199d52a5</uuid>
-                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;red&quot;</expression>
+                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health, #1)=&quot;red&quot; and
+last(/OpenSearch-Cluster/opensearch.cluster.health, #2)=&quot;red&quot; and
+last(/OpenSearch-Cluster/opensearch.cluster.health, #3)=&quot;red&quot;</expression>
                             <name>OpenSearch Cluster Health: Red</name>
                             <priority>HIGH</priority>
                             <description>Cluster currently has primary shards offline. Some data is unavailable.</description>
@@ -198,7 +200,9 @@
                         </trigger>
                         <trigger>
                             <uuid>bcaf1bb7c7f64c2aa99270314fe1212e</uuid>
-                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;yellow&quot;</expression>
+                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health,#1)=&quot;yellow&quot; and 
+last(/OpenSearch-Cluster/opensearch.cluster.health,#2)=&quot;yellow&quot; and
+last(/OpenSearch-Cluster/opensearch.cluster.health,#3)=&quot;yellow&quot;</expression>
                             <name>OpenSearch Cluster Health: Yellow</name>
                             <priority>WARNING</priority>
                             <description>Cluster currently has replica shards offline. All primary shards are still online.</description>
@@ -773,11 +777,15 @@ Red: Some primary shard(s) are offline.</description>
                             <dependencies>
                                 <dependency>
                                     <name>OpenSearch Cluster Health: Red</name>
-                                    <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;red&quot;</expression>
+                                    <expression>last(/OpenSearch-Cluster/opensearch.cluster.health, #1)=&quot;red&quot; and
+last(/OpenSearch-Cluster/opensearch.cluster.health, #2)=&quot;red&quot; and
+last(/OpenSearch-Cluster/opensearch.cluster.health, #3)=&quot;red&quot;</expression>
                                 </dependency>
                                 <dependency>
                                     <name>OpenSearch Cluster Health: Yellow</name>
-                                    <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;yellow&quot;</expression>
+                                    <expression>last(/OpenSearch-Cluster/opensearch.cluster.health,#1)=&quot;yellow&quot; and 
+last(/OpenSearch-Cluster/opensearch.cluster.health,#2)=&quot;yellow&quot; and
+last(/OpenSearch-Cluster/opensearch.cluster.health,#3)=&quot;yellow&quot;</expression>
                                 </dependency>
                             </dependencies>
                             <tags>
@@ -1219,11 +1227,15 @@ Index Name: {#INDEX.NAME}</description>
                                     <dependencies>
                                         <dependency>
                                             <name>OpenSearch Cluster Health: Red</name>
-                                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;red&quot;</expression>
+                                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health, #1)=&quot;red&quot; and
+last(/OpenSearch-Cluster/opensearch.cluster.health, #2)=&quot;red&quot; and
+last(/OpenSearch-Cluster/opensearch.cluster.health, #3)=&quot;red&quot;</expression>
                                         </dependency>
                                         <dependency>
                                             <name>OpenSearch Cluster Health: Yellow</name>
-                                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;yellow&quot;</expression>
+                                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health,#1)=&quot;yellow&quot; and 
+last(/OpenSearch-Cluster/opensearch.cluster.health,#2)=&quot;yellow&quot; and
+last(/OpenSearch-Cluster/opensearch.cluster.health,#3)=&quot;yellow&quot;</expression>
                                         </dependency>
                                     </dependencies>
                                     <tags>
@@ -1252,11 +1264,15 @@ Index Name: {#INDEX.NAME}</description>
                                     <dependencies>
                                         <dependency>
                                             <name>OpenSearch Cluster Health: Red</name>
-                                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;red&quot;</expression>
+                                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health, #1)=&quot;red&quot; and
+last(/OpenSearch-Cluster/opensearch.cluster.health, #2)=&quot;red&quot; and
+last(/OpenSearch-Cluster/opensearch.cluster.health, #3)=&quot;red&quot;</expression>
                                         </dependency>
                                         <dependency>
                                             <name>OpenSearch Cluster Health: Yellow</name>
-                                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health)=&quot;yellow&quot;</expression>
+                                            <expression>last(/OpenSearch-Cluster/opensearch.cluster.health,#1)=&quot;yellow&quot; and 
+last(/OpenSearch-Cluster/opensearch.cluster.health,#2)=&quot;yellow&quot; and
+last(/OpenSearch-Cluster/opensearch.cluster.health,#3)=&quot;yellow&quot;</expression>
                                         </dependency>
                                     </dependencies>
                                     <tags>

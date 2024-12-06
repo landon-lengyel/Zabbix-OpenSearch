@@ -112,7 +112,10 @@ zabbix_export:
               value: OpenSearch
           triggers:
             - uuid: ff1ef340488546b38bd74292199d52a5
-              expression: 'last(/OpenSearch-Cluster/opensearch.cluster.health)="red"'
+              expression: |
+                last(/OpenSearch-Cluster/opensearch.cluster.health, #1)="red" and
+                last(/OpenSearch-Cluster/opensearch.cluster.health, #2)="red" and
+                last(/OpenSearch-Cluster/opensearch.cluster.health, #3)="red"
               name: 'OpenSearch Cluster Health: Red'
               priority: HIGH
               description: 'Cluster currently has primary shards offline. Some data is unavailable.'
@@ -123,7 +126,10 @@ zabbix_export:
                 - tag: Services
                   value: OpenSearch
             - uuid: bcaf1bb7c7f64c2aa99270314fe1212e
-              expression: 'last(/OpenSearch-Cluster/opensearch.cluster.health)="yellow"'
+              expression: |
+                last(/OpenSearch-Cluster/opensearch.cluster.health,#1)="yellow" and 
+                last(/OpenSearch-Cluster/opensearch.cluster.health,#2)="yellow" and
+                last(/OpenSearch-Cluster/opensearch.cluster.health,#3)="yellow"
               name: 'OpenSearch Cluster Health: Yellow'
               priority: WARNING
               description: 'Cluster currently has replica shards offline. All primary shards are still online.'
@@ -476,9 +482,15 @@ zabbix_export:
               manual_close: 'YES'
               dependencies:
                 - name: 'OpenSearch Cluster Health: Red'
-                  expression: 'last(/OpenSearch-Cluster/opensearch.cluster.health)="red"'
+                  expression: |
+                    last(/OpenSearch-Cluster/opensearch.cluster.health, #1)="red" and
+                    last(/OpenSearch-Cluster/opensearch.cluster.health, #2)="red" and
+                    last(/OpenSearch-Cluster/opensearch.cluster.health, #3)="red"
                 - name: 'OpenSearch Cluster Health: Yellow'
-                  expression: 'last(/OpenSearch-Cluster/opensearch.cluster.health)="yellow"'
+                  expression: |
+                    last(/OpenSearch-Cluster/opensearch.cluster.health,#1)="yellow" and 
+                    last(/OpenSearch-Cluster/opensearch.cluster.health,#2)="yellow" and
+                    last(/OpenSearch-Cluster/opensearch.cluster.health,#3)="yellow"
               tags:
                 - tag: Services
                   value: OpenSearch
@@ -790,9 +802,15 @@ zabbix_export:
                     Index Name: {#INDEX.NAME}
                   dependencies:
                     - name: 'OpenSearch Cluster Health: Red'
-                      expression: 'last(/OpenSearch-Cluster/opensearch.cluster.health)="red"'
+                      expression: |
+                        last(/OpenSearch-Cluster/opensearch.cluster.health, #1)="red" and
+                        last(/OpenSearch-Cluster/opensearch.cluster.health, #2)="red" and
+                        last(/OpenSearch-Cluster/opensearch.cluster.health, #3)="red"
                     - name: 'OpenSearch Cluster Health: Yellow'
-                      expression: 'last(/OpenSearch-Cluster/opensearch.cluster.health)="yellow"'
+                      expression: |
+                        last(/OpenSearch-Cluster/opensearch.cluster.health,#1)="yellow" and 
+                        last(/OpenSearch-Cluster/opensearch.cluster.health,#2)="yellow" and
+                        last(/OpenSearch-Cluster/opensearch.cluster.health,#3)="yellow"
                   tags:
                     - tag: 'Index Name'
                       value: '{#INDEX.NAME}'
@@ -810,9 +828,15 @@ zabbix_export:
                     Index Name: {#INDEX.NAME}
                   dependencies:
                     - name: 'OpenSearch Cluster Health: Red'
-                      expression: 'last(/OpenSearch-Cluster/opensearch.cluster.health)="red"'
+                      expression: |
+                        last(/OpenSearch-Cluster/opensearch.cluster.health, #1)="red" and
+                        last(/OpenSearch-Cluster/opensearch.cluster.health, #2)="red" and
+                        last(/OpenSearch-Cluster/opensearch.cluster.health, #3)="red"
                     - name: 'OpenSearch Cluster Health: Yellow'
-                      expression: 'last(/OpenSearch-Cluster/opensearch.cluster.health)="yellow"'
+                      expression: |
+                        last(/OpenSearch-Cluster/opensearch.cluster.health,#1)="yellow" and 
+                        last(/OpenSearch-Cluster/opensearch.cluster.health,#2)="yellow" and
+                        last(/OpenSearch-Cluster/opensearch.cluster.health,#3)="yellow"
                   tags:
                     - tag: 'Index Name'
                       value: '{#INDEX.NAME}'
