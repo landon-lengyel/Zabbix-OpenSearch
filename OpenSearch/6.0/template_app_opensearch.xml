@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
-    <version>7.0</version>
+    <version>7.2</version>
     <template_groups>
         <template_group>
             <uuid>46e77e29fa6644fea1eb2386af509d50</uuid>
@@ -23,7 +23,6 @@
                     <name>Disk Available</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.allocation.disk.avail</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Total disk available on the node. Not just available to OpenSearch, but the system as a whole.</description>
                     <preprocessing>
@@ -64,7 +63,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Disk Indices</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.allocation.disk.indices</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Size of indices currently stored on the nodes disk.</description>
                     <preprocessing>
@@ -105,7 +103,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Disk Percentage Used</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.allocation.disk.percent</key>
-                    <delay>0</delay>
                     <description>Percentage of disk storage in use on node. Not just by OpenSearch.</description>
                     <preprocessing>
                         <step>
@@ -141,7 +138,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Disk Used</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.allocation.disk.used</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Total disk used on server, not just by OpenSearch.</description>
                     <preprocessing>
@@ -182,7 +178,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Shard Count</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.allocation.shards</key>
-                    <delay>0</delay>
                     <description>Shard count currently stored on the node.</description>
                     <preprocessing>
                         <step>
@@ -221,7 +216,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <delay>30m</delay>
                     <history>0</history>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <authtype>BASIC</authtype>
                     <username>{$OS.USERNAME}</username>
                     <password>{$OS.PASSWORD}</password>
@@ -245,7 +239,6 @@ https://opensearch.org/docs/latest/api-reference/cat/cat-allocation/</descriptio
                     <key>opensearch.cat_nodes</key>
                     <history>0</history>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <authtype>BASIC</authtype>
                     <username>{$OS.USERNAME}</username>
                     <password>{$OS.PASSWORD}</password>
@@ -261,13 +254,231 @@ https://opensearch.org/docs/latest/api-reference/cat/cat-allocation/</descriptio
                     </tags>
                 </item>
                 <item>
+                    <uuid>649ce8e764bc4da19cd1cf8e574b2f3c</uuid>
+                    <name>In-Flight Requests Breakers: Estimated size</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.in-flight_requests_breakers.estimated_size</key>
+                    <units>bytes</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.in_flight_requests.estimated_size_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>edcc5bef6f4b4267989c29675d03891c</uuid>
+                    <name>In-Flight Requests Breakers: Size limit</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.in-flight_requests_breakers.size_limit</key>
+                    <units>bytes</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.in_flight_requests.limit_size_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>1a2d8b69f1164e19ba907540d05006b0</uuid>
+                    <name>In-Flight Requests Breakers: Tripped count</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.in-flight_requests_breakers.tripped</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.in_flight_requests.tripped</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>08126703513a44cb9eb47b269f8be3cf</uuid>
+                    <name>Net HTTP: Current open</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.net_http.current_open</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.http.current_open</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>d576f83c118444f6a6863a4d4b48ccaf</uuid>
+                    <name>Net Transport: Total outbound connections</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.net_transport.outbound_connections</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.transport.server_open.total_outbound_connections</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>96ae67a0e7c341e995b5026d4f2e53e5</uuid>
+                    <name>Net Transport: Total receive size</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.net_transport.receive_size</key>
+                    <units>bytes</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.transport.server_open.rx_size_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>944eb6cbd15249f2b1d722fa2305c828</uuid>
+                    <name>Net Transport: Server open</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.net_transport.server_open</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.transport.server_open</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>87c6b86f810442188d2b7d7da058e89c</uuid>
+                    <name>Net Transport: Total transmit size</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.net_transport.transmit_size</key>
+                    <units>bytes</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.transport.server_open.tx_size_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
                     <uuid>f97c7d8dbad44811b696ad19d298289e</uuid>
                     <name>Package Build Number</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.build</key>
-                    <delay>0</delay>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <description>OpenSearch distribution package's build number.</description>
                     <preprocessing>
                         <step>
@@ -309,9 +520,7 @@ https://opensearch.org/docs/latest/api-reference/cat/cat-allocation/</descriptio
                     <name>Cluster Manager</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.cluster_manager</key>
-                    <delay>0</delay>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <description>True if the node is the cluster manager, False if not.</description>
                     <preprocessing>
                         <step>
@@ -355,7 +564,6 @@ https://opensearch.org/docs/latest/api-reference/cat/cat-allocation/</descriptio
                     <name>Completion Size</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.completion.size</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Size of completion</description>
                     <preprocessing>
@@ -396,7 +604,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>CPU</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.cpu</key>
-                    <delay>0</delay>
                     <description>Recent CPU utilization.</description>
                     <preprocessing>
                         <step>
@@ -453,7 +660,6 @@ Failing API Endpoint: {$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_cat/nodes</des
                     <name>Disk Available</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.disk.avail</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Total disk space available to the system.</description>
                     <preprocessing>
@@ -494,7 +700,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Disk Used</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.disk.used</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Total disk space used in OpenSearch.</description>
                     <preprocessing>
@@ -535,7 +740,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Disk Used Percent</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.disk.used_percent</key>
-                    <delay>0</delay>
                     <description>Total disk space used in OpenSearch (as a percentage of total)</description>
                     <preprocessing>
                         <step>
@@ -571,7 +775,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>FieldData Evictions</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.fielddata.evictions</key>
-                    <delay>0</delay>
                     <description>FieldData Evictions</description>
                     <preprocessing>
                         <step>
@@ -626,7 +829,6 @@ Node Name: {$OS.NAME}</description>
                     <name>FieldData Memory Size</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.fielddata.memory_size</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Used FieldData cache</description>
                     <preprocessing>
@@ -667,9 +869,7 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>File Descriptors Current</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.file_desc.current</key>
-                    <delay>0</delay>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <description>Currently used file descriptors.</description>
                     <preprocessing>
                         <step>
@@ -705,9 +905,7 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>File Descriptors Max</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.file_desc.max</key>
-                    <delay>0</delay>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <description>Maximum possible file descriptors.</description>
                     <preprocessing>
                         <step>
@@ -743,7 +941,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>File Descriptors Percent</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.file_desc.percent</key>
-                    <delay>0</delay>
                     <description>Currently used file descriptors expressed as a percentage of maximum file descriptors.</description>
                     <preprocessing>
                         <step>
@@ -798,7 +995,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Flush Changes</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.flush.changes</key>
-                    <delay>0</delay>
                     <description>Zabbix calculated difference of last value and current value.</description>
                     <preprocessing>
                         <step>
@@ -816,9 +1012,6 @@ Node Name: {$OS.NAME}</description>
                         </step>
                         <step>
                             <type>SIMPLE_CHANGE</type>
-                            <parameters>
-                                <parameter/>
-                            </parameters>
                         </step>
                     </preprocessing>
                     <master_item>
@@ -844,7 +1037,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Flush Time</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.flush.time</key>
-                    <delay>0</delay>
                     <units>uptime</units>
                     <description>Time spent in flush</description>
                     <preprocessing>
@@ -898,7 +1090,6 @@ else {
                     <name>Flush Total</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.flush.total</key>
-                    <delay>0</delay>
                     <description>Total number of flushes.</description>
                     <preprocessing>
                         <step>
@@ -934,7 +1125,6 @@ else {
                     <name>Get Changes</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.get.changes</key>
-                    <delay>0</delay>
                     <description>Zabbix calculated difference of last value and current value.</description>
                     <preprocessing>
                         <step>
@@ -952,9 +1142,6 @@ else {
                         </step>
                         <step>
                             <type>SIMPLE_CHANGE</type>
-                            <parameters>
-                                <parameter/>
-                            </parameters>
                         </step>
                     </preprocessing>
                     <master_item>
@@ -980,7 +1167,6 @@ else {
                     <name>Get Current</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.get.current</key>
-                    <delay>0</delay>
                     <description>Current number of get operations.</description>
                     <preprocessing>
                         <step>
@@ -1035,7 +1221,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Get Exists Changes</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.get.exists_changes</key>
-                    <delay>0</delay>
                     <description>Zabbix calculated difference of last value and current value.</description>
                     <preprocessing>
                         <step>
@@ -1053,9 +1238,6 @@ Node Name: {$OS.NAME}</description>
                         </step>
                         <step>
                             <type>SIMPLE_CHANGE</type>
-                            <parameters>
-                                <parameter/>
-                            </parameters>
                         </step>
                     </preprocessing>
                     <master_item>
@@ -1081,7 +1263,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Get Exists Time</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.get.exists_time</key>
-                    <delay>0</delay>
                     <units>uptime</units>
                     <description>Time spent in successful get operations.</description>
                     <preprocessing>
@@ -1135,7 +1316,6 @@ else {
                     <name>Get Exists Total</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.get.exists_total</key>
-                    <delay>0</delay>
                     <description>Total number of successful get operations.</description>
                     <preprocessing>
                         <step>
@@ -1171,7 +1351,6 @@ else {
                     <name>Get Missing Changes</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.get.missing_changes</key>
-                    <delay>0</delay>
                     <description>Zabbix calculated difference of last value and current value.</description>
                     <preprocessing>
                         <step>
@@ -1189,9 +1368,6 @@ else {
                         </step>
                         <step>
                             <type>SIMPLE_CHANGE</type>
-                            <parameters>
-                                <parameter/>
-                            </parameters>
                         </step>
                     </preprocessing>
                     <master_item>
@@ -1217,7 +1393,6 @@ else {
                     <name>Get Missing Time</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.get.missing_time</key>
-                    <delay>0</delay>
                     <units>uptime</units>
                     <description>Time spent in failed get operations.</description>
                     <preprocessing>
@@ -1271,7 +1446,6 @@ else {
                     <name>Get Missing Total</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.get.missing_total</key>
-                    <delay>0</delay>
                     <description>Total number of failed get operations.</description>
                     <preprocessing>
                         <step>
@@ -1307,7 +1481,6 @@ else {
                     <name>Get Time</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.get.time</key>
-                    <delay>0</delay>
                     <units>uptime</units>
                     <description>Time spent in get</description>
                     <preprocessing>
@@ -1361,7 +1534,6 @@ else {
                     <name>Get Total</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.get.total</key>
-                    <delay>0</delay>
                     <description>Total number of get operations.</description>
                     <preprocessing>
                         <step>
@@ -1397,7 +1569,6 @@ else {
                     <name>Heap Current</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.heap.current</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Currently used Java heap. These are Java objects in memory.</description>
                     <preprocessing>
@@ -1438,7 +1609,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Heap Max</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.heap.max</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Maximum configured Java heap. These are Java objects in memory.</description>
                     <preprocessing>
@@ -1479,7 +1649,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Heap Percent</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.heap.percent</key>
-                    <delay>0</delay>
                     <description>Currently used Java heap. These are Java objects in memory. (Expressed as a percent of max)</description>
                     <preprocessing>
                         <step>
@@ -1534,9 +1703,7 @@ Node Name: {$OS.NAME}</description>
                     <name>HTTP Address</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.http_address</key>
-                    <delay>0</delay>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <description>HTTP URL the node is listening on.</description>
                     <preprocessing>
                         <step>
@@ -1578,9 +1745,7 @@ Node Name: {$OS.NAME}</description>
                     <name>ID</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.id</key>
-                    <delay>0</delay>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <description>Cluster assigned random ID</description>
                     <preprocessing>
                         <step>
@@ -1622,7 +1787,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Delete Current</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.indexing.delete_current</key>
-                    <delay>0</delay>
                     <description>Current number of deletion operations on indices.</description>
                     <preprocessing>
                         <step>
@@ -1677,7 +1841,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Delete Time</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.indexing.delete_time</key>
-                    <delay>0</delay>
                     <units>uptime</units>
                     <description>Time spent in index deletion operations.</description>
                     <preprocessing>
@@ -1731,7 +1894,6 @@ else {
                     <name>Indexing Current</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.indexing.index_current</key>
-                    <delay>0</delay>
                     <description>Current number of indexing operations.</description>
                     <preprocessing>
                         <step>
@@ -1786,7 +1948,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Indexing Total Failed</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.indexing.index_failed</key>
-                    <delay>0</delay>
                     <description>Total number of failed indexing operations.</description>
                     <preprocessing>
                         <step>
@@ -1822,7 +1983,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Indexing Time</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.indexing.index_time</key>
-                    <delay>0</delay>
                     <units>uptime</units>
                     <description>Time spent in indexing operations.</description>
                     <preprocessing>
@@ -1869,7 +2029,6 @@ else {
                     <name>Indexing Total</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.indexing.index_total</key>
-                    <delay>0</delay>
                     <description>Total number of indexing operations.</description>
                     <preprocessing>
                         <step>
@@ -1905,9 +2064,7 @@ else {
                     <name>IP</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.ip</key>
-                    <delay>0</delay>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <description>IP the node is listening on</description>
                     <preprocessing>
                         <step>
@@ -1949,9 +2106,7 @@ else {
                     <name>Package JDK</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.jdk</key>
-                    <delay>0</delay>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <description>Node's running OpenSearch Java Development Kit (JDK) version number.</description>
                     <preprocessing>
                         <step>
@@ -1993,7 +2148,6 @@ else {
                     <name>load_1m</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.load_1m</key>
-                    <delay>0</delay>
                     <history>1d</history>
                     <trends>0</trends>
                     <description>CPU load for the last 1 minute.</description>
@@ -2031,7 +2185,6 @@ else {
                     <name>load_5m</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.load_5m</key>
-                    <delay>0</delay>
                     <history>1d</history>
                     <trends>0</trends>
                     <description>CPU load for the last 5 minutes.</description>
@@ -2069,7 +2222,6 @@ else {
                     <name>load_15m</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.load_15m</key>
-                    <delay>0</delay>
                     <history>1d</history>
                     <trends>0</trends>
                     <description>CPU load for the last 15 minutes.</description>
@@ -2107,7 +2259,6 @@ else {
                     <name>Merges Current</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.merges.current</key>
-                    <delay>0</delay>
                     <description>Number of current merge operations.</description>
                     <preprocessing>
                         <step>
@@ -2143,7 +2294,6 @@ else {
                     <name>Merges Current Docs</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.merges.current_docs</key>
-                    <delay>0</delay>
                     <description>Current number of merging docs operations.</description>
                     <preprocessing>
                         <step>
@@ -2179,7 +2329,6 @@ else {
                     <name>Merges Current Size</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.merges.current_size</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Size of current merge operations.</description>
                     <preprocessing>
@@ -2220,7 +2369,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Merges Total Count</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.merges.total</key>
-                    <delay>0</delay>
                     <description>Total number of completed merge operations.</description>
                     <preprocessing>
                         <step>
@@ -2256,7 +2404,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Merges Total Docs</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.merges.total_docs</key>
-                    <delay>0</delay>
                     <description>Total number of completed merged documents.</description>
                     <preprocessing>
                         <step>
@@ -2292,7 +2439,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Merges Total Size</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.merges.total_size</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Total size of merged operations.</description>
                     <preprocessing>
@@ -2333,7 +2479,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Merges Time</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.merges.total_time</key>
-                    <delay>0</delay>
                     <units>uptime</units>
                     <description>Time spent in merge operations.</description>
                     <preprocessing>
@@ -2386,9 +2531,7 @@ else {
                     <name>Name</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.name</key>
-                    <delay>0</delay>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <description>Admin determined node name.</description>
                     <preprocessing>
                         <step>
@@ -2430,9 +2573,7 @@ else {
                     <name>Node Role (Letters)</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.node.role</key>
-                    <delay>0</delay>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <description>Roles assigned to the node in the 'single letter form'.
 m:master eligible node, d:data node, i:ingest node, -:coordinating node only, r:remote cluster client</description>
                     <preprocessing>
@@ -2490,9 +2631,7 @@ Node Name: {$OS.NAME}</description>
                     <name>Node Roles</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.node.roles</key>
-                    <delay>0</delay>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <description>Roles assigned to the node.</description>
                     <preprocessing>
                         <step>
@@ -2528,9 +2667,7 @@ Node Name: {$OS.NAME}</description>
                     <name>PID</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.pid</key>
-                    <delay>0</delay>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <description>Process ID of OpenSearch Service</description>
                     <preprocessing>
                         <step>
@@ -2572,9 +2709,7 @@ Node Name: {$OS.NAME}</description>
                     <name>Port</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.port</key>
-                    <delay>0</delay>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <description>Process ID of OpenSearch Service</description>
                     <preprocessing>
                         <step>
@@ -2637,7 +2772,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Query Cache Evictions</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.query_cache.evictions</key>
-                    <delay>0</delay>
                     <description>Query Cache Evictions</description>
                     <preprocessing>
                         <step>
@@ -2673,7 +2807,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Query Cache Hit Count</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.query_cache.hit_count</key>
-                    <delay>0</delay>
                     <description>Query Cache Hit Count</description>
                     <preprocessing>
                         <step>
@@ -2709,7 +2842,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Query Cache Memory Size</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.query_cache.memory_size</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Used Query Cache</description>
                     <preprocessing>
@@ -2750,7 +2882,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Query Cache Miss Count</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.query_cache.miss_count</key>
-                    <delay>0</delay>
                     <description>Query Cache Miss Count</description>
                     <preprocessing>
                         <step>
@@ -2786,7 +2917,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Ram Current</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.ram.current</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Currently used system memory.</description>
                     <preprocessing>
@@ -2827,7 +2957,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Ram Max</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.ram.max</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Total system memory.</description>
                     <preprocessing>
@@ -2868,7 +2997,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Ram Percent</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.ram.percent</key>
-                    <delay>0</delay>
                     <description>Currently used system memory expressed as a percentage of total system memory.</description>
                     <preprocessing>
                         <step>
@@ -2904,7 +3032,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Refresh Changes</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.refresh.changes</key>
-                    <delay>0</delay>
                     <description>Zabbix calculated difference of last value and current value.</description>
                     <preprocessing>
                         <step>
@@ -2922,9 +3049,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         </step>
                         <step>
                             <type>SIMPLE_CHANGE</type>
-                            <parameters>
-                                <parameter/>
-                            </parameters>
                         </step>
                     </preprocessing>
                     <master_item>
@@ -2950,7 +3074,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Refresh External Changes</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.refresh.external_changes</key>
-                    <delay>0</delay>
                     <description>Zabbix calculated difference of last value and current value.</description>
                     <preprocessing>
                         <step>
@@ -2968,9 +3091,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         </step>
                         <step>
                             <type>SIMPLE_CHANGE</type>
-                            <parameters>
-                                <parameter/>
-                            </parameters>
                         </step>
                     </preprocessing>
                     <master_item>
@@ -2996,7 +3116,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Refresh External Total Time</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.refresh.external_time</key>
-                    <delay>0</delay>
                     <units>uptime</units>
                     <description>Time spent in external refresh operations.</description>
                     <preprocessing>
@@ -3050,7 +3169,6 @@ else {
                     <name>Refresh External Total</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.refresh.external_total</key>
-                    <delay>0</delay>
                     <description>Total number of external refreshes.</description>
                     <preprocessing>
                         <step>
@@ -3086,7 +3204,6 @@ else {
                     <name>Refresh Listeners</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.refresh.listeners</key>
-                    <delay>0</delay>
                     <description>Total number of pending refresh listeners.</description>
                     <preprocessing>
                         <step>
@@ -3122,7 +3239,6 @@ else {
                     <name>Refresh Time</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.refresh.time</key>
-                    <delay>0</delay>
                     <units>uptime</units>
                     <description>Time spent in refresh operations.</description>
                     <preprocessing>
@@ -3176,7 +3292,6 @@ else {
                     <name>Refresh Total</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.refresh.total</key>
-                    <delay>0</delay>
                     <description>Total number of refresh operations.</description>
                     <preprocessing>
                         <step>
@@ -3212,7 +3327,6 @@ else {
                     <name>Request Cache Evictions</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.request_cache.evictions</key>
-                    <delay>0</delay>
                     <description>Request Cache Evictions</description>
                     <preprocessing>
                         <step>
@@ -3267,14 +3381,10 @@ Node Name: {$OS.NAME}</description>
                     <name>Request Cache Hits</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.request_cache.hit_count-change</key>
-                    <delay>0</delay>
                     <description>Request Cache Hits - change calculated from previous value</description>
                     <preprocessing>
                         <step>
                             <type>SIMPLE_CHANGE</type>
-                            <parameters>
-                                <parameter/>
-                            </parameters>
                         </step>
                     </preprocessing>
                     <master_item>
@@ -3296,7 +3406,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Request Cache Hits Total</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.request_cache.hit_count-total</key>
-                    <delay>0</delay>
                     <description>Request Cache Hit Count</description>
                     <preprocessing>
                         <step>
@@ -3332,7 +3441,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Request Cache Memory Size</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.request_cache.memory_size</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Used Request Cache</description>
                     <preprocessing>
@@ -3373,7 +3481,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Request Cache Miss Total</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.request_cache.miss-total</key>
-                    <delay>0</delay>
                     <description>Request Cache Miss Counter.</description>
                     <preprocessing>
                         <step>
@@ -3409,14 +3516,10 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Request Cache Misses</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.request_cache.miss_count-change</key>
-                    <delay>0</delay>
                     <description>Request Cache Miss Counter - calculated change since previous value.</description>
                     <preprocessing>
                         <step>
                             <type>SIMPLE_CHANGE</type>
-                            <parameters>
-                                <parameter/>
-                            </parameters>
                         </step>
                     </preprocessing>
                     <master_item>
@@ -3457,7 +3560,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Cache Evictions</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.script.cache_evictions</key>
-                    <delay>0</delay>
                     <description>Number of script cache evictions.</description>
                     <preprocessing>
                         <step>
@@ -3493,7 +3595,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Script Compilations</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.script.compilations</key>
-                    <delay>0</delay>
                     <description>Number of script compilations.</description>
                     <preprocessing>
                         <step>
@@ -3529,7 +3630,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Script Compilations Changes</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.script.compilations_changes</key>
-                    <delay>0</delay>
                     <description>Zabbix calculated difference of last value and current value.</description>
                     <preprocessing>
                         <step>
@@ -3547,9 +3647,6 @@ Node Name: {$OS.NAME}</description>
                         </step>
                         <step>
                             <type>SIMPLE_CHANGE</type>
-                            <parameters>
-                                <parameter/>
-                            </parameters>
                         </step>
                     </preprocessing>
                     <master_item>
@@ -3575,7 +3672,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Script Compilation Limit Triggered</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.script.compilation_limit_triggered</key>
-                    <delay>0</delay>
                     <description>Number of script cache compilation limits triggered.</description>
                     <preprocessing>
                         <step>
@@ -3628,7 +3724,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Search Concurrent Average Slice Count</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.concurrent_avg_slice_count</key>
-                    <delay>0</delay>
                     <description>Average query concurrency.</description>
                     <preprocessing>
                         <step>
@@ -3683,7 +3778,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Search Concurrent Query Current</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.concurrent_query_current</key>
-                    <delay>0</delay>
                     <description>Current number of concurrent query phase operations.</description>
                     <preprocessing>
                         <step>
@@ -3738,7 +3832,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Search Concurrent Query Time</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.concurrent_query_time</key>
-                    <delay>0</delay>
                     <units>uptime</units>
                     <description>Time spent in concurrent query phase.</description>
                     <preprocessing>
@@ -3792,7 +3885,6 @@ else {
                     <name>Search Concurrent Query Total</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.concurrent_query_total</key>
-                    <delay>0</delay>
                     <description>Total concurrent query phase operations.</description>
                     <preprocessing>
                         <step>
@@ -3828,7 +3920,6 @@ else {
                     <name>Search Fetch Changes</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.fetch_changes</key>
-                    <delay>0</delay>
                     <description>Zabbix calculated difference of last value and current value.</description>
                     <preprocessing>
                         <step>
@@ -3846,9 +3937,6 @@ else {
                         </step>
                         <step>
                             <type>SIMPLE_CHANGE</type>
-                            <parameters>
-                                <parameter/>
-                            </parameters>
                         </step>
                     </preprocessing>
                     <master_item>
@@ -3874,7 +3962,6 @@ else {
                     <name>Search Fetch Current</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.fetch_current</key>
-                    <delay>0</delay>
                     <description>Current number of fetch phase operations.</description>
                     <preprocessing>
                         <step>
@@ -3929,7 +4016,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Search Fetch Time</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.fetch_time</key>
-                    <delay>0</delay>
                     <units>uptime</units>
                     <description>Time spent in fetch phase.</description>
                     <preprocessing>
@@ -3983,7 +4069,6 @@ else {
                     <name>Search Fetch Total</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.fetch_total</key>
-                    <delay>0</delay>
                     <description>Total number of fetch operations.</description>
                     <preprocessing>
                         <step>
@@ -4019,7 +4104,6 @@ else {
                     <name>Search Open Contexts</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.open_contexts</key>
-                    <delay>0</delay>
                     <description>Number of open search contexts.</description>
                     <preprocessing>
                         <step>
@@ -4074,7 +4158,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Search Point in Time Current</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.point_in_time_current</key>
-                    <delay>0</delay>
                     <description>Current number of open point in time contexts.</description>
                     <preprocessing>
                         <step>
@@ -4110,7 +4193,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Search Point in Time Time</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.point_in_time_time</key>
-                    <delay>0</delay>
                     <units>uptime</units>
                     <description>Time spent with point in time contexts held open.</description>
                     <preprocessing>
@@ -4157,7 +4239,6 @@ else {
                     <name>Search Point in Time Total</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.point_in_time_total</key>
-                    <delay>0</delay>
                     <description>Total number of completed point in time contexts.</description>
                     <preprocessing>
                         <step>
@@ -4193,7 +4274,6 @@ else {
                     <name>Search Query Changes</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.query_changes</key>
-                    <delay>0</delay>
                     <description>Zabbix calculated difference of last value and current value.</description>
                     <preprocessing>
                         <step>
@@ -4211,9 +4291,6 @@ else {
                         </step>
                         <step>
                             <type>SIMPLE_CHANGE</type>
-                            <parameters>
-                                <parameter/>
-                            </parameters>
                         </step>
                     </preprocessing>
                     <master_item>
@@ -4239,7 +4316,6 @@ else {
                     <name>Query Current</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.query_current</key>
-                    <delay>0</delay>
                     <description>Current number of query phase operations.</description>
                     <preprocessing>
                         <step>
@@ -4294,7 +4370,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Search Query Time</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.query_time</key>
-                    <delay>0</delay>
                     <units>uptime</units>
                     <description>Time spent in query phase.</description>
                     <preprocessing>
@@ -4348,7 +4423,6 @@ else {
                     <name>Search Query Total</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.query_total</key>
-                    <delay>0</delay>
                     <description>Total number of query phase operations.</description>
                     <preprocessing>
                         <step>
@@ -4384,7 +4458,6 @@ else {
                     <name>Search Scroll Current</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.scroll_current</key>
-                    <delay>0</delay>
                     <description>Current number of open scroll contexts.</description>
                     <preprocessing>
                         <step>
@@ -4420,7 +4493,6 @@ else {
                     <name>Search Scroll Time</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.scroll_time</key>
-                    <delay>0</delay>
                     <units>uptime</units>
                     <description>Time spent with scroll contexts held open.</description>
                     <preprocessing>
@@ -4474,7 +4546,6 @@ else {
                     <name>Search Scroll Total</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.search.scroll_total</key>
-                    <delay>0</delay>
                     <description>Total number of completed scroll contexts</description>
                     <preprocessing>
                         <step>
@@ -4510,7 +4581,6 @@ else {
                     <name>Segments Count</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.segments.count</key>
-                    <delay>0</delay>
                     <description>Number of segments.</description>
                     <preprocessing>
                         <step>
@@ -4546,7 +4616,6 @@ else {
                     <name>Segments Fixed Bitset Memory Size</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.segments.fixed_bitset_memory</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Memory used by fixed bit sets for nested object field types and type filters for types referred in _parent fields.</description>
                     <preprocessing>
@@ -4587,7 +4656,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Segments Index Writer Memory Size</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.segments.index_writer_memory</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Amount of memory used by index writer.</description>
                     <preprocessing>
@@ -4628,7 +4696,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Segments Memory Size</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.segments.memory</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Memory used by segments.</description>
                     <preprocessing>
@@ -4669,7 +4736,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Segments Version Map Memory Size</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.segments.version_map_memory</key>
-                    <delay>0</delay>
                     <units>bytes</units>
                     <description>Amount of memory used by version map.</description>
                     <preprocessing>
@@ -4710,7 +4776,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Suggest Current</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.suggest.current</key>
-                    <delay>0</delay>
                     <description>Current number of suggest operations.</description>
                     <preprocessing>
                         <step>
@@ -4746,7 +4811,6 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     <name>Suggest Total Time</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.suggest.time</key>
-                    <delay>0</delay>
                     <units>uptime</units>
                     <description>Time spent in suggest.</description>
                     <preprocessing>
@@ -4800,7 +4864,6 @@ else {
                     <name>Suggest Total</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.suggest.total</key>
-                    <delay>0</delay>
                     <description>Total number of suggest operations.</description>
                     <preprocessing>
                         <step>
@@ -4836,9 +4899,7 @@ else {
                     <name>Package Type</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.type</key>
-                    <delay>0</delay>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <description>OpenSearch distribution package type.</description>
                     <preprocessing>
                         <step>
@@ -4880,9 +4941,7 @@ else {
                     <name>Uptime</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.uptime</key>
-                    <delay>0</delay>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <description>Node uptime.</description>
                     <preprocessing>
                         <step>
@@ -4924,9 +4983,7 @@ else {
                     <name>Package Version</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node.version</key>
-                    <delay>0</delay>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <description>Node's running OpenSearch version number.</description>
                     <preprocessing>
                         <step>
@@ -4985,32 +5042,909 @@ Node Name: {$OS.NAME}</description>
                     </triggers>
                 </item>
                 <item>
-                    <uuid>10e489c1f1fa484a9535466dc49ae11e</uuid>
-                    <name>OpenSearch Node Stats Adaptive Selection</name>
+                    <uuid>6fee06cf11cc4dafb24099bc444f0ba6</uuid>
+                    <name>OpenSearch Node Stats</name>
                     <type>HTTP_AGENT</type>
-                    <key>opensearch.node_stats.adaptive_selection</key>
-                    <delay>5m</delay>
+                    <key>opensearch.node_stats</key>
+                    <history>0</history>
                     <value_type>TEXT</value_type>
-                    <trends>0</trends>
                     <authtype>BASIC</authtype>
                     <username>{$OS.USERNAME}</username>
                     <password>{$OS.PASSWORD}</password>
-                    <description>Gather data from the API endpoint: _nodes/stats/adaptive_selection</description>
+                    <description>Gather data from the API endpoint: _nodes/_local/stats</description>
                     <preprocessing>
                         <step>
                             <type>JSONPATH</type>
                             <parameters>
-                                <parameter>$.nodes.['{$OS.ID}'].adaptive_selection</parameter>
+                                <parameter>$.nodes.['{$OS.ID}']</parameter>
                             </parameters>
                         </step>
                     </preprocessing>
-                    <url>{$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_nodes/_local/stats/adaptive_selection</url>
+                    <url>{$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_nodes/_local/stats</url>
                     <verify_peer>YES</verify_peer>
                     <verify_host>YES</verify_host>
                     <tags>
                         <tag>
                             <tag>Node Name</tag>
                             <value>{$OS.NAME}</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>ff6708c1ffee468f8c4f54a33b85a8fb</uuid>
+                    <name>Indexing pressure memory limit</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.node_stats.indexing_pressure.limit</key>
+                    <units>bytes</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.indexing_pressure.memory.limit_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>47fd62cc5f894e438f9aaa203fd901ee</uuid>
+                    <name>Indexing pressure memory utilization</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.node_stats.indexing_pressure.memory_all</key>
+                    <units>bytes</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.indexing_pressure.memory.current.all_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>1f89db94bad64a539ad11a5dccb92b4b</uuid>
+                    <name>Search backpressure cancellation count</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.node_stats.search_backpressure.cancellation_count</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.search_backpressure.search_task.cancellation_stats.cancellation_count</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>aebf31d8c74b44cea8b2de6a2ddc6aac</uuid>
+                    <name>Search backpressure cpu usage (avg)</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.node_stats.search_backpressure.cpu_usage.avg</key>
+                    <units>s</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.search_backpressure.search_task.resource_tracker_stats.cpu_usage_tracker.current_avg_millis</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>return value / 1000;
+</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>147524840e7e4c05b0d37acd28d7a9ec</uuid>
+                    <name>Search backpressure cpu usage (max)</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.node_stats.search_backpressure.cpu_usage.max</key>
+                    <units>s</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.search_backpressure.search_task.resource_tracker_stats.cpu_usage_tracker.current_max_millis</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>return value / 1000;
+</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>1556f4cd4836444793b00c304abcb861</uuid>
+                    <name>Search backpressure elapsed time (avg)</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.node_stats.search_backpressure.elapsed_time.avg</key>
+                    <units>s</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.search_backpressure.search_task.resource_tracker_stats.elapsed_time_tracker.current_avg_millis</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>return value / 1000;
+</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>8f7987f2700b44aaa3de65671121b122</uuid>
+                    <name>Search backpressure elapsed time (max)</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.node_stats.search_backpressure.elapsed_time.max</key>
+                    <units>s</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.search_backpressure.search_task.resource_tracker_stats.elapsed_time_tracker.current_max_millis</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>return value / 1000;
+</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>7dfd5ea9a255490cab30761d9a838200</uuid>
+                    <name>Search backpressure heap usage (avg)</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.node_stats.search_backpressure.heap_usage.avg</key>
+                    <units>bytes</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.search_backpressure.search_task.resource_tracker_stats.heap_usage_tracker.current_avg_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>efd477df23484bf3812d07fda58be2df</uuid>
+                    <name>Search backpressure heap usage (max)</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.node_stats.search_backpressure.heap_usage.max</key>
+                    <units>bytes</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.search_backpressure.search_task.resource_tracker_stats.heap_usage_tracker.current_max_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>47185f2095d845c29573262ef80e2981</uuid>
+                    <name>Parent Breakers: Estimated size</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.parent_breakers.estimated_size</key>
+                    <units>bytes</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.parent.estimated_size_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>48acd2b1e1d049638ca07b601ea9ac0d</uuid>
+                    <name>Parent Breakers: Size limit</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.parent_breakers.size_limit</key>
+                    <units>bytes</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.parent.limit_size</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>0b993f26cc9a4806a31add97c5fdaf3b</uuid>
+                    <name>Parent Breakers: Tripped count</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.parent_breakers.tripped</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.parent.tripped</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>14ddac42ab3d4aa080144cc4fab9452e</uuid>
+                    <name>Request Breakers: Estimated size</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.request_breakers.estimated_size</key>
+                    <units>bytes</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.request.estimated_size_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>d433b5eb711b46b29ab40c39f0d8e14a</uuid>
+                    <name>Request Breakers: Size limit</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.request_breakers.size_limit</key>
+                    <units>bytes</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.request.limit_size_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>0e309eaa52b14c3e8c79041ba0faf254</uuid>
+                    <name>Request Breakers: Tripped count</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.request_breakers.tripped</key>
+                    <units>bytes</units>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.request.tripped</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>19e8f125d5874b17ab653462d3e7a944</uuid>
+                    <name>Cluster Manager throttled tasks (total)</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.tasks.throttled_tasks</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.cluster_manager_throttling.stats.total_throttled_tasks</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>38391af0b03947d9b19c806208f36304</uuid>
+                    <name>Threads: Asynchronous search generic queue</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.thread_pool.asynchronous_search_generic.queue</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.thread_pool.opensearch_asynchronous_search_generic.queue</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>fc691e971040456fb298efbc0c9d6f9c</uuid>
+                    <name>Threads: Fetch shard started queue</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.thread_pool.fetch_shard_started.queue</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.thread_pool.fetch_shard_started.queue</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>4b9cfa5d1e884d888c9f2a85228127e7</uuid>
+                    <name>Threads: Fetch shard store queue</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.thread_pool.fetch_shard_store.queue</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.thread_pool.fetch_shard_store.queue</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>6b398955aae84802823cee767c64c7c7</uuid>
+                    <name>Threads: Flush queue</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.thread_pool.flush.queue</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.thread_pool.flush.queue</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>0a0ca7f31598445d9829f14c983c41cc</uuid>
+                    <name>Threads: Generic queue</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.thread_pool.generic.queue</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.thread_pool.generic.queue</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>09a8953d5c074c5da43497c758355f83</uuid>
+                    <name>Threads: Get queue</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.thread_pool.get.queue</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.thread_pool.get.queue</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>08c8cc34fd0744e3804a4f304ac5ef9f</uuid>
+                    <name>Threads: Management queue</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.thread_pool.management.queue</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.thread_pool.management.queue</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>26510b5580e947ffa3e936bf225e435e</uuid>
+                    <name>Threads: Refresh queue</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.thread_pool.refresh.queue</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.thread_pool.refresh.queue</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>89d9f1fca8fb4c6c9b32460b94926ca0</uuid>
+                    <name>Threads: Search queue</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.thread_pool.search.queue</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.thread_pool.search.queue</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>d33eee8ee62341da8adfedec22756c83</uuid>
+                    <name>Threads: SQL worker queue</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.thread_pool.sql_worker.queue</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.thread_pool.sql-worker.queue</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>3443827a3d514deca9cca65aa9405ed3</uuid>
+                    <name>Threads: System read queue</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.thread_pool.system_read.queue</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.thread_pool.system_read.queue</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>70b4000e3c4b4a9497add34b8f761f25</uuid>
+                    <name>Threads: System write queue</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.thread_pool.system_write.queue</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.thread_pool.system_write.queue</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>f74f4c870cf2456292dab451fe596791</uuid>
+                    <name>Threads: Translog sync queue</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.thread_pool.translog_sync.queue</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.thread_pool.translog_sync.queue</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>38b5cd5a636b4635a55d80081eae70c8</uuid>
+                    <name>Threads: Translog transfer queue</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.thread_pool.translog_transfer.queue</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.thread_pool.translog_transfer.queue</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>54d3c28a6e68417aa55ee0a2c0fcc63a</uuid>
+                    <name>Threads: Write queue</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.thread_pool.write.queue</key>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.thread_pool.write.queue</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
                         </tag>
                     </tags>
                 </item>
@@ -5021,206 +5955,8 @@ Node Name: {$OS.NAME}</description>
                     <name>Node Discovery</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.nodes</key>
-                    <delay>0</delay>
                     <lifetime>30d</lifetime>
                     <description>Make Zabbix host aware of all other nodes for additional processing and alerts.</description>
-                    <item_prototypes>
-                        <item_prototype>
-                            <uuid>a308214e2a11427c8dc84341e74c5f8d</uuid>
-                            <name>Adaptive Selection Average Queue Size - {#NODE.NAME}</name>
-                            <type>DEPENDENT</type>
-                            <key>opensearch.node_stats.adaptive_selection.avg_queue_size[{#NODE.ID}]</key>
-                            <delay>0</delay>
-                            <description>The rolling average queue size of search requests for the node (exponentially weighted for adaptive selection rank).
-
-Target node Name: {#NODE.NAME}
-Target node ID: {#NODE.ID}
-Target node IP: {#NODE.IP}
-
-Note: Adaptive Selection will only be used if Adaptive Selection is enabled (default is enabled).</description>
-                            <preprocessing>
-                                <step>
-                                    <type>JSONPATH</type>
-                                    <parameters>
-                                        <parameter>$.['{#NODE.ID}'].avg_queue_size</parameter>
-                                    </parameters>
-                                </step>
-                            </preprocessing>
-                            <master_item>
-                                <key>opensearch.node_stats.adaptive_selection</key>
-                            </master_item>
-                            <tags>
-                                <tag>
-                                    <tag>OpenSearch</tag>
-                                    <value>Routing</value>
-                                </tag>
-                                <tag>
-                                    <tag>Service</tag>
-                                    <value>OpenSearch</value>
-                                </tag>
-                            </tags>
-                        </item_prototype>
-                        <item_prototype>
-                            <uuid>769329449273467091ca5f219f368d0c</uuid>
-                            <name>Adaptive Selection Average Response Time (ns) - {#NODE.NAME}</name>
-                            <type>DEPENDENT</type>
-                            <key>opensearch.node_stats.adaptive_selection.avg_response_time_ns[{#NODE.ID}]</key>
-                            <delay>0</delay>
-                            <description>The rolling average response time for search requests, in nanoseconds (exponentially weighted for adaptive selection rank).
-
-Target node Name: {#NODE.NAME}
-Target node ID: {#NODE.ID}
-Target node IP: {#NODE.IP}
-
-Note: Adaptive Selection will only be used if Adaptive Selection is enabled (default is enabled).</description>
-                            <preprocessing>
-                                <step>
-                                    <type>JSONPATH</type>
-                                    <parameters>
-                                        <parameter>$.['{#NODE.ID}'].avg_response_time_ns</parameter>
-                                    </parameters>
-                                </step>
-                            </preprocessing>
-                            <master_item>
-                                <key>opensearch.node_stats.adaptive_selection</key>
-                            </master_item>
-                            <tags>
-                                <tag>
-                                    <tag>OpenSearch</tag>
-                                    <value>Routing</value>
-                                </tag>
-                                <tag>
-                                    <tag>Service</tag>
-                                    <value>OpenSearch</value>
-                                </tag>
-                            </tags>
-                        </item_prototype>
-                        <item_prototype>
-                            <uuid>3e6bc0a263154d41ac0d86d53f2a02da</uuid>
-                            <name>Adaptive Selection Average Service Time (ns) - {#NODE.NAME}</name>
-                            <type>DEPENDENT</type>
-                            <key>opensearch.node_stats.adaptive_selection.avg_service_time_ns[{#NODE.ID}]</key>
-                            <delay>0</delay>
-                            <value_type>FLOAT</value_type>
-                            <description>The rolling average service time for search requests, in nanoseconds (exponentially weighted for adaptive selection rank).
-
-Target node Name: {#NODE.NAME}
-Target node ID: {#NODE.ID}
-Target node IP: {#NODE.IP}
-
-Note: Adaptive Selection will only be used if Adaptive Selection is enabled (default is enabled).</description>
-                            <preprocessing>
-                                <step>
-                                    <type>JSONPATH</type>
-                                    <parameters>
-                                        <parameter>$.['{#NODE.ID}'].avg_service_time_ns</parameter>
-                                    </parameters>
-                                </step>
-                            </preprocessing>
-                            <master_item>
-                                <key>opensearch.node_stats.adaptive_selection</key>
-                            </master_item>
-                            <tags>
-                                <tag>
-                                    <tag>OpenSearch</tag>
-                                    <value>Routing</value>
-                                </tag>
-                                <tag>
-                                    <tag>Service</tag>
-                                    <value>OpenSearch</value>
-                                </tag>
-                            </tags>
-                        </item_prototype>
-                        <item_prototype>
-                            <uuid>78923969b1ca4e69b5dc5f5474fac2fd</uuid>
-                            <name>Adaptive Selection Outgoing Searches - {#NODE.NAME}</name>
-                            <type>DEPENDENT</type>
-                            <key>opensearch.node_stats.adaptive_selection.outgoing_searches[{#NODE.ID}]</key>
-                            <delay>0</delay>
-                            <description>Number of outgoing search requests for the node.
-
-Target node Name: {#NODE.NAME}
-Target node ID: {#NODE.ID}
-Target node IP: {#NODE.IP}
-
-Note: Adaptive Selection will only be used if Adaptive Selection is enabled (default is enabled).</description>
-                            <preprocessing>
-                                <step>
-                                    <type>JSONPATH</type>
-                                    <parameters>
-                                        <parameter>$.['{#NODE.ID}'].outgoing_searches</parameter>
-                                    </parameters>
-                                </step>
-                            </preprocessing>
-                            <master_item>
-                                <key>opensearch.node_stats.adaptive_selection</key>
-                            </master_item>
-                            <tags>
-                                <tag>
-                                    <tag>OpenSearch</tag>
-                                    <value>Routing</value>
-                                </tag>
-                                <tag>
-                                    <tag>Service</tag>
-                                    <value>OpenSearch</value>
-                                </tag>
-                            </tags>
-                        </item_prototype>
-                        <item_prototype>
-                            <uuid>66b9a40dd06d4debb6cbe229bf25defa</uuid>
-                            <name>Adaptive Selection Rank - {#NODE.NAME}</name>
-                            <type>DEPENDENT</type>
-                            <key>opensearch.node_stats.adaptive_selection.rank[{#NODE.ID}]</key>
-                            <delay>0</delay>
-                            <value_type>FLOAT</value_type>
-                            <description>When a request goes to the node this Zabbix item is under, it will choose to route it to the node with a matching shard with the lowest rank.
-Ranks are determined by the relative response time, service time, queue size, and outgoing searches.
-
-Target node Name: {#NODE.NAME}
-Target node ID: {#NODE.ID}
-Target node IP: {#NODE.IP}
-
-Note: Adaptive Selection will only be used if Adaptive Selection is enabled (default is enabled).</description>
-                            <preprocessing>
-                                <step>
-                                    <type>JSONPATH</type>
-                                    <parameters>
-                                        <parameter>$.['{#NODE.ID}'].rank</parameter>
-                                    </parameters>
-                                </step>
-                            </preprocessing>
-                            <master_item>
-                                <key>opensearch.node_stats.adaptive_selection</key>
-                            </master_item>
-                            <tags>
-                                <tag>
-                                    <tag>OpenSearch</tag>
-                                    <value>Routing</value>
-                                </tag>
-                                <tag>
-                                    <tag>Service</tag>
-                                    <value>OpenSearch</value>
-                                </tag>
-                            </tags>
-                        </item_prototype>
-                    </item_prototypes>
-                    <graph_prototypes>
-                        <graph_prototype>
-                            <uuid>e564f158e25c497f89ce145e0c147927</uuid>
-                            <name>Adaptive Selection Rank</name>
-                            <ymin_type_1>FIXED</ymin_type_1>
-                            <graph_items>
-                                <graph_item>
-                                    <color>199C0D</color>
-                                    <calc_fnc>ALL</calc_fnc>
-                                    <item>
-                                        <host>OpenSearch</host>
-                                        <key>opensearch.node_stats.adaptive_selection.rank[{#NODE.ID}]</key>
-                                    </item>
-                                </graph_item>
-                            </graph_items>
-                        </graph_prototype>
-                    </graph_prototypes>
                     <master_item>
                         <key>opensearch.cat_nodes</key>
                     </master_item>

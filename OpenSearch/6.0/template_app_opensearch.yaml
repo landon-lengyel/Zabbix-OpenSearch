@@ -1,5 +1,5 @@
 zabbix_export:
-  version: '7.0'
+  version: '7.2'
   template_groups:
     - uuid: 46e77e29fa6644fea1eb2386af509d50
       name: TG_CLIENT_SERVER_OPENSEARCH
@@ -14,7 +14,6 @@ zabbix_export:
           name: 'Disk Available'
           type: DEPENDENT
           key: opensearch.allocation.disk.avail
-          delay: '0'
           units: bytes
           description: 'Total disk available on the node. Not just available to OpenSearch, but the system as a whole.'
           preprocessing:
@@ -41,7 +40,6 @@ zabbix_export:
           name: 'Disk Indices'
           type: DEPENDENT
           key: opensearch.allocation.disk.indices
-          delay: '0'
           units: bytes
           description: 'Size of indices currently stored on the nodes disk.'
           preprocessing:
@@ -68,7 +66,6 @@ zabbix_export:
           name: 'Disk Percentage Used'
           type: DEPENDENT
           key: opensearch.allocation.disk.percent
-          delay: '0'
           description: 'Percentage of disk storage in use on node. Not just by OpenSearch.'
           preprocessing:
             - type: JSONPATH
@@ -89,7 +86,6 @@ zabbix_export:
           name: 'Disk Used'
           type: DEPENDENT
           key: opensearch.allocation.disk.used
-          delay: '0'
           units: bytes
           description: 'Total disk used on server, not just by OpenSearch.'
           preprocessing:
@@ -116,7 +112,6 @@ zabbix_export:
           name: 'Shard Count'
           type: DEPENDENT
           key: opensearch.allocation.shards
-          delay: '0'
           description: 'Shard count currently stored on the node.'
           preprocessing:
             - type: JSONPATH
@@ -140,7 +135,6 @@ zabbix_export:
           delay: 30m
           history: '0'
           value_type: TEXT
-          trends: '0'
           authtype: BASIC
           username: '{$OS.USERNAME}'
           password: '{$OS.PASSWORD}'
@@ -160,7 +154,6 @@ zabbix_export:
           key: opensearch.cat_nodes
           history: '0'
           value_type: TEXT
-          trends: '0'
           authtype: BASIC
           username: '{$OS.USERNAME}'
           password: '{$OS.PASSWORD}'
@@ -171,13 +164,135 @@ zabbix_export:
           tags:
             - tag: 'Node Name'
               value: '{$OS.NAME}'
+        - uuid: 649ce8e764bc4da19cd1cf8e574b2f3c
+          name: 'In-Flight Requests Breakers: Estimated size'
+          type: DEPENDENT
+          key: opensearch.in-flight_requests_breakers.estimated_size
+          units: bytes
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.breakers.in_flight_requests.estimated_size_in_bytes
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: edcc5bef6f4b4267989c29675d03891c
+          name: 'In-Flight Requests Breakers: Size limit'
+          type: DEPENDENT
+          key: opensearch.in-flight_requests_breakers.size_limit
+          units: bytes
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.breakers.in_flight_requests.limit_size_in_bytes
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 1a2d8b69f1164e19ba907540d05006b0
+          name: 'In-Flight Requests Breakers: Tripped count'
+          type: DEPENDENT
+          key: opensearch.in-flight_requests_breakers.tripped
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.breakers.in_flight_requests.tripped
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 08126703513a44cb9eb47b269f8be3cf
+          name: 'Net HTTP: Current open'
+          type: DEPENDENT
+          key: opensearch.net_http.current_open
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.http.current_open
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: d576f83c118444f6a6863a4d4b48ccaf
+          name: 'Net Transport: Total outbound connections'
+          type: DEPENDENT
+          key: opensearch.net_transport.outbound_connections
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.transport.server_open.total_outbound_connections
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 96ae67a0e7c341e995b5026d4f2e53e5
+          name: 'Net Transport: Total receive size'
+          type: DEPENDENT
+          key: opensearch.net_transport.receive_size
+          units: bytes
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.transport.server_open.rx_size_in_bytes
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 944eb6cbd15249f2b1d722fa2305c828
+          name: 'Net Transport: Server open'
+          type: DEPENDENT
+          key: opensearch.net_transport.server_open
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.transport.server_open
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 87c6b86f810442188d2b7d7da058e89c
+          name: 'Net Transport: Total transmit size'
+          type: DEPENDENT
+          key: opensearch.net_transport.transmit_size
+          units: bytes
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.transport.server_open.tx_size_in_bytes
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
         - uuid: f97c7d8dbad44811b696ad19d298289e
           name: 'Package Build Number'
           type: DEPENDENT
           key: opensearch.node.build
-          delay: '0'
           value_type: TEXT
-          trends: '0'
           description: 'OpenSearch distribution package''s build number.'
           preprocessing:
             - type: JSONPATH
@@ -201,9 +316,7 @@ zabbix_export:
           name: 'Cluster Manager'
           type: DEPENDENT
           key: opensearch.node.cluster_manager
-          delay: '0'
           value_type: TEXT
-          trends: '0'
           description: 'True if the node is the cluster manager, False if not.'
           preprocessing:
             - type: JSONPATH
@@ -229,7 +342,6 @@ zabbix_export:
           name: 'Completion Size'
           type: DEPENDENT
           key: opensearch.node.completion.size
-          delay: '0'
           units: bytes
           description: 'Size of completion'
           preprocessing:
@@ -256,7 +368,6 @@ zabbix_export:
           name: CPU
           type: DEPENDENT
           key: opensearch.node.cpu
-          delay: '0'
           description: 'Recent CPU utilization.'
           preprocessing:
             - type: JSONPATH
@@ -291,7 +402,6 @@ zabbix_export:
           name: 'Disk Available'
           type: DEPENDENT
           key: opensearch.node.disk.avail
-          delay: '0'
           units: bytes
           description: 'Total disk space available to the system.'
           preprocessing:
@@ -318,7 +428,6 @@ zabbix_export:
           name: 'Disk Used'
           type: DEPENDENT
           key: opensearch.node.disk.used
-          delay: '0'
           units: bytes
           description: 'Total disk space used in OpenSearch.'
           preprocessing:
@@ -345,7 +454,6 @@ zabbix_export:
           name: 'Disk Used Percent'
           type: DEPENDENT
           key: opensearch.node.disk.used_percent
-          delay: '0'
           description: 'Total disk space used in OpenSearch (as a percentage of total)'
           preprocessing:
             - type: JSONPATH
@@ -366,7 +474,6 @@ zabbix_export:
           name: 'FieldData Evictions'
           type: DEPENDENT
           key: opensearch.node.fielddata.evictions
-          delay: '0'
           description: 'FieldData Evictions'
           preprocessing:
             - type: JSONPATH
@@ -401,7 +508,6 @@ zabbix_export:
           name: 'FieldData Memory Size'
           type: DEPENDENT
           key: opensearch.node.fielddata.memory_size
-          delay: '0'
           units: bytes
           description: 'Used FieldData cache'
           preprocessing:
@@ -428,9 +534,7 @@ zabbix_export:
           name: 'File Descriptors Current'
           type: DEPENDENT
           key: opensearch.node.file_desc.current
-          delay: '0'
           value_type: TEXT
-          trends: '0'
           description: 'Currently used file descriptors.'
           preprocessing:
             - type: JSONPATH
@@ -451,9 +555,7 @@ zabbix_export:
           name: 'File Descriptors Max'
           type: DEPENDENT
           key: opensearch.node.file_desc.max
-          delay: '0'
           value_type: TEXT
-          trends: '0'
           description: 'Maximum possible file descriptors.'
           preprocessing:
             - type: JSONPATH
@@ -474,7 +576,6 @@ zabbix_export:
           name: 'File Descriptors Percent'
           type: DEPENDENT
           key: opensearch.node.file_desc.percent
-          delay: '0'
           description: 'Currently used file descriptors expressed as a percentage of maximum file descriptors.'
           preprocessing:
             - type: JSONPATH
@@ -509,7 +610,6 @@ zabbix_export:
           name: 'Flush Changes'
           type: DEPENDENT
           key: opensearch.node.flush.changes
-          delay: '0'
           description: 'Zabbix calculated difference of last value and current value.'
           preprocessing:
             - type: JSONPATH
@@ -520,8 +620,6 @@ zabbix_export:
                 - \w+
                 - \0
             - type: SIMPLE_CHANGE
-              parameters:
-                - ''
           master_item:
             key: opensearch.cat_nodes
           tags:
@@ -535,7 +633,6 @@ zabbix_export:
           name: 'Flush Time'
           type: DEPENDENT
           key: opensearch.node.flush.time
-          delay: '0'
           units: uptime
           description: 'Time spent in flush'
           preprocessing:
@@ -575,7 +672,6 @@ zabbix_export:
           name: 'Flush Total'
           type: DEPENDENT
           key: opensearch.node.flush.total
-          delay: '0'
           description: 'Total number of flushes.'
           preprocessing:
             - type: JSONPATH
@@ -596,7 +692,6 @@ zabbix_export:
           name: 'Get Changes'
           type: DEPENDENT
           key: opensearch.node.get.changes
-          delay: '0'
           description: 'Zabbix calculated difference of last value and current value.'
           preprocessing:
             - type: JSONPATH
@@ -607,8 +702,6 @@ zabbix_export:
                 - \w+
                 - \0
             - type: SIMPLE_CHANGE
-              parameters:
-                - ''
           master_item:
             key: opensearch.cat_nodes
           tags:
@@ -622,7 +715,6 @@ zabbix_export:
           name: 'Get Current'
           type: DEPENDENT
           key: opensearch.node.get.current
-          delay: '0'
           description: 'Current number of get operations.'
           preprocessing:
             - type: JSONPATH
@@ -657,7 +749,6 @@ zabbix_export:
           name: 'Get Exists Changes'
           type: DEPENDENT
           key: opensearch.node.get.exists_changes
-          delay: '0'
           description: 'Zabbix calculated difference of last value and current value.'
           preprocessing:
             - type: JSONPATH
@@ -668,8 +759,6 @@ zabbix_export:
                 - \w+
                 - \0
             - type: SIMPLE_CHANGE
-              parameters:
-                - ''
           master_item:
             key: opensearch.cat_nodes
           tags:
@@ -683,7 +772,6 @@ zabbix_export:
           name: 'Get Exists Time'
           type: DEPENDENT
           key: opensearch.node.get.exists_time
-          delay: '0'
           units: uptime
           description: 'Time spent in successful get operations.'
           preprocessing:
@@ -723,7 +811,6 @@ zabbix_export:
           name: 'Get Exists Total'
           type: DEPENDENT
           key: opensearch.node.get.exists_total
-          delay: '0'
           description: 'Total number of successful get operations.'
           preprocessing:
             - type: JSONPATH
@@ -744,7 +831,6 @@ zabbix_export:
           name: 'Get Missing Changes'
           type: DEPENDENT
           key: opensearch.node.get.missing_changes
-          delay: '0'
           description: 'Zabbix calculated difference of last value and current value.'
           preprocessing:
             - type: JSONPATH
@@ -755,8 +841,6 @@ zabbix_export:
                 - \w+
                 - \0
             - type: SIMPLE_CHANGE
-              parameters:
-                - ''
           master_item:
             key: opensearch.cat_nodes
           tags:
@@ -770,7 +854,6 @@ zabbix_export:
           name: 'Get Missing Time'
           type: DEPENDENT
           key: opensearch.node.get.missing_time
-          delay: '0'
           units: uptime
           description: 'Time spent in failed get operations.'
           preprocessing:
@@ -810,7 +893,6 @@ zabbix_export:
           name: 'Get Missing Total'
           type: DEPENDENT
           key: opensearch.node.get.missing_total
-          delay: '0'
           description: 'Total number of failed get operations.'
           preprocessing:
             - type: JSONPATH
@@ -831,7 +913,6 @@ zabbix_export:
           name: 'Get Time'
           type: DEPENDENT
           key: opensearch.node.get.time
-          delay: '0'
           units: uptime
           description: 'Time spent in get'
           preprocessing:
@@ -871,7 +952,6 @@ zabbix_export:
           name: 'Get Total'
           type: DEPENDENT
           key: opensearch.node.get.total
-          delay: '0'
           description: 'Total number of get operations.'
           preprocessing:
             - type: JSONPATH
@@ -892,7 +972,6 @@ zabbix_export:
           name: 'Heap Current'
           type: DEPENDENT
           key: opensearch.node.heap.current
-          delay: '0'
           units: bytes
           description: 'Currently used Java heap. These are Java objects in memory.'
           preprocessing:
@@ -919,7 +998,6 @@ zabbix_export:
           name: 'Heap Max'
           type: DEPENDENT
           key: opensearch.node.heap.max
-          delay: '0'
           units: bytes
           description: 'Maximum configured Java heap. These are Java objects in memory.'
           preprocessing:
@@ -946,7 +1024,6 @@ zabbix_export:
           name: 'Heap Percent'
           type: DEPENDENT
           key: opensearch.node.heap.percent
-          delay: '0'
           description: 'Currently used Java heap. These are Java objects in memory. (Expressed as a percent of max)'
           preprocessing:
             - type: JSONPATH
@@ -981,9 +1058,7 @@ zabbix_export:
           name: 'HTTP Address'
           type: DEPENDENT
           key: opensearch.node.http_address
-          delay: '0'
           value_type: TEXT
-          trends: '0'
           description: 'HTTP URL the node is listening on.'
           preprocessing:
             - type: JSONPATH
@@ -1007,9 +1082,7 @@ zabbix_export:
           name: ID
           type: DEPENDENT
           key: opensearch.node.id
-          delay: '0'
           value_type: TEXT
-          trends: '0'
           description: 'Cluster assigned random ID'
           preprocessing:
             - type: JSONPATH
@@ -1033,7 +1106,6 @@ zabbix_export:
           name: 'Delete Current'
           type: DEPENDENT
           key: opensearch.node.indexing.delete_current
-          delay: '0'
           description: 'Current number of deletion operations on indices.'
           preprocessing:
             - type: JSONPATH
@@ -1068,7 +1140,6 @@ zabbix_export:
           name: 'Delete Time'
           type: DEPENDENT
           key: opensearch.node.indexing.delete_time
-          delay: '0'
           units: uptime
           description: 'Time spent in index deletion operations.'
           preprocessing:
@@ -1108,7 +1179,6 @@ zabbix_export:
           name: 'Indexing Current'
           type: DEPENDENT
           key: opensearch.node.indexing.index_current
-          delay: '0'
           description: 'Current number of indexing operations.'
           preprocessing:
             - type: JSONPATH
@@ -1143,7 +1213,6 @@ zabbix_export:
           name: 'Indexing Total Failed'
           type: DEPENDENT
           key: opensearch.node.indexing.index_failed
-          delay: '0'
           description: 'Total number of failed indexing operations.'
           preprocessing:
             - type: JSONPATH
@@ -1164,7 +1233,6 @@ zabbix_export:
           name: 'Indexing Time'
           type: DEPENDENT
           key: opensearch.node.indexing.index_time
-          delay: '0'
           units: uptime
           description: 'Time spent in indexing operations.'
           preprocessing:
@@ -1197,7 +1265,6 @@ zabbix_export:
           name: 'Indexing Total'
           type: DEPENDENT
           key: opensearch.node.indexing.index_total
-          delay: '0'
           description: 'Total number of indexing operations.'
           preprocessing:
             - type: JSONPATH
@@ -1218,9 +1285,7 @@ zabbix_export:
           name: IP
           type: DEPENDENT
           key: opensearch.node.ip
-          delay: '0'
           value_type: TEXT
-          trends: '0'
           description: 'IP the node is listening on'
           preprocessing:
             - type: JSONPATH
@@ -1244,9 +1309,7 @@ zabbix_export:
           name: 'Package JDK'
           type: DEPENDENT
           key: opensearch.node.jdk
-          delay: '0'
           value_type: TEXT
-          trends: '0'
           description: 'Node''s running OpenSearch Java Development Kit (JDK) version number.'
           preprocessing:
             - type: JSONPATH
@@ -1270,7 +1333,6 @@ zabbix_export:
           name: load_1m
           type: DEPENDENT
           key: opensearch.node.load_1m
-          delay: '0'
           history: 1d
           trends: '0'
           description: 'CPU load for the last 1 minute.'
@@ -1293,7 +1355,6 @@ zabbix_export:
           name: load_5m
           type: DEPENDENT
           key: opensearch.node.load_5m
-          delay: '0'
           history: 1d
           trends: '0'
           description: 'CPU load for the last 5 minutes.'
@@ -1316,7 +1377,6 @@ zabbix_export:
           name: load_15m
           type: DEPENDENT
           key: opensearch.node.load_15m
-          delay: '0'
           history: 1d
           trends: '0'
           description: 'CPU load for the last 15 minutes.'
@@ -1339,7 +1399,6 @@ zabbix_export:
           name: 'Merges Current'
           type: DEPENDENT
           key: opensearch.node.merges.current
-          delay: '0'
           description: 'Number of current merge operations.'
           preprocessing:
             - type: JSONPATH
@@ -1360,7 +1419,6 @@ zabbix_export:
           name: 'Merges Current Docs'
           type: DEPENDENT
           key: opensearch.node.merges.current_docs
-          delay: '0'
           description: 'Current number of merging docs operations.'
           preprocessing:
             - type: JSONPATH
@@ -1381,7 +1439,6 @@ zabbix_export:
           name: 'Merges Current Size'
           type: DEPENDENT
           key: opensearch.node.merges.current_size
-          delay: '0'
           units: bytes
           description: 'Size of current merge operations.'
           preprocessing:
@@ -1408,7 +1465,6 @@ zabbix_export:
           name: 'Merges Total Count'
           type: DEPENDENT
           key: opensearch.node.merges.total
-          delay: '0'
           description: 'Total number of completed merge operations.'
           preprocessing:
             - type: JSONPATH
@@ -1429,7 +1485,6 @@ zabbix_export:
           name: 'Merges Total Docs'
           type: DEPENDENT
           key: opensearch.node.merges.total_docs
-          delay: '0'
           description: 'Total number of completed merged documents.'
           preprocessing:
             - type: JSONPATH
@@ -1450,7 +1505,6 @@ zabbix_export:
           name: 'Merges Total Size'
           type: DEPENDENT
           key: opensearch.node.merges.total_size
-          delay: '0'
           units: bytes
           description: 'Total size of merged operations.'
           preprocessing:
@@ -1477,7 +1531,6 @@ zabbix_export:
           name: 'Merges Time'
           type: DEPENDENT
           key: opensearch.node.merges.total_time
-          delay: '0'
           units: uptime
           description: 'Time spent in merge operations.'
           preprocessing:
@@ -1516,9 +1569,7 @@ zabbix_export:
           name: Name
           type: DEPENDENT
           key: opensearch.node.name
-          delay: '0'
           value_type: TEXT
-          trends: '0'
           description: 'Admin determined node name.'
           preprocessing:
             - type: JSONPATH
@@ -1542,9 +1593,7 @@ zabbix_export:
           name: 'Node Role (Letters)'
           type: DEPENDENT
           key: opensearch.node.node.role
-          delay: '0'
           value_type: TEXT
-          trends: '0'
           description: |
             Roles assigned to the node in the 'single letter form'.
             m:master eligible node, d:data node, i:ingest node, -:coordinating node only, r:remote cluster client
@@ -1583,9 +1632,7 @@ zabbix_export:
           name: 'Node Roles'
           type: DEPENDENT
           key: opensearch.node.node.roles
-          delay: '0'
           value_type: TEXT
-          trends: '0'
           description: 'Roles assigned to the node.'
           preprocessing:
             - type: JSONPATH
@@ -1606,9 +1653,7 @@ zabbix_export:
           name: PID
           type: DEPENDENT
           key: opensearch.node.pid
-          delay: '0'
           value_type: TEXT
-          trends: '0'
           description: 'Process ID of OpenSearch Service'
           preprocessing:
             - type: JSONPATH
@@ -1632,9 +1677,7 @@ zabbix_export:
           name: Port
           type: DEPENDENT
           key: opensearch.node.port
-          delay: '0'
           value_type: TEXT
-          trends: '0'
           description: 'Process ID of OpenSearch Service'
           preprocessing:
             - type: JSONPATH
@@ -1674,7 +1717,6 @@ zabbix_export:
           name: 'Query Cache Evictions'
           type: DEPENDENT
           key: opensearch.node.query_cache.evictions
-          delay: '0'
           description: 'Query Cache Evictions'
           preprocessing:
             - type: JSONPATH
@@ -1695,7 +1737,6 @@ zabbix_export:
           name: 'Query Cache Hit Count'
           type: DEPENDENT
           key: opensearch.node.query_cache.hit_count
-          delay: '0'
           description: 'Query Cache Hit Count'
           preprocessing:
             - type: JSONPATH
@@ -1716,7 +1757,6 @@ zabbix_export:
           name: 'Query Cache Memory Size'
           type: DEPENDENT
           key: opensearch.node.query_cache.memory_size
-          delay: '0'
           units: bytes
           description: 'Used Query Cache'
           preprocessing:
@@ -1743,7 +1783,6 @@ zabbix_export:
           name: 'Query Cache Miss Count'
           type: DEPENDENT
           key: opensearch.node.query_cache.miss_count
-          delay: '0'
           description: 'Query Cache Miss Count'
           preprocessing:
             - type: JSONPATH
@@ -1764,7 +1803,6 @@ zabbix_export:
           name: 'Ram Current'
           type: DEPENDENT
           key: opensearch.node.ram.current
-          delay: '0'
           units: bytes
           description: 'Currently used system memory.'
           preprocessing:
@@ -1791,7 +1829,6 @@ zabbix_export:
           name: 'Ram Max'
           type: DEPENDENT
           key: opensearch.node.ram.max
-          delay: '0'
           units: bytes
           description: 'Total system memory.'
           preprocessing:
@@ -1818,7 +1855,6 @@ zabbix_export:
           name: 'Ram Percent'
           type: DEPENDENT
           key: opensearch.node.ram.percent
-          delay: '0'
           description: 'Currently used system memory expressed as a percentage of total system memory.'
           preprocessing:
             - type: JSONPATH
@@ -1839,7 +1875,6 @@ zabbix_export:
           name: 'Refresh Changes'
           type: DEPENDENT
           key: opensearch.node.refresh.changes
-          delay: '0'
           description: 'Zabbix calculated difference of last value and current value.'
           preprocessing:
             - type: JSONPATH
@@ -1850,8 +1885,6 @@ zabbix_export:
                 - \w+
                 - \0
             - type: SIMPLE_CHANGE
-              parameters:
-                - ''
           master_item:
             key: opensearch.cat_nodes
           tags:
@@ -1865,7 +1898,6 @@ zabbix_export:
           name: 'Refresh External Changes'
           type: DEPENDENT
           key: opensearch.node.refresh.external_changes
-          delay: '0'
           description: 'Zabbix calculated difference of last value and current value.'
           preprocessing:
             - type: JSONPATH
@@ -1876,8 +1908,6 @@ zabbix_export:
                 - \w+
                 - \0
             - type: SIMPLE_CHANGE
-              parameters:
-                - ''
           master_item:
             key: opensearch.cat_nodes
           tags:
@@ -1891,7 +1921,6 @@ zabbix_export:
           name: 'Refresh External Total Time'
           type: DEPENDENT
           key: opensearch.node.refresh.external_time
-          delay: '0'
           units: uptime
           description: 'Time spent in external refresh operations.'
           preprocessing:
@@ -1931,7 +1960,6 @@ zabbix_export:
           name: 'Refresh External Total'
           type: DEPENDENT
           key: opensearch.node.refresh.external_total
-          delay: '0'
           description: 'Total number of external refreshes.'
           preprocessing:
             - type: JSONPATH
@@ -1952,7 +1980,6 @@ zabbix_export:
           name: 'Refresh Listeners'
           type: DEPENDENT
           key: opensearch.node.refresh.listeners
-          delay: '0'
           description: 'Total number of pending refresh listeners.'
           preprocessing:
             - type: JSONPATH
@@ -1973,7 +2000,6 @@ zabbix_export:
           name: 'Refresh Time'
           type: DEPENDENT
           key: opensearch.node.refresh.time
-          delay: '0'
           units: uptime
           description: 'Time spent in refresh operations.'
           preprocessing:
@@ -2013,7 +2039,6 @@ zabbix_export:
           name: 'Refresh Total'
           type: DEPENDENT
           key: opensearch.node.refresh.total
-          delay: '0'
           description: 'Total number of refresh operations.'
           preprocessing:
             - type: JSONPATH
@@ -2034,7 +2059,6 @@ zabbix_export:
           name: 'Request Cache Evictions'
           type: DEPENDENT
           key: opensearch.node.request_cache.evictions
-          delay: '0'
           description: 'Request Cache Evictions'
           preprocessing:
             - type: JSONPATH
@@ -2069,12 +2093,9 @@ zabbix_export:
           name: 'Request Cache Hits'
           type: DEPENDENT
           key: opensearch.node.request_cache.hit_count-change
-          delay: '0'
           description: 'Request Cache Hits - change calculated from previous value'
           preprocessing:
             - type: SIMPLE_CHANGE
-              parameters:
-                - ''
           master_item:
             key: opensearch.node.request_cache.hit_count-total
           tags:
@@ -2086,7 +2107,6 @@ zabbix_export:
           name: 'Request Cache Hits Total'
           type: DEPENDENT
           key: opensearch.node.request_cache.hit_count-total
-          delay: '0'
           description: 'Request Cache Hit Count'
           preprocessing:
             - type: JSONPATH
@@ -2107,7 +2127,6 @@ zabbix_export:
           name: 'Request Cache Memory Size'
           type: DEPENDENT
           key: opensearch.node.request_cache.memory_size
-          delay: '0'
           units: bytes
           description: 'Used Request Cache'
           preprocessing:
@@ -2134,7 +2153,6 @@ zabbix_export:
           name: 'Request Cache Miss Total'
           type: DEPENDENT
           key: opensearch.node.request_cache.miss-total
-          delay: '0'
           description: 'Request Cache Miss Counter.'
           preprocessing:
             - type: JSONPATH
@@ -2155,12 +2173,9 @@ zabbix_export:
           name: 'Request Cache Misses'
           type: DEPENDENT
           key: opensearch.node.request_cache.miss_count-change
-          delay: '0'
           description: 'Request Cache Miss Counter - calculated change since previous value.'
           preprocessing:
             - type: SIMPLE_CHANGE
-              parameters:
-                - ''
           master_item:
             key: opensearch.node.request_cache.miss-total
           tags:
@@ -2186,7 +2201,6 @@ zabbix_export:
           name: 'Cache Evictions'
           type: DEPENDENT
           key: opensearch.node.script.cache_evictions
-          delay: '0'
           description: 'Number of script cache evictions.'
           preprocessing:
             - type: JSONPATH
@@ -2207,7 +2221,6 @@ zabbix_export:
           name: 'Script Compilations'
           type: DEPENDENT
           key: opensearch.node.script.compilations
-          delay: '0'
           description: 'Number of script compilations.'
           preprocessing:
             - type: JSONPATH
@@ -2228,7 +2241,6 @@ zabbix_export:
           name: 'Script Compilations Changes'
           type: DEPENDENT
           key: opensearch.node.script.compilations_changes
-          delay: '0'
           description: 'Zabbix calculated difference of last value and current value.'
           preprocessing:
             - type: JSONPATH
@@ -2239,8 +2251,6 @@ zabbix_export:
                 - \w+
                 - \0
             - type: SIMPLE_CHANGE
-              parameters:
-                - ''
           master_item:
             key: opensearch.cat_nodes
           tags:
@@ -2254,7 +2264,6 @@ zabbix_export:
           name: 'Script Compilation Limit Triggered'
           type: DEPENDENT
           key: opensearch.node.script.compilation_limit_triggered
-          delay: '0'
           description: 'Number of script cache compilation limits triggered.'
           preprocessing:
             - type: JSONPATH
@@ -2287,7 +2296,6 @@ zabbix_export:
           name: 'Search Concurrent Average Slice Count'
           type: DEPENDENT
           key: opensearch.node.search.concurrent_avg_slice_count
-          delay: '0'
           description: 'Average query concurrency.'
           preprocessing:
             - type: JSONPATH
@@ -2322,7 +2330,6 @@ zabbix_export:
           name: 'Search Concurrent Query Current'
           type: DEPENDENT
           key: opensearch.node.search.concurrent_query_current
-          delay: '0'
           description: 'Current number of concurrent query phase operations.'
           preprocessing:
             - type: JSONPATH
@@ -2357,7 +2364,6 @@ zabbix_export:
           name: 'Search Concurrent Query Time'
           type: DEPENDENT
           key: opensearch.node.search.concurrent_query_time
-          delay: '0'
           units: uptime
           description: 'Time spent in concurrent query phase.'
           preprocessing:
@@ -2397,7 +2403,6 @@ zabbix_export:
           name: 'Search Concurrent Query Total'
           type: DEPENDENT
           key: opensearch.node.search.concurrent_query_total
-          delay: '0'
           description: 'Total concurrent query phase operations.'
           preprocessing:
             - type: JSONPATH
@@ -2418,7 +2423,6 @@ zabbix_export:
           name: 'Search Fetch Changes'
           type: DEPENDENT
           key: opensearch.node.search.fetch_changes
-          delay: '0'
           description: 'Zabbix calculated difference of last value and current value.'
           preprocessing:
             - type: JSONPATH
@@ -2429,8 +2433,6 @@ zabbix_export:
                 - \w+
                 - \0
             - type: SIMPLE_CHANGE
-              parameters:
-                - ''
           master_item:
             key: opensearch.cat_nodes
           tags:
@@ -2444,7 +2446,6 @@ zabbix_export:
           name: 'Search Fetch Current'
           type: DEPENDENT
           key: opensearch.node.search.fetch_current
-          delay: '0'
           description: 'Current number of fetch phase operations.'
           preprocessing:
             - type: JSONPATH
@@ -2479,7 +2480,6 @@ zabbix_export:
           name: 'Search Fetch Time'
           type: DEPENDENT
           key: opensearch.node.search.fetch_time
-          delay: '0'
           units: uptime
           description: 'Time spent in fetch phase.'
           preprocessing:
@@ -2519,7 +2519,6 @@ zabbix_export:
           name: 'Search Fetch Total'
           type: DEPENDENT
           key: opensearch.node.search.fetch_total
-          delay: '0'
           description: 'Total number of fetch operations.'
           preprocessing:
             - type: JSONPATH
@@ -2540,7 +2539,6 @@ zabbix_export:
           name: 'Search Open Contexts'
           type: DEPENDENT
           key: opensearch.node.search.open_contexts
-          delay: '0'
           description: 'Number of open search contexts.'
           preprocessing:
             - type: JSONPATH
@@ -2575,7 +2573,6 @@ zabbix_export:
           name: 'Search Point in Time Current'
           type: DEPENDENT
           key: opensearch.node.search.point_in_time_current
-          delay: '0'
           description: 'Current number of open point in time contexts.'
           preprocessing:
             - type: JSONPATH
@@ -2596,7 +2593,6 @@ zabbix_export:
           name: 'Search Point in Time Time'
           type: DEPENDENT
           key: opensearch.node.search.point_in_time_time
-          delay: '0'
           units: uptime
           description: 'Time spent with point in time contexts held open.'
           preprocessing:
@@ -2629,7 +2625,6 @@ zabbix_export:
           name: 'Search Point in Time Total'
           type: DEPENDENT
           key: opensearch.node.search.point_in_time_total
-          delay: '0'
           description: 'Total number of completed point in time contexts.'
           preprocessing:
             - type: JSONPATH
@@ -2650,7 +2645,6 @@ zabbix_export:
           name: 'Search Query Changes'
           type: DEPENDENT
           key: opensearch.node.search.query_changes
-          delay: '0'
           description: 'Zabbix calculated difference of last value and current value.'
           preprocessing:
             - type: JSONPATH
@@ -2661,8 +2655,6 @@ zabbix_export:
                 - \w+
                 - \0
             - type: SIMPLE_CHANGE
-              parameters:
-                - ''
           master_item:
             key: opensearch.cat_nodes
           tags:
@@ -2676,7 +2668,6 @@ zabbix_export:
           name: 'Query Current'
           type: DEPENDENT
           key: opensearch.node.search.query_current
-          delay: '0'
           description: 'Current number of query phase operations.'
           preprocessing:
             - type: JSONPATH
@@ -2711,7 +2702,6 @@ zabbix_export:
           name: 'Search Query Time'
           type: DEPENDENT
           key: opensearch.node.search.query_time
-          delay: '0'
           units: uptime
           description: 'Time spent in query phase.'
           preprocessing:
@@ -2751,7 +2741,6 @@ zabbix_export:
           name: 'Search Query Total'
           type: DEPENDENT
           key: opensearch.node.search.query_total
-          delay: '0'
           description: 'Total number of query phase operations.'
           preprocessing:
             - type: JSONPATH
@@ -2772,7 +2761,6 @@ zabbix_export:
           name: 'Search Scroll Current'
           type: DEPENDENT
           key: opensearch.node.search.scroll_current
-          delay: '0'
           description: 'Current number of open scroll contexts.'
           preprocessing:
             - type: JSONPATH
@@ -2793,7 +2781,6 @@ zabbix_export:
           name: 'Search Scroll Time'
           type: DEPENDENT
           key: opensearch.node.search.scroll_time
-          delay: '0'
           units: uptime
           description: 'Time spent with scroll contexts held open.'
           preprocessing:
@@ -2833,7 +2820,6 @@ zabbix_export:
           name: 'Search Scroll Total'
           type: DEPENDENT
           key: opensearch.node.search.scroll_total
-          delay: '0'
           description: 'Total number of completed scroll contexts'
           preprocessing:
             - type: JSONPATH
@@ -2854,7 +2840,6 @@ zabbix_export:
           name: 'Segments Count'
           type: DEPENDENT
           key: opensearch.node.segments.count
-          delay: '0'
           description: 'Number of segments.'
           preprocessing:
             - type: JSONPATH
@@ -2875,7 +2860,6 @@ zabbix_export:
           name: 'Segments Fixed Bitset Memory Size'
           type: DEPENDENT
           key: opensearch.node.segments.fixed_bitset_memory
-          delay: '0'
           units: bytes
           description: 'Memory used by fixed bit sets for nested object field types and type filters for types referred in _parent fields.'
           preprocessing:
@@ -2902,7 +2886,6 @@ zabbix_export:
           name: 'Segments Index Writer Memory Size'
           type: DEPENDENT
           key: opensearch.node.segments.index_writer_memory
-          delay: '0'
           units: bytes
           description: 'Amount of memory used by index writer.'
           preprocessing:
@@ -2929,7 +2912,6 @@ zabbix_export:
           name: 'Segments Memory Size'
           type: DEPENDENT
           key: opensearch.node.segments.memory
-          delay: '0'
           units: bytes
           description: 'Memory used by segments.'
           preprocessing:
@@ -2956,7 +2938,6 @@ zabbix_export:
           name: 'Segments Version Map Memory Size'
           type: DEPENDENT
           key: opensearch.node.segments.version_map_memory
-          delay: '0'
           units: bytes
           description: 'Amount of memory used by version map.'
           preprocessing:
@@ -2983,7 +2964,6 @@ zabbix_export:
           name: 'Suggest Current'
           type: DEPENDENT
           key: opensearch.node.suggest.current
-          delay: '0'
           description: 'Current number of suggest operations.'
           preprocessing:
             - type: JSONPATH
@@ -3004,7 +2984,6 @@ zabbix_export:
           name: 'Suggest Total Time'
           type: DEPENDENT
           key: opensearch.node.suggest.time
-          delay: '0'
           units: uptime
           description: 'Time spent in suggest.'
           preprocessing:
@@ -3044,7 +3023,6 @@ zabbix_export:
           name: 'Suggest Total'
           type: DEPENDENT
           key: opensearch.node.suggest.total
-          delay: '0'
           description: 'Total number of suggest operations.'
           preprocessing:
             - type: JSONPATH
@@ -3065,9 +3043,7 @@ zabbix_export:
           name: 'Package Type'
           type: DEPENDENT
           key: opensearch.node.type
-          delay: '0'
           value_type: TEXT
-          trends: '0'
           description: 'OpenSearch distribution package type.'
           preprocessing:
             - type: JSONPATH
@@ -3091,9 +3067,7 @@ zabbix_export:
           name: Uptime
           type: DEPENDENT
           key: opensearch.node.uptime
-          delay: '0'
           value_type: TEXT
-          trends: '0'
           description: 'Node uptime.'
           preprocessing:
             - type: JSONPATH
@@ -3117,9 +3091,7 @@ zabbix_export:
           name: 'Package Version'
           type: DEPENDENT
           key: opensearch.node.version
-          delay: '0'
           value_type: TEXT
-          trends: '0'
           description: 'Node''s running OpenSearch version number.'
           preprocessing:
             - type: JSONPATH
@@ -3155,169 +3127,531 @@ zabbix_export:
               tags:
                 - tag: Services
                   value: OpenSearch
-        - uuid: 10e489c1f1fa484a9535466dc49ae11e
-          name: 'OpenSearch Node Stats Adaptive Selection'
+        - uuid: 6fee06cf11cc4dafb24099bc444f0ba6
+          name: 'OpenSearch Node Stats'
           type: HTTP_AGENT
-          key: opensearch.node_stats.adaptive_selection
-          delay: 5m
+          key: opensearch.node_stats
+          history: '0'
           value_type: TEXT
-          trends: '0'
           authtype: BASIC
           username: '{$OS.USERNAME}'
           password: '{$OS.PASSWORD}'
-          description: 'Gather data from the API endpoint: _nodes/stats/adaptive_selection'
+          description: 'Gather data from the API endpoint: _nodes/_local/stats'
           preprocessing:
             - type: JSONPATH
               parameters:
-                - '$.nodes.[''{$OS.ID}''].adaptive_selection'
-          url: '{$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_nodes/_local/stats/adaptive_selection'
+                - '$.nodes.[''{$OS.ID}'']'
+          url: '{$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_nodes/_local/stats'
           verify_peer: 'YES'
           verify_host: 'YES'
           tags:
             - tag: 'Node Name'
               value: '{$OS.NAME}'
+        - uuid: ff6708c1ffee468f8c4f54a33b85a8fb
+          name: 'Indexing pressure memory limit'
+          type: DEPENDENT
+          key: opensearch.node_stats.indexing_pressure.limit
+          units: bytes
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.indexing_pressure.memory.limit_in_bytes
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 47fd62cc5f894e438f9aaa203fd901ee
+          name: 'Indexing pressure memory utilization'
+          type: DEPENDENT
+          key: opensearch.node_stats.indexing_pressure.memory_all
+          units: bytes
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.indexing_pressure.memory.current.all_in_bytes
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 1f89db94bad64a539ad11a5dccb92b4b
+          name: 'Search backpressure cancellation count'
+          type: DEPENDENT
+          key: opensearch.node_stats.search_backpressure.cancellation_count
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.search_backpressure.search_task.cancellation_stats.cancellation_count
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: aebf31d8c74b44cea8b2de6a2ddc6aac
+          name: 'Search backpressure cpu usage (avg)'
+          type: DEPENDENT
+          key: opensearch.node_stats.search_backpressure.cpu_usage.avg
+          units: s
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.search_backpressure.search_task.resource_tracker_stats.cpu_usage_tracker.current_avg_millis
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  return value / 1000;
+                  
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 147524840e7e4c05b0d37acd28d7a9ec
+          name: 'Search backpressure cpu usage (max)'
+          type: DEPENDENT
+          key: opensearch.node_stats.search_backpressure.cpu_usage.max
+          units: s
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.search_backpressure.search_task.resource_tracker_stats.cpu_usage_tracker.current_max_millis
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  return value / 1000;
+                  
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 1556f4cd4836444793b00c304abcb861
+          name: 'Search backpressure elapsed time (avg)'
+          type: DEPENDENT
+          key: opensearch.node_stats.search_backpressure.elapsed_time.avg
+          units: s
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.search_backpressure.search_task.resource_tracker_stats.elapsed_time_tracker.current_avg_millis
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  return value / 1000;
+                  
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 8f7987f2700b44aaa3de65671121b122
+          name: 'Search backpressure elapsed time (max)'
+          type: DEPENDENT
+          key: opensearch.node_stats.search_backpressure.elapsed_time.max
+          units: s
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.search_backpressure.search_task.resource_tracker_stats.elapsed_time_tracker.current_max_millis
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  return value / 1000;
+                  
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 7dfd5ea9a255490cab30761d9a838200
+          name: 'Search backpressure heap usage (avg)'
+          type: DEPENDENT
+          key: opensearch.node_stats.search_backpressure.heap_usage.avg
+          units: bytes
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.search_backpressure.search_task.resource_tracker_stats.heap_usage_tracker.current_avg_bytes
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: efd477df23484bf3812d07fda58be2df
+          name: 'Search backpressure heap usage (max)'
+          type: DEPENDENT
+          key: opensearch.node_stats.search_backpressure.heap_usage.max
+          units: bytes
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.search_backpressure.search_task.resource_tracker_stats.heap_usage_tracker.current_max_bytes
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 47185f2095d845c29573262ef80e2981
+          name: 'Parent Breakers: Estimated size'
+          type: DEPENDENT
+          key: opensearch.parent_breakers.estimated_size
+          units: bytes
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.breakers.parent.estimated_size_in_bytes
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 48acd2b1e1d049638ca07b601ea9ac0d
+          name: 'Parent Breakers: Size limit'
+          type: DEPENDENT
+          key: opensearch.parent_breakers.size_limit
+          units: bytes
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.breakers.parent.limit_size
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 0b993f26cc9a4806a31add97c5fdaf3b
+          name: 'Parent Breakers: Tripped count'
+          type: DEPENDENT
+          key: opensearch.parent_breakers.tripped
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.breakers.parent.tripped
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 14ddac42ab3d4aa080144cc4fab9452e
+          name: 'Request Breakers: Estimated size'
+          type: DEPENDENT
+          key: opensearch.request_breakers.estimated_size
+          units: bytes
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.breakers.request.estimated_size_in_bytes
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: d433b5eb711b46b29ab40c39f0d8e14a
+          name: 'Request Breakers: Size limit'
+          type: DEPENDENT
+          key: opensearch.request_breakers.size_limit
+          units: bytes
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.breakers.request.limit_size_in_bytes
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 0e309eaa52b14c3e8c79041ba0faf254
+          name: 'Request Breakers: Tripped count'
+          type: DEPENDENT
+          key: opensearch.request_breakers.tripped
+          units: bytes
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.breakers.request.tripped
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 19e8f125d5874b17ab653462d3e7a944
+          name: 'Cluster Manager throttled tasks (total)'
+          type: DEPENDENT
+          key: opensearch.tasks.throttled_tasks
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.cluster_manager_throttling.stats.total_throttled_tasks
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 38391af0b03947d9b19c806208f36304
+          name: 'Threads: Asynchronous search generic queue'
+          type: DEPENDENT
+          key: opensearch.thread_pool.asynchronous_search_generic.queue
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.thread_pool.opensearch_asynchronous_search_generic.queue
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: fc691e971040456fb298efbc0c9d6f9c
+          name: 'Threads: Fetch shard started queue'
+          type: DEPENDENT
+          key: opensearch.thread_pool.fetch_shard_started.queue
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.thread_pool.fetch_shard_started.queue
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 4b9cfa5d1e884d888c9f2a85228127e7
+          name: 'Threads: Fetch shard store queue'
+          type: DEPENDENT
+          key: opensearch.thread_pool.fetch_shard_store.queue
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.thread_pool.fetch_shard_store.queue
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 6b398955aae84802823cee767c64c7c7
+          name: 'Threads: Flush queue'
+          type: DEPENDENT
+          key: opensearch.thread_pool.flush.queue
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.thread_pool.flush.queue
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 0a0ca7f31598445d9829f14c983c41cc
+          name: 'Threads: Generic queue'
+          type: DEPENDENT
+          key: opensearch.thread_pool.generic.queue
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.thread_pool.generic.queue
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 09a8953d5c074c5da43497c758355f83
+          name: 'Threads: Get queue'
+          type: DEPENDENT
+          key: opensearch.thread_pool.get.queue
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.thread_pool.get.queue
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 08c8cc34fd0744e3804a4f304ac5ef9f
+          name: 'Threads: Management queue'
+          type: DEPENDENT
+          key: opensearch.thread_pool.management.queue
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.thread_pool.management.queue
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 26510b5580e947ffa3e936bf225e435e
+          name: 'Threads: Refresh queue'
+          type: DEPENDENT
+          key: opensearch.thread_pool.refresh.queue
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.thread_pool.refresh.queue
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 89d9f1fca8fb4c6c9b32460b94926ca0
+          name: 'Threads: Search queue'
+          type: DEPENDENT
+          key: opensearch.thread_pool.search.queue
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.thread_pool.search.queue
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: d33eee8ee62341da8adfedec22756c83
+          name: 'Threads: SQL worker queue'
+          type: DEPENDENT
+          key: opensearch.thread_pool.sql_worker.queue
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.thread_pool.sql-worker.queue
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 3443827a3d514deca9cca65aa9405ed3
+          name: 'Threads: System read queue'
+          type: DEPENDENT
+          key: opensearch.thread_pool.system_read.queue
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.thread_pool.system_read.queue
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 70b4000e3c4b4a9497add34b8f761f25
+          name: 'Threads: System write queue'
+          type: DEPENDENT
+          key: opensearch.thread_pool.system_write.queue
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.thread_pool.system_write.queue
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: f74f4c870cf2456292dab451fe596791
+          name: 'Threads: Translog sync queue'
+          type: DEPENDENT
+          key: opensearch.thread_pool.translog_sync.queue
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.thread_pool.translog_sync.queue
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 38b5cd5a636b4635a55d80081eae70c8
+          name: 'Threads: Translog transfer queue'
+          type: DEPENDENT
+          key: opensearch.thread_pool.translog_transfer.queue
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.thread_pool.translog_transfer.queue
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 54d3c28a6e68417aa55ee0a2c0fcc63a
+          name: 'Threads: Write queue'
+          type: DEPENDENT
+          key: opensearch.thread_pool.write.queue
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.thread_pool.write.queue
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
       discovery_rules:
         - uuid: 63f9a17511c24a3d8521b9e8008a480d
           name: 'Node Discovery'
           type: DEPENDENT
           key: opensearch.nodes
-          delay: '0'
           lifetime: 30d
           description: 'Make Zabbix host aware of all other nodes for additional processing and alerts.'
-          item_prototypes:
-            - uuid: a308214e2a11427c8dc84341e74c5f8d
-              name: 'Adaptive Selection Average Queue Size - {#NODE.NAME}'
-              type: DEPENDENT
-              key: 'opensearch.node_stats.adaptive_selection.avg_queue_size[{#NODE.ID}]'
-              delay: '0'
-              description: |
-                The rolling average queue size of search requests for the node (exponentially weighted for adaptive selection rank).
-                
-                Target node Name: {#NODE.NAME}
-                Target node ID: {#NODE.ID}
-                Target node IP: {#NODE.IP}
-                
-                Note: Adaptive Selection will only be used if Adaptive Selection is enabled (default is enabled).
-              preprocessing:
-                - type: JSONPATH
-                  parameters:
-                    - '$.[''{#NODE.ID}''].avg_queue_size'
-              master_item:
-                key: opensearch.node_stats.adaptive_selection
-              tags:
-                - tag: OpenSearch
-                  value: Routing
-                - tag: Service
-                  value: OpenSearch
-            - uuid: 769329449273467091ca5f219f368d0c
-              name: 'Adaptive Selection Average Response Time (ns) - {#NODE.NAME}'
-              type: DEPENDENT
-              key: 'opensearch.node_stats.adaptive_selection.avg_response_time_ns[{#NODE.ID}]'
-              delay: '0'
-              description: |
-                The rolling average response time for search requests, in nanoseconds (exponentially weighted for adaptive selection rank).
-                
-                Target node Name: {#NODE.NAME}
-                Target node ID: {#NODE.ID}
-                Target node IP: {#NODE.IP}
-                
-                Note: Adaptive Selection will only be used if Adaptive Selection is enabled (default is enabled).
-              preprocessing:
-                - type: JSONPATH
-                  parameters:
-                    - '$.[''{#NODE.ID}''].avg_response_time_ns'
-              master_item:
-                key: opensearch.node_stats.adaptive_selection
-              tags:
-                - tag: OpenSearch
-                  value: Routing
-                - tag: Service
-                  value: OpenSearch
-            - uuid: 3e6bc0a263154d41ac0d86d53f2a02da
-              name: 'Adaptive Selection Average Service Time (ns) - {#NODE.NAME}'
-              type: DEPENDENT
-              key: 'opensearch.node_stats.adaptive_selection.avg_service_time_ns[{#NODE.ID}]'
-              delay: '0'
-              value_type: FLOAT
-              description: |
-                The rolling average service time for search requests, in nanoseconds (exponentially weighted for adaptive selection rank).
-                
-                Target node Name: {#NODE.NAME}
-                Target node ID: {#NODE.ID}
-                Target node IP: {#NODE.IP}
-                
-                Note: Adaptive Selection will only be used if Adaptive Selection is enabled (default is enabled).
-              preprocessing:
-                - type: JSONPATH
-                  parameters:
-                    - '$.[''{#NODE.ID}''].avg_service_time_ns'
-              master_item:
-                key: opensearch.node_stats.adaptive_selection
-              tags:
-                - tag: OpenSearch
-                  value: Routing
-                - tag: Service
-                  value: OpenSearch
-            - uuid: 78923969b1ca4e69b5dc5f5474fac2fd
-              name: 'Adaptive Selection Outgoing Searches - {#NODE.NAME}'
-              type: DEPENDENT
-              key: 'opensearch.node_stats.adaptive_selection.outgoing_searches[{#NODE.ID}]'
-              delay: '0'
-              description: |
-                Number of outgoing search requests for the node.
-                
-                Target node Name: {#NODE.NAME}
-                Target node ID: {#NODE.ID}
-                Target node IP: {#NODE.IP}
-                
-                Note: Adaptive Selection will only be used if Adaptive Selection is enabled (default is enabled).
-              preprocessing:
-                - type: JSONPATH
-                  parameters:
-                    - '$.[''{#NODE.ID}''].outgoing_searches'
-              master_item:
-                key: opensearch.node_stats.adaptive_selection
-              tags:
-                - tag: OpenSearch
-                  value: Routing
-                - tag: Service
-                  value: OpenSearch
-            - uuid: 66b9a40dd06d4debb6cbe229bf25defa
-              name: 'Adaptive Selection Rank - {#NODE.NAME}'
-              type: DEPENDENT
-              key: 'opensearch.node_stats.adaptive_selection.rank[{#NODE.ID}]'
-              delay: '0'
-              value_type: FLOAT
-              description: |
-                When a request goes to the node this Zabbix item is under, it will choose to route it to the node with a matching shard with the lowest rank.
-                Ranks are determined by the relative response time, service time, queue size, and outgoing searches.
-                
-                Target node Name: {#NODE.NAME}
-                Target node ID: {#NODE.ID}
-                Target node IP: {#NODE.IP}
-                
-                Note: Adaptive Selection will only be used if Adaptive Selection is enabled (default is enabled).
-              preprocessing:
-                - type: JSONPATH
-                  parameters:
-                    - '$.[''{#NODE.ID}''].rank'
-              master_item:
-                key: opensearch.node_stats.adaptive_selection
-              tags:
-                - tag: OpenSearch
-                  value: Routing
-                - tag: Service
-                  value: OpenSearch
-          graph_prototypes:
-            - uuid: e564f158e25c497f89ce145e0c147927
-              name: 'Adaptive Selection Rank'
-              ymin_type_1: FIXED
-              graph_items:
-                - color: 199C0D
-                  calc_fnc: ALL
-                  item:
-                    host: OpenSearch
-                    key: 'opensearch.node_stats.adaptive_selection.rank[{#NODE.ID}]'
           master_item:
             key: opensearch.cat_nodes
           lld_macro_paths:
