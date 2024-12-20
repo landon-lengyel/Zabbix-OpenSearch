@@ -209,6 +209,468 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                     </tags>
                 </item>
                 <item>
+                    <uuid>4a01e76923be45b0b45bc715992ac412</uuid>
+                    <name>Field Data Breakers: Estimated size</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.breakers.field_data.estimated_size</key>
+                    <units>bytes</units>
+                    <description>The field data circuit breaker limits the heap memory required to load a field into the field data cache.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.fielddata.estimated_size_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>0b59d3e4311f44a2a4085bdeb34aa35f</uuid>
+                    <name>Field Data Breakers: Memory utilization</name>
+                    <type>CALCULATED</type>
+                    <key>opensearch.breakers.field_data.memory_util</key>
+                    <value_type>FLOAT</value_type>
+                    <params>(last(//opensearch.breakers.field_data.estimated_size) / last(//opensearch.breakers.field_data.size_limit)) * 100</params>
+                    <description>This is the current memory utilization before the circuit breaker is tripped at 100%, and further requests are declined.
+The field data circuit breaker limits the heap memory required to load a field into the field data cache.</description>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                        <tag>
+                            <tag>Source</tag>
+                            <value>Calculated</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>ea97034ed7c74a988fa44e63c70120bf</uuid>
+                    <name>Field Data Breakers: Size limit</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.breakers.field_data.size_limit</key>
+                    <units>bytes</units>
+                    <description>The field data circuit breaker limits the heap memory required to load a field into the field data cache.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.fielddata.limit_size_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>5b4fef1a20be4cf6ba91fce87494ed62</uuid>
+                    <name>Field Data Breakers: Tripped count</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.breakers.field_data.tripped</key>
+                    <description>The field data circuit breaker limits the heap memory required to load a field into the field data cache.
+This is the number of times the circuit breaker has been tripped since a service restart.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.fielddata.tripped</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>649ce8e764bc4da19cd1cf8e574b2f3c</uuid>
+                    <name>In-Flight Requests Breakers: Estimated size</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.breakers.in-flight_requests.estimated_size</key>
+                    <units>bytes</units>
+                    <description>The in-flight request circuit breaker limits the memory usage for all currently running incoming requests on transport and HTTP level. The memory usage for a request is based on the content length of the request and includes memory needed for the raw request and a structured object representing the request.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.in_flight_requests.estimated_size_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>8c5286f243e948dbaa1c9b74a98dd1d3</uuid>
+                    <name>In-Flight Requests Breakers: Memory utilization</name>
+                    <type>CALCULATED</type>
+                    <key>opensearch.breakers.in-flight_requests.memory_util</key>
+                    <value_type>FLOAT</value_type>
+                    <params>(last(//opensearch.breakers.in-flight_requests.estimated_size) / last(//opensearch.breakers.in-flight_requests.size_limit)) * 100</params>
+                    <description>The in-flight request circuit breaker limits the memory usage for all currently running incoming requests on transport and HTTP level. The memory usage for a request is based on the content length of the request and includes memory needed for the raw request and a structured object representing the request.
+
+This is the current memory utilization before the circuit breaker is tripped at 100%, and further requests are declined.</description>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                        <tag>
+                            <tag>Source</tag>
+                            <value>Calculated</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>edcc5bef6f4b4267989c29675d03891c</uuid>
+                    <name>In-Flight Requests Breakers: Size limit</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.breakers.in-flight_requests.size_limit</key>
+                    <units>bytes</units>
+                    <description>The in-flight request circuit breaker limits the memory usage for all currently running incoming requests on transport and HTTP level. The memory usage for a request is based on the content length of the request and includes memory needed for the raw request and a structured object representing the request.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.in_flight_requests.limit_size_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>1a2d8b69f1164e19ba907540d05006b0</uuid>
+                    <name>In-Flight Requests Breakers: Tripped count</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.breakers.in-flight_requests.tripped</key>
+                    <description>The in-flight request circuit breaker limits the memory usage for all currently running incoming requests on transport and HTTP level. The memory usage for a request is based on the content length of the request and includes memory needed for the raw request and a structured object representing the request.
+
+This is the number of times the circuit breaker has been tripped since a service restart.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.in_flight_requests.tripped</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>47185f2095d845c29573262ef80e2981</uuid>
+                    <name>Parent Breakers: Estimated size</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.breakers.parent.estimated_size</key>
+                    <units>bytes</units>
+                    <description>Breakers prevent out of memory errors in OpenSearch. The &quot;Parent&quot; breaker is the combination of all other breakers values.
+This is the current estimated size of memory utilization.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.parent.estimated_size_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>79db35309c484d8783bc74ebab27bbd7</uuid>
+                    <name>Parent Breakers: Memory utilization</name>
+                    <type>CALCULATED</type>
+                    <key>opensearch.breakers.parent.memory_util</key>
+                    <value_type>FLOAT</value_type>
+                    <params>(last(//opensearch.breakers.parent.estimated_size) / last(//opensearch.breakers.parent.size_limit)) * 100</params>
+                    <description>Breakers prevent out of memory errors in OpenSearch. The &quot;Parent&quot; breaker is the combination of all other breakers values.
+This is the current memory utilization before the circuit breaker is tripped at 100%, and further requests are declined.</description>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                        <tag>
+                            <tag>Source</tag>
+                            <value>Calculated</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>48acd2b1e1d049638ca07b601ea9ac0d</uuid>
+                    <name>Parent Breakers: Size limit</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.breakers.parent.size_limit</key>
+                    <units>bytes</units>
+                    <description>Breakers prevent out of memory errors in OpenSearch. The &quot;Parent&quot; breaker is the combination of all other breakers values.
+This is the maximum size of memory utilization before the circuit breaker is tripped, and further requests are declined.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.parent.limit_size</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+
+var res = regex.exec(value);
+
+return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>0b993f26cc9a4806a31add97c5fdaf3b</uuid>
+                    <name>Parent Breakers: Tripped count</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.breakers.parent.tripped</key>
+                    <description>Breakers prevent out of memory errors in OpenSearch. The &quot;Parent&quot; breaker is the combination of all other breakers values.
+
+This is the number of times the circuit breaker has been tripped, and further requests were declined.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.parent.tripped</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>14ddac42ab3d4aa080144cc4fab9452e</uuid>
+                    <name>Request Breakers: Estimated size</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.breakers.request.estimated_size</key>
+                    <units>bytes</units>
+                    <description>The request circuit breaker limits the memory required to build data structures that are needed for a request (for example, when calculating aggregations).</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.request.estimated_size_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>0f179cbf16b44597b9e4f510f829cda9</uuid>
+                    <name>Request Breakers: Memory utilization</name>
+                    <type>CALCULATED</type>
+                    <key>opensearch.breakers.request.memory_util</key>
+                    <value_type>FLOAT</value_type>
+                    <params>(last(//opensearch.breakers.request.estimated_size) / last(//opensearch.breakers.request.size_limit)) * 100</params>
+                    <description>The request circuit breaker limits the memory required to build data structures that are needed for a request (for example, when calculating aggregations).
+
+This is the current memory utilization before the circuit breaker is tripped at 100%, and further requests are declined.</description>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                        <tag>
+                            <tag>Source</tag>
+                            <value>Calculated</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>d433b5eb711b46b29ab40c39f0d8e14a</uuid>
+                    <name>Request Breakers: Size limit</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.breakers.request.size_limit</key>
+                    <units>bytes</units>
+                    <description>The request circuit breaker limits the memory required to build data structures that are needed for a request (for example, when calculating aggregations).</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.request.limit_size_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>0e309eaa52b14c3e8c79041ba0faf254</uuid>
+                    <name>Request Breakers: Tripped count</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.breakers.request.tripped</key>
+                    <description>The request circuit breaker limits the memory required to build data structures that are needed for a request (for example, when calculating aggregations).
+
+This is the number of times the circuit breaker has been tripped since a service restart.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.breakers.request.tripped</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
                     <uuid>de6e0647c38543c08412a70e945f639e</uuid>
                     <name>OpenSearch Cat Allocation</name>
                     <type>HTTP_AGENT</type>
@@ -250,89 +712,6 @@ https://opensearch.org/docs/latest/api-reference/cat/cat-allocation/</descriptio
                         <tag>
                             <tag>Node Name</tag>
                             <value>{$OS.NAME}</value>
-                        </tag>
-                    </tags>
-                </item>
-                <item>
-                    <uuid>649ce8e764bc4da19cd1cf8e574b2f3c</uuid>
-                    <name>In-Flight Requests Breakers: Estimated size</name>
-                    <type>DEPENDENT</type>
-                    <key>opensearch.in-flight_requests_breakers.estimated_size</key>
-                    <units>bytes</units>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <parameters>
-                                <parameter>$.breakers.in_flight_requests.estimated_size_in_bytes</parameter>
-                            </parameters>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>opensearch.node_stats</key>
-                    </master_item>
-                    <tags>
-                        <tag>
-                            <tag>Node Name</tag>
-                            <value>{$OS.NAME}</value>
-                        </tag>
-                        <tag>
-                            <tag>Service</tag>
-                            <value>OpenSearch</value>
-                        </tag>
-                    </tags>
-                </item>
-                <item>
-                    <uuid>edcc5bef6f4b4267989c29675d03891c</uuid>
-                    <name>In-Flight Requests Breakers: Size limit</name>
-                    <type>DEPENDENT</type>
-                    <key>opensearch.in-flight_requests_breakers.size_limit</key>
-                    <units>bytes</units>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <parameters>
-                                <parameter>$.breakers.in_flight_requests.limit_size_in_bytes</parameter>
-                            </parameters>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>opensearch.node_stats</key>
-                    </master_item>
-                    <tags>
-                        <tag>
-                            <tag>Node Name</tag>
-                            <value>{$OS.NAME}</value>
-                        </tag>
-                        <tag>
-                            <tag>Service</tag>
-                            <value>OpenSearch</value>
-                        </tag>
-                    </tags>
-                </item>
-                <item>
-                    <uuid>1a2d8b69f1164e19ba907540d05006b0</uuid>
-                    <name>In-Flight Requests Breakers: Tripped count</name>
-                    <type>DEPENDENT</type>
-                    <key>opensearch.in-flight_requests_breakers.tripped</key>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <parameters>
-                                <parameter>$.breakers.in_flight_requests.tripped</parameter>
-                            </parameters>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>opensearch.node_stats</key>
-                    </master_item>
-                    <tags>
-                        <tag>
-                            <tag>Node Name</tag>
-                            <value>{$OS.NAME}</value>
-                        </tag>
-                        <tag>
-                            <tag>Service</tag>
-                            <value>OpenSearch</value>
                         </tag>
                     </tags>
                 </item>
@@ -5100,7 +5479,7 @@ Node Name: {$OS.NAME}</description>
                 </item>
                 <item>
                     <uuid>47fd62cc5f894e438f9aaa203fd901ee</uuid>
-                    <name>Indexing pressure memory utilization</name>
+                    <name>Indexing pressure memory used</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.node_stats.indexing_pressure.memory_all</key>
                     <units>bytes</units>
@@ -5123,6 +5502,28 @@ Node Name: {$OS.NAME}</description>
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>e5a2b15db7e94965860efb880aaa0d95</uuid>
+                    <name>Indexing pressure memory utilization</name>
+                    <type>CALCULATED</type>
+                    <key>opensearch.node_stats.indexing_pressure.memory_util</key>
+                    <value_type>FLOAT</value_type>
+                    <params>(last(//opensearch.node_stats.indexing_pressure.memory_all) / last(//opensearch.node_stats.indexing_pressure.limit)) * 100</params>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                        <tag>
+                            <tag>Source</tag>
+                            <value>Calculated</value>
                         </tag>
                     </tags>
                 </item>
@@ -5332,183 +5733,6 @@ Node Name: {$OS.NAME}</description>
                             <type>JSONPATH</type>
                             <parameters>
                                 <parameter>$.search_backpressure.search_task.resource_tracker_stats.heap_usage_tracker.current_max_bytes</parameter>
-                            </parameters>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>opensearch.node_stats</key>
-                    </master_item>
-                    <tags>
-                        <tag>
-                            <tag>Node Name</tag>
-                            <value>{$OS.NAME}</value>
-                        </tag>
-                        <tag>
-                            <tag>Service</tag>
-                            <value>OpenSearch</value>
-                        </tag>
-                    </tags>
-                </item>
-                <item>
-                    <uuid>47185f2095d845c29573262ef80e2981</uuid>
-                    <name>Parent Breakers: Estimated size</name>
-                    <type>DEPENDENT</type>
-                    <key>opensearch.parent_breakers.estimated_size</key>
-                    <units>bytes</units>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <parameters>
-                                <parameter>$.breakers.parent.estimated_size_in_bytes</parameter>
-                            </parameters>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>opensearch.node_stats</key>
-                    </master_item>
-                    <tags>
-                        <tag>
-                            <tag>Node Name</tag>
-                            <value>{$OS.NAME}</value>
-                        </tag>
-                        <tag>
-                            <tag>Service</tag>
-                            <value>OpenSearch</value>
-                        </tag>
-                    </tags>
-                </item>
-                <item>
-                    <uuid>48acd2b1e1d049638ca07b601ea9ac0d</uuid>
-                    <name>Parent Breakers: Size limit</name>
-                    <type>DEPENDENT</type>
-                    <key>opensearch.parent_breakers.size_limit</key>
-                    <units>bytes</units>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <parameters>
-                                <parameter>$.breakers.parent.limit_size</parameter>
-                            </parameters>
-                        </step>
-                        <step>
-                            <type>JAVASCRIPT</type>
-                            <parameters>
-                                <parameter>var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
-var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
-
-var res = regex.exec(value);
-
-return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
-                            </parameters>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>opensearch.node_stats</key>
-                    </master_item>
-                    <tags>
-                        <tag>
-                            <tag>Node Name</tag>
-                            <value>{$OS.NAME}</value>
-                        </tag>
-                        <tag>
-                            <tag>Service</tag>
-                            <value>OpenSearch</value>
-                        </tag>
-                    </tags>
-                </item>
-                <item>
-                    <uuid>0b993f26cc9a4806a31add97c5fdaf3b</uuid>
-                    <name>Parent Breakers: Tripped count</name>
-                    <type>DEPENDENT</type>
-                    <key>opensearch.parent_breakers.tripped</key>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <parameters>
-                                <parameter>$.breakers.parent.tripped</parameter>
-                            </parameters>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>opensearch.node_stats</key>
-                    </master_item>
-                    <tags>
-                        <tag>
-                            <tag>Node Name</tag>
-                            <value>{$OS.NAME}</value>
-                        </tag>
-                        <tag>
-                            <tag>Service</tag>
-                            <value>OpenSearch</value>
-                        </tag>
-                    </tags>
-                </item>
-                <item>
-                    <uuid>14ddac42ab3d4aa080144cc4fab9452e</uuid>
-                    <name>Request Breakers: Estimated size</name>
-                    <type>DEPENDENT</type>
-                    <key>opensearch.request_breakers.estimated_size</key>
-                    <units>bytes</units>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <parameters>
-                                <parameter>$.breakers.request.estimated_size_in_bytes</parameter>
-                            </parameters>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>opensearch.node_stats</key>
-                    </master_item>
-                    <tags>
-                        <tag>
-                            <tag>Node Name</tag>
-                            <value>{$OS.NAME}</value>
-                        </tag>
-                        <tag>
-                            <tag>Service</tag>
-                            <value>OpenSearch</value>
-                        </tag>
-                    </tags>
-                </item>
-                <item>
-                    <uuid>d433b5eb711b46b29ab40c39f0d8e14a</uuid>
-                    <name>Request Breakers: Size limit</name>
-                    <type>DEPENDENT</type>
-                    <key>opensearch.request_breakers.size_limit</key>
-                    <units>bytes</units>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <parameters>
-                                <parameter>$.breakers.request.limit_size_in_bytes</parameter>
-                            </parameters>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>opensearch.node_stats</key>
-                    </master_item>
-                    <tags>
-                        <tag>
-                            <tag>Node Name</tag>
-                            <value>{$OS.NAME}</value>
-                        </tag>
-                        <tag>
-                            <tag>Service</tag>
-                            <value>OpenSearch</value>
-                        </tag>
-                    </tags>
-                </item>
-                <item>
-                    <uuid>0e309eaa52b14c3e8c79041ba0faf254</uuid>
-                    <name>Request Breakers: Tripped count</name>
-                    <type>DEPENDENT</type>
-                    <key>opensearch.request_breakers.tripped</key>
-                    <preprocessing>
-                        <step>
-                            <type>JSONPATH</type>
-                            <parameters>
-                                <parameter>$.breakers.request.tripped</parameter>
                             </parameters>
                         </step>
                     </preprocessing>
