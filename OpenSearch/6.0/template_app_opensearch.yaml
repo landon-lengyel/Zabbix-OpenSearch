@@ -233,7 +233,7 @@ zabbix_export:
           preprocessing:
             - type: JSONPATH
               parameters:
-                - $.transport.server_open.total_outbound_connections
+                - $.transport.total_outbound_connections
           master_item:
             key: opensearch.node_stats
           tags:
@@ -249,7 +249,7 @@ zabbix_export:
           preprocessing:
             - type: JSONPATH
               parameters:
-                - $.transport.server_open.rx_size_in_bytes
+                - $.transport.rx_size_in_bytes
           master_item:
             key: opensearch.node_stats
           tags:
@@ -280,7 +280,7 @@ zabbix_export:
           preprocessing:
             - type: JSONPATH
               parameters:
-                - $.transport.server_open.tx_size_in_bytes
+                - $.transport.tx_size_in_bytes
           master_item:
             key: opensearch.node_stats
           tags:
@@ -3335,6 +3335,15 @@ zabbix_export:
             - type: JSONPATH
               parameters:
                 - $.breakers.parent.limit_size
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+                  var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+                  
+                  var res = regex.exec(value);
+                  
+                  return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);
           master_item:
             key: opensearch.node_stats
           tags:
@@ -3393,7 +3402,6 @@ zabbix_export:
           name: 'Request Breakers: Tripped count'
           type: DEPENDENT
           key: opensearch.request_breakers.tripped
-          units: bytes
           preprocessing:
             - type: JSONPATH
               parameters:
@@ -3562,7 +3570,7 @@ zabbix_export:
           preprocessing:
             - type: JSONPATH
               parameters:
-                - $.thread_pool.sql-worker.queue
+                - '$.thread_pool.["sql-worker"].queue'
           master_item:
             key: opensearch.node_stats
           tags:

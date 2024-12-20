@@ -372,7 +372,7 @@ https://opensearch.org/docs/latest/api-reference/cat/cat-allocation/</descriptio
                         <step>
                             <type>JSONPATH</type>
                             <parameters>
-                                <parameter>$.transport.server_open.total_outbound_connections</parameter>
+                                <parameter>$.transport.total_outbound_connections</parameter>
                             </parameters>
                         </step>
                     </preprocessing>
@@ -400,7 +400,7 @@ https://opensearch.org/docs/latest/api-reference/cat/cat-allocation/</descriptio
                         <step>
                             <type>JSONPATH</type>
                             <parameters>
-                                <parameter>$.transport.server_open.rx_size_in_bytes</parameter>
+                                <parameter>$.transport.rx_size_in_bytes</parameter>
                             </parameters>
                         </step>
                     </preprocessing>
@@ -455,7 +455,7 @@ https://opensearch.org/docs/latest/api-reference/cat/cat-allocation/</descriptio
                         <step>
                             <type>JSONPATH</type>
                             <parameters>
-                                <parameter>$.transport.server_open.tx_size_in_bytes</parameter>
+                                <parameter>$.transport.tx_size_in_bytes</parameter>
                             </parameters>
                         </step>
                     </preprocessing>
@@ -5390,6 +5390,17 @@ Node Name: {$OS.NAME}</description>
                                 <parameter>$.breakers.parent.limit_size</parameter>
                             </parameters>
                         </step>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <parameters>
+                                <parameter>var powers = {'b': 0, 'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4};
+var regex = /(\d+(?:\.\d+)?)\s?(b|kb|mb|gb|tb)?b?/i;
+
+var res = regex.exec(value);
+
+return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
+                            </parameters>
+                        </step>
                     </preprocessing>
                     <master_item>
                         <key>opensearch.node_stats</key>
@@ -5493,7 +5504,6 @@ Node Name: {$OS.NAME}</description>
                     <name>Request Breakers: Tripped count</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.request_breakers.tripped</key>
-                    <units>bytes</units>
                     <preprocessing>
                         <step>
                             <type>JSONPATH</type>
@@ -5795,7 +5805,7 @@ Node Name: {$OS.NAME}</description>
                         <step>
                             <type>JSONPATH</type>
                             <parameters>
-                                <parameter>$.thread_pool.sql-worker.queue</parameter>
+                                <parameter>$.thread_pool.[&quot;sql-worker&quot;].queue</parameter>
                             </parameters>
                         </step>
                     </preprocessing>
