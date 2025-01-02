@@ -3818,15 +3818,13 @@ zabbix_export:
           name: OpenSearch
           auto_start: 'NO'
           pages:
-            - widgets:
+            - name: 'OS Performance'
+              widgets:
                 - type: graph
-                  name: Operations
-                  width: '45'
+                  name: 'Node Operations {#NODE.NAME}'
+                  width: '36'
                   height: '6'
                   fields:
-                    - type: INTEGER
-                      name: columns
-                      value: '1'
                     - type: GRAPH
                       name: graphid.0
                       value:
@@ -3834,147 +3832,442 @@ zabbix_export:
                         name: 'OpenSearch Node Operations'
                     - type: STRING
                       name: reference
-                      value: XDESE
-                - type: graph
-                  name: 'JVM Heap'
-                  'y': '6'
-                  width: '27'
-                  height: '6'
-                  fields:
-                    - type: INTEGER
-                      name: columns
-                      value: '1'
-                    - type: GRAPH
-                      name: graphid.0
-                      value:
-                        host: OpenSearch
-                        name: 'OpenSearch Node Heap Utilization'
-                    - type: STRING
-                      name: reference
-                      value: LYVAS
-                - type: graph
-                  name: 'Merges Size'
-                  x: '27'
-                  'y': '6'
-                  width: '24'
-                  height: '6'
-                  fields:
-                    - type: INTEGER
-                      name: columns
-                      value: '1'
-                    - type: GRAPH
-                      name: graphid.0
-                      value:
-                        host: OpenSearch
-                        name: 'OpenSearch Node Merges Size'
-                    - type: STRING
-                      name: reference
-                      value: RHLUC
-                - type: graph
-                  name: 'Operations Memory'
-                  x: '45'
-                  width: '27'
-                  height: '6'
-                  fields:
-                    - type: INTEGER
-                      name: columns
-                      value: '1'
-                    - type: GRAPH
-                      name: graphid.0
-                      value:
-                        host: OpenSearch
-                        name: 'OpenSearch Node Services Memory'
-                    - type: STRING
-                      name: reference
-                      value: LXTZT
-                - type: graph
-                  name: 'Merges Doc Count'
-                  x: '51'
-                  'y': '6'
-                  width: '21'
-                  height: '6'
-                  fields:
-                    - type: INTEGER
-                      name: columns
-                      value: '1'
-                    - type: GRAPH
-                      name: graphid.0
-                      value:
-                        host: OpenSearch
-                        name: 'OpenSearch Node Merges Docs'
-                    - type: STRING
-                      name: reference
-                      value: LSXBA
-            - name: 'Page 2'
-              widgets:
-                - type: graph
-                  name: 'Query Cache Hit/Miss/Evictions'
-                  width: '36'
-                  height: '6'
-                  fields:
-                    - type: INTEGER
-                      name: columns
-                      value: '1'
-                    - type: GRAPH
-                      name: graphid.0
-                      value:
-                        host: OpenSearch
-                        name: 'OpenSearch Node Query Cache Hit/Miss/Evictions'
-                    - type: STRING
-                      name: reference
-                      value: HHGGN
-                - type: graph
-                  name: 'Search Metrics'
+                      value: OTXEW
+                - type: svggraph
+                  name: 'Indexing pressure memory utilization'
                   'y': '6'
                   width: '36'
-                  height: '6'
+                  height: '4'
                   fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: EF5350
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Indexing pressure memory utilization'
                     - type: INTEGER
-                      name: columns
+                      name: ds.0.transparency
                       value: '1'
-                    - type: GRAPH
-                      name: graphid.0
-                      value:
-                        host: OpenSearch
-                        name: 'OpenSearch Node Search Metrics'
+                    - type: INTEGER
+                      name: ds.0.width
+                      value: '3'
+                    - type: STRING
+                      name: lefty_max
+                      value: '100'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '10'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: INTEGER
+                      name: legend_statistic
+                      value: '1'
                     - type: STRING
                       name: reference
-                      value: BIYZI
-                - type: graph
-                  name: 'Request Cache Hit/Miss/Evictions'
+                      value: DBTHH
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
+                - type: svggraph
+                  name: 'Threads active'
+                  'y': '10'
+                  width: '36'
+                  height: '7'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: 4CAF50
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Threads: Active*'
+                    - type: INTEGER
+                      name: ds.0.transparency
+                      value: '3'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '10'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: INTEGER
+                      name: legend_statistic
+                      value: '1'
+                    - type: STRING
+                      name: reference
+                      value: LASPL
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
+                - type: svggraph
+                  name: 'JVM Heap Utilization (Memory)'
+                  'y': '17'
+                  width: '36'
+                  height: '5'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: 42A5F5
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Heap Percent'
+                    - type: INTEGER
+                      name: ds.0.transparency
+                      value: '3'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '10'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: INTEGER
+                      name: legend_statistic
+                      value: '1'
+                    - type: STRING
+                      name: reference
+                      value: GZOCM
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
+                - type: svggraph
+                  name: 'Net HTTP: Open connections'
+                  'y': '24'
+                  width: '25'
+                  height: '5'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: FFB300
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Net HTTP: Current open'
+                    - type: INTEGER
+                      name: ds.0.transparency
+                      value: '1'
+                    - type: INTEGER
+                      name: ds.0.width
+                      value: '3'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '10'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: INTEGER
+                      name: legend_statistic
+                      value: '1'
+                    - type: STRING
+                      name: reference
+                      value: LZGDX
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
+                - type: svggraph
+                  name: 'Net Transport: Receive size'
+                  'y': '29'
+                  width: '25'
+                  height: '5'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: 66BB6A
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Net Transport: Total receive size changes'
+                    - type: INTEGER
+                      name: ds.0.transparency
+                      value: '1'
+                    - type: INTEGER
+                      name: ds.0.width
+                      value: '3'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '10'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: INTEGER
+                      name: legend_statistic
+                      value: '1'
+                    - type: STRING
+                      name: reference
+                      value: IXPAY
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
+                - type: svggraph
+                  name: 'Net Transport: Connections open'
+                  x: '25'
+                  'y': '24'
+                  width: '25'
+                  height: '5'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: 673AB7
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Net Transport: Server open'
+                    - type: INTEGER
+                      name: ds.0.transparency
+                      value: '1'
+                    - type: INTEGER
+                      name: ds.0.width
+                      value: '3'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '10'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: INTEGER
+                      name: legend_statistic
+                      value: '1'
+                    - type: STRING
+                      name: reference
+                      value: ZCWSJ
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
+                - type: svggraph
+                  name: 'Net Transport: Transmit size'
+                  x: '25'
+                  'y': '29'
+                  width: '25'
+                  height: '5'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: 26C6DA
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Net Transport: Total transmit size changes'
+                    - type: INTEGER
+                      name: ds.0.transparency
+                      value: '1'
+                    - type: INTEGER
+                      name: ds.0.width
+                      value: '3'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '10'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: INTEGER
+                      name: legend_statistic
+                      value: '1'
+                    - type: STRING
+                      name: reference
+                      value: GPKEP
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
+                - type: svggraph
+                  name: 'Parent (total) breaker memory utilization'
                   x: '36'
                   width: '36'
                   height: '6'
                   fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: 80DEEA
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: '*breakers: Memory utilization'
                     - type: INTEGER
-                      name: columns
+                      name: ds.0.transparency
                       value: '1'
-                    - type: GRAPH
-                      name: graphid.0
-                      value:
-                        host: OpenSearch
-                        name: 'OpenSearch Node Request Cache Hit/Miss/Evictions'
+                    - type: INTEGER
+                      name: ds.0.width
+                      value: '3'
+                    - type: STRING
+                      name: lefty_max
+                      value: '100'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '10'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: INTEGER
+                      name: legend_statistic
+                      value: '1'
                     - type: STRING
                       name: reference
-                      value: RQJAL
-                - type: graph
-                  name: 'Script Compilations'
+                      value: FYFWG
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
+                - type: svggraph
+                  name: 'Parent (total) breaker memory utilization'
                   x: '36'
                   'y': '6'
                   width: '36'
-                  height: '6'
+                  height: '4'
                   fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: 80DEEA
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Parent Breakers: Memory utilization'
                     - type: INTEGER
-                      name: columns
+                      name: ds.0.transparency
                       value: '1'
-                    - type: GRAPH
-                      name: graphid.0
-                      value:
-                        host: OpenSearch
-                        name: 'OpenSearch Node Script Compilations'
+                    - type: INTEGER
+                      name: ds.0.width
+                      value: '3'
+                    - type: STRING
+                      name: lefty_max
+                      value: '100'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '10'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: INTEGER
+                      name: legend_statistic
+                      value: '1'
                     - type: STRING
                       name: reference
-                      value: CJDXA
+                      value: VXTZT
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
+                - type: svggraph
+                  name: 'Threads queue'
+                  x: '36'
+                  'y': '10'
+                  width: '36'
+                  height: '7'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: FFC107
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Threads: Queue*'
+                    - type: INTEGER
+                      name: ds.0.transparency
+                      value: '3'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '10'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: INTEGER
+                      name: legend_statistic
+                      value: '1'
+                    - type: STRING
+                      name: reference
+                      value: GTKTU
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
+                - type: svggraph
+                  name: 'Threads rejected'
+                  x: '36'
+                  'y': '17'
+                  width: '36'
+                  height: '7'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: F44336
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Threads: Rejected*'
+                    - type: INTEGER
+                      name: ds.0.transparency
+                      value: '3'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '10'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: INTEGER
+                      name: legend_statistic
+                      value: '1'
+                    - type: STRING
+                      name: reference
+                      value: RWKKM
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
+                - type: svggraph
+                  name: 'Net Transport: Outbound connections'
+                  x: '50'
+                  'y': '24'
+                  width: '22'
+                  height: '5'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: 673AB7
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Net Transport: Total outbound connections'
+                    - type: INTEGER
+                      name: ds.0.transparency
+                      value: '1'
+                    - type: INTEGER
+                      name: ds.0.width
+                      value: '3'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '10'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: INTEGER
+                      name: legend_statistic
+                      value: '1'
+                    - type: STRING
+                      name: reference
+                      value: VGLGM
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
             - name: 'Page 3'
               widgets:
                 - type: graph
@@ -3982,9 +4275,6 @@ zabbix_export:
                   width: '37'
                   height: '6'
                   fields:
-                    - type: INTEGER
-                      name: columns
-                      value: '1'
                     - type: GRAPH
                       name: graphid.0
                       value:

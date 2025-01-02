@@ -6187,18 +6187,14 @@ Node Name: {$OS.NAME}</description>
                     <auto_start>NO</auto_start>
                     <pages>
                         <page>
+                            <name>OS Performance</name>
                             <widgets>
                                 <widget>
                                     <type>graph</type>
-                                    <name>Operations</name>
-                                    <width>45</width>
+                                    <name>Node Operations {#NODE.NAME}</name>
+                                    <width>36</width>
                                     <height>6</height>
                                     <fields>
-                                        <field>
-                                            <type>INTEGER</type>
-                                            <name>columns</name>
-                                            <value>1</value>
-                                        </field>
                                         <field>
                                             <type>GRAPH</type>
                                             <name>graphid.0</name>
@@ -6210,230 +6206,716 @@ Node Name: {$OS.NAME}</description>
                                         <field>
                                             <type>STRING</type>
                                             <name>reference</name>
-                                            <value>XDESE</value>
+                                            <value>OTXEW</value>
                                         </field>
                                     </fields>
                                 </widget>
                                 <widget>
-                                    <type>graph</type>
-                                    <name>JVM Heap</name>
-                                    <y>6</y>
-                                    <width>27</width>
-                                    <height>6</height>
-                                    <fields>
-                                        <field>
-                                            <type>INTEGER</type>
-                                            <name>columns</name>
-                                            <value>1</value>
-                                        </field>
-                                        <field>
-                                            <type>GRAPH</type>
-                                            <name>graphid.0</name>
-                                            <value>
-                                                <host>OpenSearch</host>
-                                                <name>OpenSearch Node Heap Utilization</name>
-                                            </value>
-                                        </field>
-                                        <field>
-                                            <type>STRING</type>
-                                            <name>reference</name>
-                                            <value>LYVAS</value>
-                                        </field>
-                                    </fields>
-                                </widget>
-                                <widget>
-                                    <type>graph</type>
-                                    <name>Merges Size</name>
-                                    <x>27</x>
-                                    <y>6</y>
-                                    <width>24</width>
-                                    <height>6</height>
-                                    <fields>
-                                        <field>
-                                            <type>INTEGER</type>
-                                            <name>columns</name>
-                                            <value>1</value>
-                                        </field>
-                                        <field>
-                                            <type>GRAPH</type>
-                                            <name>graphid.0</name>
-                                            <value>
-                                                <host>OpenSearch</host>
-                                                <name>OpenSearch Node Merges Size</name>
-                                            </value>
-                                        </field>
-                                        <field>
-                                            <type>STRING</type>
-                                            <name>reference</name>
-                                            <value>RHLUC</value>
-                                        </field>
-                                    </fields>
-                                </widget>
-                                <widget>
-                                    <type>graph</type>
-                                    <name>Operations Memory</name>
-                                    <x>45</x>
-                                    <width>27</width>
-                                    <height>6</height>
-                                    <fields>
-                                        <field>
-                                            <type>INTEGER</type>
-                                            <name>columns</name>
-                                            <value>1</value>
-                                        </field>
-                                        <field>
-                                            <type>GRAPH</type>
-                                            <name>graphid.0</name>
-                                            <value>
-                                                <host>OpenSearch</host>
-                                                <name>OpenSearch Node Services Memory</name>
-                                            </value>
-                                        </field>
-                                        <field>
-                                            <type>STRING</type>
-                                            <name>reference</name>
-                                            <value>LXTZT</value>
-                                        </field>
-                                    </fields>
-                                </widget>
-                                <widget>
-                                    <type>graph</type>
-                                    <name>Merges Doc Count</name>
-                                    <x>51</x>
-                                    <y>6</y>
-                                    <width>21</width>
-                                    <height>6</height>
-                                    <fields>
-                                        <field>
-                                            <type>INTEGER</type>
-                                            <name>columns</name>
-                                            <value>1</value>
-                                        </field>
-                                        <field>
-                                            <type>GRAPH</type>
-                                            <name>graphid.0</name>
-                                            <value>
-                                                <host>OpenSearch</host>
-                                                <name>OpenSearch Node Merges Docs</name>
-                                            </value>
-                                        </field>
-                                        <field>
-                                            <type>STRING</type>
-                                            <name>reference</name>
-                                            <value>LSXBA</value>
-                                        </field>
-                                    </fields>
-                                </widget>
-                            </widgets>
-                        </page>
-                        <page>
-                            <name>Page 2</name>
-                            <widgets>
-                                <widget>
-                                    <type>graph</type>
-                                    <name>Query Cache Hit/Miss/Evictions</name>
-                                    <width>36</width>
-                                    <height>6</height>
-                                    <fields>
-                                        <field>
-                                            <type>INTEGER</type>
-                                            <name>columns</name>
-                                            <value>1</value>
-                                        </field>
-                                        <field>
-                                            <type>GRAPH</type>
-                                            <name>graphid.0</name>
-                                            <value>
-                                                <host>OpenSearch</host>
-                                                <name>OpenSearch Node Query Cache Hit/Miss/Evictions</name>
-                                            </value>
-                                        </field>
-                                        <field>
-                                            <type>STRING</type>
-                                            <name>reference</name>
-                                            <value>HHGGN</value>
-                                        </field>
-                                    </fields>
-                                </widget>
-                                <widget>
-                                    <type>graph</type>
-                                    <name>Search Metrics</name>
+                                    <type>svggraph</type>
+                                    <name>Indexing pressure memory utilization</name>
                                     <y>6</y>
                                     <width>36</width>
-                                    <height>6</height>
+                                    <height>4</height>
                                     <fields>
                                         <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>EF5350</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Indexing pressure memory utilization</value>
+                                        </field>
+                                        <field>
                                             <type>INTEGER</type>
-                                            <name>columns</name>
+                                            <name>ds.0.transparency</name>
                                             <value>1</value>
                                         </field>
                                         <field>
-                                            <type>GRAPH</type>
-                                            <name>graphid.0</name>
-                                            <value>
-                                                <host>OpenSearch</host>
-                                                <name>OpenSearch Node Search Metrics</name>
-                                            </value>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_max</name>
+                                            <value>100</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>10</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_statistic</name>
+                                            <value>1</value>
                                         </field>
                                         <field>
                                             <type>STRING</type>
                                             <name>reference</name>
-                                            <value>BIYZI</value>
+                                            <value>DBTHH</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
                                         </field>
                                     </fields>
                                 </widget>
                                 <widget>
-                                    <type>graph</type>
-                                    <name>Request Cache Hit/Miss/Evictions</name>
+                                    <type>svggraph</type>
+                                    <name>Threads active</name>
+                                    <y>10</y>
+                                    <width>36</width>
+                                    <height>7</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>4CAF50</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Threads: Active*</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.transparency</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>10</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_statistic</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>reference</name>
+                                            <value>LASPL</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>svggraph</type>
+                                    <name>JVM Heap Utilization (Memory)</name>
+                                    <y>17</y>
+                                    <width>36</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>42A5F5</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Heap Percent</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.transparency</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>10</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_statistic</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>reference</name>
+                                            <value>GZOCM</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>svggraph</type>
+                                    <name>Net HTTP: Open connections</name>
+                                    <y>24</y>
+                                    <width>25</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>FFB300</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Net HTTP: Current open</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.transparency</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>10</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_statistic</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>reference</name>
+                                            <value>LZGDX</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>svggraph</type>
+                                    <name>Net Transport: Receive size</name>
+                                    <y>29</y>
+                                    <width>25</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>66BB6A</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Net Transport: Total receive size changes</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.transparency</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>10</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_statistic</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>reference</name>
+                                            <value>IXPAY</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>svggraph</type>
+                                    <name>Net Transport: Connections open</name>
+                                    <x>25</x>
+                                    <y>24</y>
+                                    <width>25</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>673AB7</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Net Transport: Server open</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.transparency</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>10</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_statistic</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>reference</name>
+                                            <value>ZCWSJ</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>svggraph</type>
+                                    <name>Net Transport: Transmit size</name>
+                                    <x>25</x>
+                                    <y>29</y>
+                                    <width>25</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>26C6DA</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Net Transport: Total transmit size changes</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.transparency</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>10</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_statistic</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>reference</name>
+                                            <value>GPKEP</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>svggraph</type>
+                                    <name>Parent (total) breaker memory utilization</name>
                                     <x>36</x>
                                     <width>36</width>
                                     <height>6</height>
                                     <fields>
                                         <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>80DEEA</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>*breakers: Memory utilization</value>
+                                        </field>
+                                        <field>
                                             <type>INTEGER</type>
-                                            <name>columns</name>
+                                            <name>ds.0.transparency</name>
                                             <value>1</value>
                                         </field>
                                         <field>
-                                            <type>GRAPH</type>
-                                            <name>graphid.0</name>
-                                            <value>
-                                                <host>OpenSearch</host>
-                                                <name>OpenSearch Node Request Cache Hit/Miss/Evictions</name>
-                                            </value>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_max</name>
+                                            <value>100</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>10</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_statistic</name>
+                                            <value>1</value>
                                         </field>
                                         <field>
                                             <type>STRING</type>
                                             <name>reference</name>
-                                            <value>RQJAL</value>
+                                            <value>FYFWG</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
                                         </field>
                                     </fields>
                                 </widget>
                                 <widget>
-                                    <type>graph</type>
-                                    <name>Script Compilations</name>
+                                    <type>svggraph</type>
+                                    <name>Parent (total) breaker memory utilization</name>
                                     <x>36</x>
                                     <y>6</y>
                                     <width>36</width>
-                                    <height>6</height>
+                                    <height>4</height>
                                     <fields>
                                         <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>80DEEA</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Parent Breakers: Memory utilization</value>
+                                        </field>
+                                        <field>
                                             <type>INTEGER</type>
-                                            <name>columns</name>
+                                            <name>ds.0.transparency</name>
                                             <value>1</value>
                                         </field>
                                         <field>
-                                            <type>GRAPH</type>
-                                            <name>graphid.0</name>
-                                            <value>
-                                                <host>OpenSearch</host>
-                                                <name>OpenSearch Node Script Compilations</name>
-                                            </value>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_max</name>
+                                            <value>100</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>10</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_statistic</name>
+                                            <value>1</value>
                                         </field>
                                         <field>
                                             <type>STRING</type>
                                             <name>reference</name>
-                                            <value>CJDXA</value>
+                                            <value>VXTZT</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>svggraph</type>
+                                    <name>Threads queue</name>
+                                    <x>36</x>
+                                    <y>10</y>
+                                    <width>36</width>
+                                    <height>7</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>FFC107</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Threads: Queue*</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.transparency</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>10</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_statistic</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>reference</name>
+                                            <value>GTKTU</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>svggraph</type>
+                                    <name>Threads rejected</name>
+                                    <x>36</x>
+                                    <y>17</y>
+                                    <width>36</width>
+                                    <height>7</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>F44336</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Threads: Rejected*</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.transparency</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>10</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_statistic</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>reference</name>
+                                            <value>RWKKM</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>svggraph</type>
+                                    <name>Net Transport: Outbound connections</name>
+                                    <x>50</x>
+                                    <y>24</y>
+                                    <width>22</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>673AB7</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Net Transport: Total outbound connections</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.transparency</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>10</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_statistic</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>reference</name>
+                                            <value>VGLGM</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
                                         </field>
                                     </fields>
                                 </widget>
@@ -6448,11 +6930,6 @@ Node Name: {$OS.NAME}</description>
                                     <width>37</width>
                                     <height>6</height>
                                     <fields>
-                                        <field>
-                                            <type>INTEGER</type>
-                                            <name>columns</name>
-                                            <value>1</value>
-                                        </field>
                                         <field>
                                             <type>GRAPH</type>
                                             <name>graphid.0</name>
