@@ -798,6 +798,36 @@ https://opensearch.org/docs/latest/api-reference/cat/cat-allocation/</descriptio
                     </tags>
                 </item>
                 <item>
+                    <uuid>185a5cea2b96480b937a29c4b3e726c1</uuid>
+                    <name>Net Transport: Total receive size changes</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.net_transport.receive_size.changes</key>
+                    <units>bytes</units>
+                    <description>Zabbix calculated difference of last value and current value.</description>
+                    <preprocessing>
+                        <step>
+                            <type>SIMPLE_CHANGE</type>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.net_transport.receive_size</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                        <tag>
+                            <tag>Source</tag>
+                            <value>Calculated</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
                     <uuid>944eb6cbd15249f2b1d722fa2305c828</uuid>
                     <name>Net Transport: Server open</name>
                     <type>DEPENDENT</type>
@@ -849,6 +879,36 @@ https://opensearch.org/docs/latest/api-reference/cat/cat-allocation/</descriptio
                         <tag>
                             <tag>Service</tag>
                             <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>2ad5f03be5184e51ac74cd40e96c8f0a</uuid>
+                    <name>Net Transport: Total transmit size changes</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.net_transport.transmit_size.changes</key>
+                    <units>bytes</units>
+                    <description>Zabbix calculated difference of last value and current value.</description>
+                    <preprocessing>
+                        <step>
+                            <type>SIMPLE_CHANGE</type>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.net_transport.transmit_size</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                        <tag>
+                            <tag>Source</tag>
+                            <value>Calculated</value>
                         </tag>
                     </tags>
                 </item>
@@ -5778,6 +5838,35 @@ Node Name: {$OS.NAME}</description>
                     </tags>
                 </item>
                 <item>
+                    <uuid>25a23a9135fb47969a2579c87a603bd1</uuid>
+                    <name>OpenSearch Node Thread Pool</name>
+                    <type>HTTP_AGENT</type>
+                    <key>opensearch.thread_pool</key>
+                    <history>0</history>
+                    <value_type>TEXT</value_type>
+                    <authtype>BASIC</authtype>
+                    <username>{$OS.USERNAME}</username>
+                    <password>{$OS.PASSWORD}</password>
+                    <description>Gather data from the API endpoint: _cat/thread_pool</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.node_name=='{$OS.NAME}')]</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <url>{$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_cat/thread_pool?format=json</url>
+                    <verify_peer>YES</verify_peer>
+                    <verify_host>YES</verify_host>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
                     <uuid>38391af0b03947d9b19c806208f36304</uuid>
                     <name>Threads: Asynchronous search generic queue</name>
                     <type>DEPENDENT</type>
@@ -6186,7 +6275,7 @@ Node Name: {$OS.NAME}</description>
             <discovery_rules>
                 <discovery_rule>
                     <uuid>63f9a17511c24a3d8521b9e8008a480d</uuid>
-                    <name>Node Discovery</name>
+                    <name>Node discovery</name>
                     <type>DEPENDENT</type>
                     <key>opensearch.nodes</key>
                     <lifetime>30d</lifetime>
@@ -6234,6 +6323,162 @@ Node Name: {$OS.NAME}</description>
                         <lld_macro_path>
                             <lld_macro>{#NODE.ROLES}</lld_macro>
                             <path>$.['node.role']</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                </discovery_rule>
+                <discovery_rule>
+                    <uuid>52c94001984f4528a996737e98ad2c30</uuid>
+                    <name>Thread pool discovery</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearchnode.thread_pools</key>
+                    <item_prototypes>
+                        <item_prototype>
+                            <uuid>7c102bfceca64d27bc1d17c06a9604c6</uuid>
+                            <name>Threads: Active ({#THREAD.NAME})</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearchnode.thread_pools.active[{#THREAD.NAME}]</key>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.node_name=='{$OS.NAME}'&amp;&amp;@.name=='{#THREAD.NAME}')].active</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <parameters>
+                                        <parameter>[&quot;</parameter>
+                                        <parameter/>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <parameters>
+                                        <parameter>&quot;]</parameter>
+                                        <parameter/>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearch.thread_pool</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>616c3319e8a64377a0f5e13d9203b15e</uuid>
+                            <name>Threads: Queue ({#THREAD.NAME})</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearchnode.thread_pools.queue[{#THREAD.NAME}]</key>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.node_name=='{$OS.NAME}'&amp;&amp;@.name=='{#THREAD.NAME}')].queue</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <parameters>
+                                        <parameter>[&quot;</parameter>
+                                        <parameter/>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <parameters>
+                                        <parameter>&quot;]</parameter>
+                                        <parameter/>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearch.thread_pool</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>4e83b1f9c2ac4d8eb2fd2a42d8ea2628</uuid>
+                            <name>Threads: Rejected ({#THREAD.NAME})</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearchnode.thread_pools.rejected[{#THREAD.NAME}]</key>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.node_name=='{$OS.NAME}'&amp;&amp;@.name=='{#THREAD.NAME}')].rejected</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <parameters>
+                                        <parameter>[&quot;</parameter>
+                                        <parameter/>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <parameters>
+                                        <parameter>&quot;]</parameter>
+                                        <parameter/>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearch.thread_pool</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>opensearch.thread_pool</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#NODE.NAME}</lld_macro>
+                            <path>$.node_name</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#THREAD.ACTIVE_COUNT}</lld_macro>
+                            <path>$.active</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#THREAD.NAME}</lld_macro>
+                            <path>$.name</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#THREAD.QUEUE_COUNT}</lld_macro>
+                            <path>$.queue</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#THREAD.REJECTED_COUNT}</lld_macro>
+                            <path>$.rejected</path>
                         </lld_macro_path>
                     </lld_macro_paths>
                 </discovery_rule>

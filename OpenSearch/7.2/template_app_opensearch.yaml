@@ -500,6 +500,23 @@ zabbix_export:
               value: '{$OS.NAME}'
             - tag: Service
               value: OpenSearch
+        - uuid: 185a5cea2b96480b937a29c4b3e726c1
+          name: 'Net Transport: Total receive size changes'
+          type: DEPENDENT
+          key: opensearch.net_transport.receive_size.changes
+          units: bytes
+          description: 'Zabbix calculated difference of last value and current value.'
+          preprocessing:
+            - type: SIMPLE_CHANGE
+          master_item:
+            key: opensearch.net_transport.receive_size
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+            - tag: Source
+              value: Calculated
         - uuid: 944eb6cbd15249f2b1d722fa2305c828
           name: 'Net Transport: Server open'
           type: DEPENDENT
@@ -531,6 +548,23 @@ zabbix_export:
               value: '{$OS.NAME}'
             - tag: Service
               value: OpenSearch
+        - uuid: 2ad5f03be5184e51ac74cd40e96c8f0a
+          name: 'Net Transport: Total transmit size changes'
+          type: DEPENDENT
+          key: opensearch.net_transport.transmit_size.changes
+          units: bytes
+          description: 'Zabbix calculated difference of last value and current value.'
+          preprocessing:
+            - type: SIMPLE_CHANGE
+          master_item:
+            key: opensearch.net_transport.transmit_size
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+            - tag: Source
+              value: Calculated
         - uuid: f97c7d8dbad44811b696ad19d298289e
           name: 'Package Build Number'
           type: DEPENDENT
@@ -3581,6 +3615,26 @@ zabbix_export:
               value: '{$OS.NAME}'
             - tag: Service
               value: OpenSearch
+        - uuid: 25a23a9135fb47969a2579c87a603bd1
+          name: 'OpenSearch Node Thread Pool'
+          type: HTTP_AGENT
+          key: opensearch.thread_pool
+          history: '0'
+          value_type: TEXT
+          authtype: BASIC
+          username: '{$OS.USERNAME}'
+          password: '{$OS.PASSWORD}'
+          description: 'Gather data from the API endpoint: _cat/thread_pool'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.node_name==''{$OS.NAME}'')]'
+          url: '{$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_cat/thread_pool?format=json'
+          verify_peer: 'YES'
+          verify_host: 'YES'
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
         - uuid: 38391af0b03947d9b19c806208f36304
           name: 'Threads: Asynchronous search generic queue'
           type: DEPENDENT
@@ -3808,7 +3862,7 @@ zabbix_export:
               value: OpenSearch
       discovery_rules:
         - uuid: 63f9a17511c24a3d8521b9e8008a480d
-          name: 'Node Discovery'
+          name: 'Node discovery'
           type: DEPENDENT
           key: opensearch.nodes
           lifetime: 30d
@@ -3836,6 +3890,93 @@ zabbix_export:
               path: '$.[''port'']'
             - lld_macro: '{#NODE.ROLES}'
               path: '$.[''node.role'']'
+        - uuid: 52c94001984f4528a996737e98ad2c30
+          name: 'Thread pool discovery'
+          type: DEPENDENT
+          key: opensearchnode.thread_pools
+          item_prototypes:
+            - uuid: 7c102bfceca64d27bc1d17c06a9604c6
+              name: 'Threads: Active ({#THREAD.NAME})'
+              type: DEPENDENT
+              key: 'opensearchnode.thread_pools.active[{#THREAD.NAME}]'
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$[?(@.node_name==''{$OS.NAME}''&&@.name==''{#THREAD.NAME}'')].active'
+                - type: STR_REPLACE
+                  parameters:
+                    - '["'
+                    - ''
+                - type: STR_REPLACE
+                  parameters:
+                    - '"]'
+                    - ''
+              master_item:
+                key: opensearch.thread_pool
+              tags:
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
+                  value: OpenSearch
+            - uuid: 616c3319e8a64377a0f5e13d9203b15e
+              name: 'Threads: Queue ({#THREAD.NAME})'
+              type: DEPENDENT
+              key: 'opensearchnode.thread_pools.queue[{#THREAD.NAME}]'
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$[?(@.node_name==''{$OS.NAME}''&&@.name==''{#THREAD.NAME}'')].queue'
+                - type: STR_REPLACE
+                  parameters:
+                    - '["'
+                    - ''
+                - type: STR_REPLACE
+                  parameters:
+                    - '"]'
+                    - ''
+              master_item:
+                key: opensearch.thread_pool
+              tags:
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
+                  value: OpenSearch
+            - uuid: 4e83b1f9c2ac4d8eb2fd2a42d8ea2628
+              name: 'Threads: Rejected ({#THREAD.NAME})'
+              type: DEPENDENT
+              key: 'opensearchnode.thread_pools.rejected[{#THREAD.NAME}]'
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$[?(@.node_name==''{$OS.NAME}''&&@.name==''{#THREAD.NAME}'')].rejected'
+                - type: STR_REPLACE
+                  parameters:
+                    - '["'
+                    - ''
+                - type: STR_REPLACE
+                  parameters:
+                    - '"]'
+                    - ''
+              master_item:
+                key: opensearch.thread_pool
+              tags:
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
+                  value: OpenSearch
+          master_item:
+            key: opensearch.thread_pool
+          lld_macro_paths:
+            - lld_macro: '{#NODE.NAME}'
+              path: $.node_name
+            - lld_macro: '{#THREAD.ACTIVE_COUNT}'
+              path: $.active
+            - lld_macro: '{#THREAD.NAME}'
+              path: $.name
+            - lld_macro: '{#THREAD.QUEUE_COUNT}'
+              path: $.queue
+            - lld_macro: '{#THREAD.REJECTED_COUNT}'
+              path: $.rejected
       macros:
         - macro: '{$OS.FIELDDATA.EVICTIONS.MAX}'
           value: CUSTOMIZE
