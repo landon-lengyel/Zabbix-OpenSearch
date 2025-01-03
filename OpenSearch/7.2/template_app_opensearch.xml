@@ -2613,6 +2613,153 @@ else {
                     </tags>
                 </item>
                 <item>
+                    <uuid>8e7138481494499282ccd7691b12aa71</uuid>
+                    <name>Indexing total docs accepted</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.node.indexing.status_2xx</key>
+                    <description>Total documents accepted for indexing. Accepted means an HTTP status code of 2xx</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.indices.indexing.doc_status.2xx</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>1c97dfd8d0394744951ecedd085faf0d</uuid>
+                    <name>Indexing total docs client errors</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.node.indexing.status_4xx</key>
+                    <description>Total documents rejected due to something invalid on the client side. Rejected means an HTTP status code of 4xx</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.indices.indexing.doc_status.4xx</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>910fb53613044eac8f4b22a9f3b0f515</uuid>
+                    <name>Indexing total docs server errors</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.node.indexing.status_5xx</key>
+                    <description>Total documents rejected due to something invalid on the server (OpenSearch) side. Rejected means an HTTP status code of 5xx</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.indices.indexing.doc_status.5xx</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>61d0315873114f59be9353346a6931c8</uuid>
+                    <name>Indexing throttled</name>
+                    <type>DEPENDENT</type>
+                    <key>opensearch.node.indexing.throttled</key>
+                    <description>Whether or not indexing is currently throttled.</description>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.indices.indexing.is_throttled</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>STR_REPLACE</type>
+                            <parameters>
+                                <parameter>true</parameter>
+                                <parameter>1</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>STR_REPLACE</type>
+                            <parameters>
+                                <parameter>false</parameter>
+                                <parameter>0</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>opensearch.node_stats</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>272e3240cd0f4255b266033f20e90364</uuid>
+                            <expression>last(/OpenSearch/opensearch.node.indexing.throttled,#1)&gt;0 and 
+last(/OpenSearch/opensearch.node.indexing.throttled,#2)&gt;0 and
+last(/OpenSearch/opensearch.node.indexing.throttled,#3)&gt;0</expression>
+                            <name>OpenSearch: Indexing is throttled</name>
+                            <priority>AVERAGE</priority>
+                            <description>Indexing is currently being throttled, and requests are being rejected.</description>
+                            <tags>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
                     <uuid>1486f7478e174028b2b283c2092933c1</uuid>
                     <name>IP</name>
                     <type>DEPENDENT</type>
@@ -6054,6 +6201,175 @@ last(/OpenSearch/opensearch.node_stats.indexing_pressure.memory_util,#3)&gt;80</
                     <key>opensearch.nodes</key>
                     <lifetime>30d</lifetime>
                     <description>Make Zabbix host aware of all other nodes for additional processing and alerts.</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <uuid>416b2be9d5c046c2a462fa1cb4c446c9</uuid>
+                            <name>OpenSearch: Adaptive selection outgoing searches to {#NODE.NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearch.node.adaptive-selection.outgoing-searches[{#NODE.NAME}]</key>
+                            <value_type>FLOAT</value_type>
+                            <description>The node this item is assigned to ranks the other nodes based on their response times. If a request cannot be processed on this node, it will be sent to the node that can process it with the lowest rank.
+
+These are the outgoing number of searches to this node.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$.adaptive_selection.[&quot;{#NODE.ID}&quot;].outgoing_searches</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearch.node_stats</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>2ab71f6e590d49cba70d903c66c55e19</uuid>
+                            <name>OpenSearch: Adaptive selection average queue size to {#NODE.NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearch.node.adaptive-selection.queue[{#NODE.NAME}]</key>
+                            <value_type>FLOAT</value_type>
+                            <description>The node this item is assigned to ranks the other nodes based on their response times. If a request cannot be processed on this node, it will be sent to the node that can process it with the lowest rank.
+
+The average queue size is a factor in determining rank.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$.adaptive_selection.[&quot;{#NODE.ID}&quot;].avg_queue_size</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearch.node_stats</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>f8f720a6ceca4aa89bc8d41a7245e7d8</uuid>
+                            <name>OpenSearch: Adaptive selection rank to {#NODE.NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearch.node.adaptive-selection.rank[{#NODE.NAME}]</key>
+                            <value_type>FLOAT</value_type>
+                            <description>The node this item is assigned to ranks the other nodes based on their response times. If a request cannot be processed on this node, it will be sent to the node that can process it with the lowest rank.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$.adaptive_selection.[&quot;{#NODE.ID}&quot;].rank</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearch.node_stats</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>7b156e830c154f1f826e63a8708bf41b</uuid>
+                            <name>OpenSearch: Adaptive selection average response time to {#NODE.NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearch.node.adaptive-selection.response-time[{#NODE.NAME}]</key>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <description>The node this item is assigned to ranks the other nodes based on their response times. If a request cannot be processed on this node, it will be sent to the node that can process it with the lowest rank.
+
+The average response time is a factor in determining rank.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$.adaptive_selection.[&quot;{#NODE.ID}&quot;].avg_response_time_ns</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1.0E-9</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearch.node_stats</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>943df2c2b53743efb113c132641f0fa1</uuid>
+                            <name>OpenSearch: Adaptive selection average service time to {#NODE.NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>opensearch.node.adaptive-selection.service-time[{#NODE.NAME}]</key>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <description>The node this item is assigned to ranks the other nodes based on their response times. If a request cannot be processed on this node, it will be sent to the node that can process it with the lowest rank.
+
+The average service time is a factor in determining rank.</description>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$.adaptive_selection.[&quot;{#NODE.ID}&quot;].avg_service_time_ns</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1.0E-9</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>opensearch.node_stats</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                    </item_prototypes>
                     <master_item>
                         <key>opensearch.cat_nodes</key>
                     </master_item>
@@ -7385,6 +7701,312 @@ last(/OpenSearch/opensearch.node_stats.indexing_pressure.memory_util,#3)&gt;80</
                                             <type>STRING</type>
                                             <name>reference</name>
                                             <value>VFIPE</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                            </widgets>
+                        </page>
+                        <page>
+                            <name>Status</name>
+                            <widgets>
+                                <widget>
+                                    <type>svggraph</type>
+                                    <name>Indexing docs accepted or rejected</name>
+                                    <width>36</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>FF465C</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.fill</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Indexing total docs client errors</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.1</name>
+                                            <value>Indexing total docs server errors</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.1.color</name>
+                                            <value>43A047</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.1.fill</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.1.items.0</name>
+                                            <value>Indexing total docs accepted</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.1.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>5</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_statistic</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>reference</name>
+                                            <value>WVBHU</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>topitems</type>
+                                    <name>Adaptive selection ranking</name>
+                                    <y>5</y>
+                                    <width>20</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>columns.0.display</name>
+                                            <value>6</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>columns.0.items.0</name>
+                                            <value>OpenSearch: Adaptive selection rank to*</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>columns.0.sparkline.color</name>
+                                            <value>009688</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>columns.0.sparkline.fill</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>host_ordering_item.0</name>
+                                            <value>OpenSearch: Adaptive selection rank to*</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>host_ordering_order</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>host_ordering_order_by</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>item_ordering_order</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>layout</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>problems</name>
+                                            <value>2</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>show_column_header</name>
+                                            <value>0</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>svggraph</type>
+                                    <name>Adaptive selection ranking</name>
+                                    <x>20</x>
+                                    <y>5</y>
+                                    <width>33</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>009688</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.fill</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>OpenSearch: Adaptive selection rank to*</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>reference</name>
+                                            <value>THCPN</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>piechart</type>
+                                    <name>Indexing docs accepted or rejected</name>
+                                    <x>36</x>
+                                    <width>17</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>FF465C</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Indexing total docs client errors</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.1</name>
+                                            <value>Indexing total docs server errors</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.1.color</name>
+                                            <value>43A047</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.1.items.0</name>
+                                            <value>Indexing total docs accepted</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>5</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>svggraph</type>
+                                    <name>Adaptive average selection service time</name>
+                                    <x>53</x>
+                                    <y>5</y>
+                                    <width>19</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>FFF59D</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.fill</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>OpenSearch: Adaptive selection average service time to*</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>reference</name>
+                                            <value>KXIAR</value>
                                         </field>
                                         <field>
                                             <type>INTEGER</type>

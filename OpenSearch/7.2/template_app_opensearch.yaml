@@ -1619,6 +1619,92 @@ zabbix_export:
               value: '{$OS.NAME}'
             - tag: Service
               value: OpenSearch
+        - uuid: 8e7138481494499282ccd7691b12aa71
+          name: 'Indexing total docs accepted'
+          type: DEPENDENT
+          key: opensearch.node.indexing.status_2xx
+          description: 'Total documents accepted for indexing. Accepted means an HTTP status code of 2xx'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.indices.indexing.doc_status.2xx
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 1c97dfd8d0394744951ecedd085faf0d
+          name: 'Indexing total docs client errors'
+          type: DEPENDENT
+          key: opensearch.node.indexing.status_4xx
+          description: 'Total documents rejected due to something invalid on the client side. Rejected means an HTTP status code of 4xx'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.indices.indexing.doc_status.4xx
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 910fb53613044eac8f4b22a9f3b0f515
+          name: 'Indexing total docs server errors'
+          type: DEPENDENT
+          key: opensearch.node.indexing.status_5xx
+          description: 'Total documents rejected due to something invalid on the server (OpenSearch) side. Rejected means an HTTP status code of 5xx'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.indices.indexing.doc_status.5xx
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: 61d0315873114f59be9353346a6931c8
+          name: 'Indexing throttled'
+          type: DEPENDENT
+          key: opensearch.node.indexing.throttled
+          description: 'Whether or not indexing is currently throttled.'
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.indices.indexing.is_throttled
+            - type: STR_REPLACE
+              parameters:
+                - 'true'
+                - '1'
+            - type: STR_REPLACE
+              parameters:
+                - 'false'
+                - '0'
+          master_item:
+            key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+          triggers:
+            - uuid: 272e3240cd0f4255b266033f20e90364
+              expression: |
+                last(/OpenSearch/opensearch.node.indexing.throttled,#1)>0 and 
+                last(/OpenSearch/opensearch.node.indexing.throttled,#2)>0 and
+                last(/OpenSearch/opensearch.node.indexing.throttled,#3)>0
+              name: 'OpenSearch: Indexing is throttled'
+              priority: AVERAGE
+              description: 'Indexing is currently being throttled, and requests are being rejected.'
+              tags:
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
+                  value: OpenSearch
         - uuid: 1486f7478e174028b2b283c2092933c1
           name: IP
           type: DEPENDENT
@@ -3739,6 +3825,112 @@ zabbix_export:
           key: opensearch.nodes
           lifetime: 30d
           description: 'Make Zabbix host aware of all other nodes for additional processing and alerts.'
+          item_prototypes:
+            - uuid: 416b2be9d5c046c2a462fa1cb4c446c9
+              name: 'OpenSearch: Adaptive selection outgoing searches to {#NODE.NAME}'
+              type: DEPENDENT
+              key: 'opensearch.node.adaptive-selection.outgoing-searches[{#NODE.NAME}]'
+              value_type: FLOAT
+              description: |
+                The node this item is assigned to ranks the other nodes based on their response times. If a request cannot be processed on this node, it will be sent to the node that can process it with the lowest rank.
+                
+                These are the outgoing number of searches to this node.
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.adaptive_selection.["{#NODE.ID}"].outgoing_searches'
+              master_item:
+                key: opensearch.node_stats
+              tags:
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
+                  value: OpenSearch
+            - uuid: 2ab71f6e590d49cba70d903c66c55e19
+              name: 'OpenSearch: Adaptive selection average queue size to {#NODE.NAME}'
+              type: DEPENDENT
+              key: 'opensearch.node.adaptive-selection.queue[{#NODE.NAME}]'
+              value_type: FLOAT
+              description: |
+                The node this item is assigned to ranks the other nodes based on their response times. If a request cannot be processed on this node, it will be sent to the node that can process it with the lowest rank.
+                
+                The average queue size is a factor in determining rank.
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.adaptive_selection.["{#NODE.ID}"].avg_queue_size'
+              master_item:
+                key: opensearch.node_stats
+              tags:
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
+                  value: OpenSearch
+            - uuid: f8f720a6ceca4aa89bc8d41a7245e7d8
+              name: 'OpenSearch: Adaptive selection rank to {#NODE.NAME}'
+              type: DEPENDENT
+              key: 'opensearch.node.adaptive-selection.rank[{#NODE.NAME}]'
+              value_type: FLOAT
+              description: 'The node this item is assigned to ranks the other nodes based on their response times. If a request cannot be processed on this node, it will be sent to the node that can process it with the lowest rank.'
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.adaptive_selection.["{#NODE.ID}"].rank'
+              master_item:
+                key: opensearch.node_stats
+              tags:
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
+                  value: OpenSearch
+            - uuid: 7b156e830c154f1f826e63a8708bf41b
+              name: 'OpenSearch: Adaptive selection average response time to {#NODE.NAME}'
+              type: DEPENDENT
+              key: 'opensearch.node.adaptive-selection.response-time[{#NODE.NAME}]'
+              value_type: FLOAT
+              units: s
+              description: |
+                The node this item is assigned to ranks the other nodes based on their response times. If a request cannot be processed on this node, it will be sent to the node that can process it with the lowest rank.
+                
+                The average response time is a factor in determining rank.
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.adaptive_selection.["{#NODE.ID}"].avg_response_time_ns'
+                - type: MULTIPLIER
+                  parameters:
+                    - '1.0E-9'
+              master_item:
+                key: opensearch.node_stats
+              tags:
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
+                  value: OpenSearch
+            - uuid: 943df2c2b53743efb113c132641f0fa1
+              name: 'OpenSearch: Adaptive selection average service time to {#NODE.NAME}'
+              type: DEPENDENT
+              key: 'opensearch.node.adaptive-selection.service-time[{#NODE.NAME}]'
+              value_type: FLOAT
+              units: s
+              description: |
+                The node this item is assigned to ranks the other nodes based on their response times. If a request cannot be processed on this node, it will be sent to the node that can process it with the lowest rank.
+                
+                The average service time is a factor in determining rank.
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.adaptive_selection.["{#NODE.ID}"].avg_service_time_ns'
+                - type: MULTIPLIER
+                  parameters:
+                    - '1.0E-9'
+              master_item:
+                key: opensearch.node_stats
+              tags:
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
+                  value: OpenSearch
           master_item:
             key: opensearch.cat_nodes
           lld_macro_paths:
@@ -4541,6 +4733,192 @@ zabbix_export:
                     - type: STRING
                       name: reference
                       value: VFIPE
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
+            - name: Status
+              widgets:
+                - type: svggraph
+                  name: 'Indexing docs accepted or rejected'
+                  width: '36'
+                  height: '5'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: FF465C
+                    - type: INTEGER
+                      name: ds.0.fill
+                      value: '1'
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Indexing total docs client errors'
+                    - type: STRING
+                      name: ds.0.items.1
+                      value: 'Indexing total docs server errors'
+                    - type: INTEGER
+                      name: ds.0.width
+                      value: '3'
+                    - type: STRING
+                      name: ds.1.color
+                      value: 43A047
+                    - type: INTEGER
+                      name: ds.1.fill
+                      value: '1'
+                    - type: STRING
+                      name: ds.1.items.0
+                      value: 'Indexing total docs accepted'
+                    - type: INTEGER
+                      name: ds.1.width
+                      value: '3'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '5'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: INTEGER
+                      name: legend_statistic
+                      value: '1'
+                    - type: STRING
+                      name: reference
+                      value: WVBHU
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
+                - type: topitems
+                  name: 'Adaptive selection ranking'
+                  'y': '5'
+                  width: '20'
+                  height: '5'
+                  fields:
+                    - type: INTEGER
+                      name: columns.0.display
+                      value: '6'
+                    - type: STRING
+                      name: columns.0.items.0
+                      value: 'OpenSearch: Adaptive selection rank to*'
+                    - type: STRING
+                      name: columns.0.sparkline.color
+                      value: '009688'
+                    - type: INTEGER
+                      name: columns.0.sparkline.fill
+                      value: '1'
+                    - type: STRING
+                      name: host_ordering_item.0
+                      value: 'OpenSearch: Adaptive selection rank to*'
+                    - type: INTEGER
+                      name: host_ordering_order
+                      value: '3'
+                    - type: INTEGER
+                      name: host_ordering_order_by
+                      value: '3'
+                    - type: INTEGER
+                      name: item_ordering_order
+                      value: '3'
+                    - type: INTEGER
+                      name: layout
+                      value: '1'
+                    - type: INTEGER
+                      name: problems
+                      value: '2'
+                    - type: INTEGER
+                      name: show_column_header
+                      value: '0'
+                - type: svggraph
+                  name: 'Adaptive selection ranking'
+                  x: '20'
+                  'y': '5'
+                  width: '33'
+                  height: '5'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: '009688'
+                    - type: INTEGER
+                      name: ds.0.fill
+                      value: '1'
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'OpenSearch: Adaptive selection rank to*'
+                    - type: INTEGER
+                      name: ds.0.width
+                      value: '3'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '3'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: STRING
+                      name: reference
+                      value: THCPN
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
+                - type: piechart
+                  name: 'Indexing docs accepted or rejected'
+                  x: '36'
+                  width: '17'
+                  height: '5'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: FF465C
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Indexing total docs client errors'
+                    - type: STRING
+                      name: ds.0.items.1
+                      value: 'Indexing total docs server errors'
+                    - type: STRING
+                      name: ds.1.color
+                      value: 43A047
+                    - type: STRING
+                      name: ds.1.items.0
+                      value: 'Indexing total docs accepted'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '5'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                - type: svggraph
+                  name: 'Adaptive average selection service time'
+                  x: '53'
+                  'y': '5'
+                  width: '19'
+                  height: '5'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: FFF59D
+                    - type: INTEGER
+                      name: ds.0.fill
+                      value: '1'
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'OpenSearch: Adaptive selection average service time to*'
+                    - type: INTEGER
+                      name: ds.0.width
+                      value: '3'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '3'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: STRING
+                      name: reference
+                      value: KXIAR
                     - type: INTEGER
                       name: righty
                       value: '0'
