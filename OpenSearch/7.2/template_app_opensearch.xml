@@ -318,6 +318,24 @@ This is the number of times the circuit breaker has been tripped since a service
                             <value>OpenSearch</value>
                         </tag>
                     </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>45190de9d10d48ad8b69e4b622b50c84</uuid>
+                            <expression>change(/OpenSearch/opensearch.breakers.field_data.tripped)&gt;=1</expression>
+                            <name>OpenSearch: FieldData breaker tripped</name>
+                            <priority>WARNING</priority>
+                            <tags>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>649ce8e764bc4da19cd1cf8e574b2f3c</uuid>
@@ -431,6 +449,24 @@ This is the number of times the circuit breaker has been tripped since a service
                             <value>OpenSearch</value>
                         </tag>
                     </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>23ed8176935a44e4a3e3056cb48a0a36</uuid>
+                            <expression>change(/OpenSearch/opensearch.breakers.in-flight_requests.tripped)&gt;=1</expression>
+                            <name>OpenSearch: In-Flight Requests breaker tripped</name>
+                            <priority>WARNING</priority>
+                            <tags>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>47185f2095d845c29573262ef80e2981</uuid>
@@ -556,6 +592,38 @@ This is the number of times the circuit breaker has been tripped, and further re
                             <value>OpenSearch</value>
                         </tag>
                     </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>a90c2c6f7aa543a0a9c08bb087790b65</uuid>
+                            <expression>change(/OpenSearch/opensearch.breakers.parent.tripped)&gt;=1</expression>
+                            <name>OpenSearch: Parent breaker tripped</name>
+                            <priority>WARNING</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>OpenSearch: FieldData breaker tripped</name>
+                                    <expression>change(/OpenSearch/opensearch.breakers.field_data.tripped)&gt;=1</expression>
+                                </dependency>
+                                <dependency>
+                                    <name>OpenSearch: In-Flight Requests breaker tripped</name>
+                                    <expression>change(/OpenSearch/opensearch.breakers.in-flight_requests.tripped)&gt;=1</expression>
+                                </dependency>
+                                <dependency>
+                                    <name>OpenSearch: Request breaker tripped</name>
+                                    <expression>change(/OpenSearch/opensearch.breakers.request.tripped)&gt;=1</expression>
+                                </dependency>
+                            </dependencies>
+                            <tags>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>14ddac42ab3d4aa080144cc4fab9452e</uuid>
@@ -669,6 +737,24 @@ This is the number of times the circuit breaker has been tripped since a service
                             <value>OpenSearch</value>
                         </tag>
                     </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>a87a5a885e7445d0b4aeadf351e663ce</uuid>
+                            <expression>change(/OpenSearch/opensearch.breakers.request.tripped)&gt;=1</expression>
+                            <name>OpenSearch: Request breaker tripped</name>
+                            <priority>WARNING</priority>
+                            <tags>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>de6e0647c38543c08412a70e945f639e</uuid>
@@ -1076,12 +1162,16 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <trigger>
                             <uuid>676d3d78315e44a8afa606dc4223e8a5</uuid>
                             <expression>nodata(/OpenSearch/opensearch.node.cpu,3m)=1</expression>
-                            <name>Node is not responding</name>
+                            <name>OpenSearch: Node is not responding</name>
                             <priority>HIGH</priority>
                             <description>Attempted to reach the API on node, but hasn't been responding for at least 3 minutes.
 
 Failing API Endpoint: {$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_cat/nodes</description>
                             <tags>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
                                 <tag>
                                     <tag>OpenSearch</tag>
                                     <value>Health</value>
@@ -1247,7 +1337,7 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <trigger>
                             <uuid>1c975791d02d4f9d850a048747e593f1</uuid>
                             <expression>last(/OpenSearch/opensearch.node.fielddata.evictions,#1)&gt;={$OS.FIELDDATA.EVICTIONS.MAX}</expression>
-                            <name>OpenSearch FieldData Evictions High</name>
+                            <name>OpenSearch: FieldData evictions are high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's FieldData Eviction operations are higher than configured threshold.
 Current FieldData Eviction operations: {ITEM.LASTVALUE1}
@@ -1256,7 +1346,11 @@ Alert Threshold: {$OS.FIELDDATA.EVICTIONS.MAX}
 Node Name: {$OS.NAME}</description>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -1413,7 +1507,7 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <trigger>
                             <uuid>1864144917a74df98a31ec4595a23ad9</uuid>
                             <expression>last(/OpenSearch/opensearch.node.file_desc.percent,#1)&gt;={$OS.FILEDESCRIPTORS.MAX}</expression>
-                            <name>OpenSearch File Descriptors Availability Low</name>
+                            <name>OpenSearch: File descriptor availability is low</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's available file descriptors have crossed below the defined threshold.
 Current descriptor utilization: {ITEM.LASTVALUE1}
@@ -1422,7 +1516,11 @@ Alert threshold: {$OS.FILEDESCRIPTORS.MAX}
 Node Name: {$OS.NAME}</description>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -1639,7 +1737,7 @@ else {
                         <trigger>
                             <uuid>7c94857e34b244baa266af8efa3316c2</uuid>
                             <expression>last(/OpenSearch/opensearch.node.get.current,#1)&gt;={$OS.GET.CURRENT.MAX}</expression>
-                            <name>OpenSearch Get Operations High</name>
+                            <name>OpenSearch: Get operations are high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's get operations are higher than configured threshold.
 Current Get operations: {ITEM.LASTVALUE1}
@@ -1648,7 +1746,11 @@ Alert Threshold: {$OS.GET.CURRENT.MAX}
 Node Name: {$OS.NAME}</description>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -2121,7 +2223,7 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <trigger>
                             <uuid>a541fb644fd9437ba64100aef5aff896</uuid>
                             <expression>last(/OpenSearch/opensearch.node.heap.percent,#1)&gt;={$OS.HEAP.MAX}</expression>
-                            <name>OpenSearch JVM Heap Utilization High</name>
+                            <name>OpenSearch: JVM heap utilization is high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's JVM heap utilization is higher than configured threshold.
 Current Heap Utilization: {ITEM.LASTVALUE1}
@@ -2130,7 +2232,11 @@ Alert Threshold: {$OS.HEAP.MAX}
 Node Name: {$OS.NAME}</description>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -2259,7 +2365,7 @@ Node Name: {$OS.NAME}</description>
                         <trigger>
                             <uuid>3048f85f6839422ba01a325a8ae000e5</uuid>
                             <expression>last(/OpenSearch/opensearch.node.indexing.delete_current,#1)&gt;={$OS.INDEXING.DELETE.MAX}</expression>
-                            <name>OpenSearch Delete Operations High</name>
+                            <name>OpenSearch: Delete operations are high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's deletion operations are higher than configured threshold.
 Current Delete operations: {ITEM.LASTVALUE1}
@@ -2268,7 +2374,11 @@ Alert Threshold: {$OS.INDEXING.DELETE.MAX}
 Node Name: {$OS.NAME}</description>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -2366,7 +2476,7 @@ else {
                         <trigger>
                             <uuid>2d47c6714d384246825cd255ef4ecdf7</uuid>
                             <expression>last(/OpenSearch/opensearch.node.indexing.index_current,#1)&gt;={$OS.INDEXING.INDEX.MAX}</expression>
-                            <name>OpenSearch Indexing Operations High</name>
+                            <name>OpenSearch: Indexing operations are high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's indexing operations are higher than configured threshold.
 Current Indexing operations: {ITEM.LASTVALUE1}
@@ -2375,7 +2485,11 @@ Alert Threshold: {$OS.INDEXING.INDEX.MAX}
 Node Name: {$OS.NAME}</description>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -3048,7 +3162,7 @@ m:master eligible node, d:data node, i:ingest node, -:coordinating node only, r:
                             <uuid>9d7493b7deda49b9b693c60470fccab9</uuid>
                             <expression>last(/OpenSearch/opensearch.node.node.role,#2)&lt;&gt;last(/OpenSearch/opensearch.node.node.role,#1)</expression>
                             <recovery_mode>NONE</recovery_mode>
-                            <name>OpenSearch Node Roles Changed</name>
+                            <name>OpenSearch: Node roles changed</name>
                             <priority>INFO</priority>
                             <description>OpenSearch node's assigned cluster roles have changed. 
 New roles: {ITEM.LASTVALUE2}
@@ -3058,7 +3172,11 @@ Node Name: {$OS.NAME}</description>
                             <manual_close>YES</manual_close>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -3189,7 +3307,7 @@ Node Name: {$OS.NAME}</description>
                             <uuid>edae02dfbf8048869a80b5eab422294a</uuid>
                             <expression>last(/OpenSearch/opensearch.node.port,#2)&lt;&gt;last(/OpenSearch/opensearch.node.port,#1)</expression>
                             <recovery_mode>NONE</recovery_mode>
-                            <name>OpenSearch Node Port Changed</name>
+                            <name>OpenSearch: Node port changed</name>
                             <priority>INFO</priority>
                             <description>OpenSearch node's service port has changed:
 New port: {ITEM.LASTVALUE2}
@@ -3199,7 +3317,11 @@ Node Name: {$OS.NAME}</description>
                             <manual_close>YES</manual_close>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -3799,7 +3921,7 @@ else {
                         <trigger>
                             <uuid>07c3f57e76924d45bf3b8af75c17122e</uuid>
                             <expression>last(/OpenSearch/opensearch.node.request_cache.evictions,#1)&gt;={$OS.REQUESTCACHE.EVICTIONS.MAX}</expression>
-                            <name>OpenSearch Request Cache Evictions High</name>
+                            <name>OpenSearch: Request cache evictions are high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's Request Cache Eviction operations are higher than configured threshold.
 Current Request Cache Evictions: {ITEM.LASTVALUE1}
@@ -3808,7 +3930,11 @@ Alert Threshold: {$OS.REQUESTCACHE.EVICTIONS.MAX}
 Node Name: {$OS.NAME}</description>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -3978,7 +4104,7 @@ return res[1] * Math.pow(1024, powers[res[2].toLowerCase()]);</parameter>
                         <trigger>
                             <uuid>5dae922c65094d448c9cfcc4c96a943f</uuid>
                             <expression>last(/OpenSearch/opensearch.node.request_cache.miss_count-change,#1)&gt;={$OS.REQUESTCACHE.MISSCOUNT.MAX}</expression>
-                            <name>OpenSearch Request Cache Miss Count High</name>
+                            <name>OpenSearch: Request cache miss count is high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's request cache miss count is higher than configured threshold.
 Current Request Cache Miss Count: {ITEM.LASTVALUE1}
@@ -3987,7 +4113,11 @@ Alert Threshold: {$OS.REQUESTCACHE.MISSCOUNT.MAX}
 Node Name: {$OS.NAME}</description>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -4144,14 +4274,18 @@ Node Name: {$OS.NAME}</description>
                         <trigger>
                             <uuid>ad7342a6a8494f2f9e84111a1735820a</uuid>
                             <expression>last(/OpenSearch/opensearch.node.script.compilation_limit_triggered,#1)&gt;0</expression>
-                            <name>OpenSearch Script Compilation Limit Reached</name>
+                            <name>OpenSearch: Script compilation limit tripped</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch's script compilation limit was reached.
 
 Node Name: {$OS.NAME}</description>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -4196,7 +4330,7 @@ Node Name: {$OS.NAME}</description>
                         <trigger>
                             <uuid>7edef1063c8543f399bb212ce001770a</uuid>
                             <expression>last(/OpenSearch/opensearch.node.search.concurrent_avg_slice_count,#1)&gt;={$OS.SEARCH.CONCURRENT_AVG_SLICE_COUNT.MAX}</expression>
-                            <name>OpenSearch Concurrent Average Slices High</name>
+                            <name>OpenSearch: Concurrent average slices are high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's concurrent average slice counter is higher than configured threshold.
 Current Concurrent Average Slice counter: {ITEM.LASTVALUE1}
@@ -4205,7 +4339,11 @@ Alert Threshold: {$OS.SEARCH.CONCURRENT_AVG_SLICE_COUNT.MAX}
 Node Name: {$OS.NAME}</description>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -4250,7 +4388,7 @@ Node Name: {$OS.NAME}</description>
                         <trigger>
                             <uuid>7108d22bd1fb417eb8d230690092d29b</uuid>
                             <expression>last(/OpenSearch/opensearch.node.search.concurrent_query_current,#1)&gt;={$OS.SEARCH.CONCURRENT_QUERY.MAX}</expression>
-                            <name>OpenSearch Concurrent Query High</name>
+                            <name>OpenSearch: Concurrent query operations are high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's concurrent query's are higher than configured threshold.
 Current Concurrent Query's: {ITEM.LASTVALUE1}
@@ -4259,7 +4397,11 @@ Alert Threshold: {$OS.SEARCH.CONCURRENT_QUERY.MAX}
 Node Name: {$OS.NAME}</description>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -4434,7 +4576,7 @@ else {
                         <trigger>
                             <uuid>385f9bc74eb54f1c8a887a5abd5e4e34</uuid>
                             <expression>last(/OpenSearch/opensearch.node.search.fetch_current,#1)&gt;={$OS.SEARCH.FETCH_CURRENT.MAX}</expression>
-                            <name>OpenSearch Fetch Operations High</name>
+                            <name>OpenSearch: Fetch operations are high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's Fetch Phase operations are higher than configured threshold.
 Current Fetch operations: {ITEM.LASTVALUE1}
@@ -4443,7 +4585,11 @@ Alert Threshold: {$OS.SEARCH.FETCH_CURRENT.MAX}
 Node Name: {$OS.NAME}</description>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -4576,7 +4722,7 @@ else {
                         <trigger>
                             <uuid>ce790a159c9c476c9b5bccb3bbb5a281</uuid>
                             <expression>last(/OpenSearch/opensearch.node.search.open_contexts,#1)&gt;={$OS.SEARCH.OPEN_CONTEXTS.MAX}</expression>
-                            <name>OpenSearch Search Open Contexts High</name>
+                            <name>OpenSearch: Open search contexts are high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's open search context counter is higher than configured threshold.
 Current Open Search Contexts: {ITEM.LASTVALUE1}
@@ -4585,7 +4731,11 @@ Alert Threshold: {$OS.SEARCH.OPEN_CONTEXTS.MAX}
 Node Name: {$OS.NAME}</description>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -4788,7 +4938,7 @@ else {
                         <trigger>
                             <uuid>888d928883b5402a9a1d36832f9ccf09</uuid>
                             <expression>last(/OpenSearch/opensearch.node.search.query_current,#1)&gt;={$OS.SEARCH.QUERY.MAX}</expression>
-                            <name>OpenSearch Query Operations High</name>
+                            <name>OpenSearch: Query operations are high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's Search Query operations are higher than configured threshold.
 Current Query operations: {ITEM.LASTVALUE1}
@@ -4797,7 +4947,11 @@ Alert Threshold: {$OS.SEARCH.QUERY.MAX}
 Node Name: {$OS.NAME}</description>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -5463,7 +5617,7 @@ else {
                             <uuid>2debc382db374fe1b89c0d28e565a637</uuid>
                             <expression>last(/OpenSearch/opensearch.node.version,#2)&lt;&gt;last(/OpenSearch/opensearch.node.version,#1)</expression>
                             <recovery_mode>NONE</recovery_mode>
-                            <name>OpenSearch Node Version Changed</name>
+                            <name>OpenSearch: Node version changed</name>
                             <priority>INFO</priority>
                             <description>OpenSearch node's package version has changed:
 New version: {ITEM.LASTVALUE2}
@@ -5473,7 +5627,11 @@ Node Name: {$OS.NAME}</description>
                             <manual_close>YES</manual_close>
                             <tags>
                                 <tag>
-                                    <tag>Services</tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
                                     <value>OpenSearch</value>
                                 </tag>
                             </tags>
@@ -5586,6 +5744,27 @@ Node Name: {$OS.NAME}</description>
                             <value>Calculated</value>
                         </tag>
                     </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>c3420980ce8d4a57837361fcff3fdbe7</uuid>
+                            <expression>last(/OpenSearch/opensearch.node_stats.indexing_pressure.memory_util,#1)&gt;80 and
+last(/OpenSearch/opensearch.node_stats.indexing_pressure.memory_util,#2)&gt;80 and
+last(/OpenSearch/opensearch.node_stats.indexing_pressure.memory_util,#3)&gt;80</expression>
+                            <name>OpenSearch: Indexing pressure is high</name>
+                            <priority>WARNING</priority>
+                            <description>Indexing pressure is using over 80% of the defined memory limit. If it reaches 100%, it will start dropping requests.</description>
+                            <tags>
+                                <tag>
+                                    <tag>Node Name</tag>
+                                    <value>{$OS.NAME}</value>
+                                </tag>
+                                <tag>
+                                    <tag>Service</tag>
+                                    <value>OpenSearch</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>1f89db94bad64a539ad11a5dccb92b4b</uuid>
@@ -6191,7 +6370,7 @@ Node Name: {$OS.NAME}</description>
                             <widgets>
                                 <widget>
                                     <type>graph</type>
-                                    <name>Node Operations {#NODE.NAME}</name>
+                                    <name>Node Operations</name>
                                     <width>36</width>
                                     <height>6</height>
                                     <fields>
@@ -6922,26 +7101,295 @@ Node Name: {$OS.NAME}</description>
                             </widgets>
                         </page>
                         <page>
-                            <name>Page 3</name>
+                            <name>Caches</name>
                             <widgets>
                                 <widget>
-                                    <type>graph</type>
-                                    <name>Search Metrics</name>
-                                    <width>37</width>
-                                    <height>6</height>
+                                    <type>piechart</type>
+                                    <name>Request cache</name>
+                                    <width>15</width>
+                                    <height>5</height>
                                     <fields>
                                         <field>
-                                            <type>GRAPH</type>
-                                            <name>graphid.0</name>
-                                            <value>
-                                                <host>OpenSearch</host>
-                                                <name>OpenSearch Node Search Metrics</name>
-                                            </value>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>7CB342</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Request Cache Hits Total</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.1.color</name>
+                                            <value>FF465C</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.1.items.0</name>
+                                            <value>Request Cache Miss Total</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>svggraph</type>
+                                    <name>Request cache</name>
+                                    <y>5</y>
+                                    <width>34</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>FF465C</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.fill</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Request Cache Misses</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.1.color</name>
+                                            <value>7CB342</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.1.fill</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.1.items.0</name>
+                                            <value>Request Cache Hits</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.1.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>10</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_statistic</name>
+                                            <value>1</value>
                                         </field>
                                         <field>
                                             <type>STRING</type>
                                             <name>reference</name>
-                                            <value>HLTVF</value>
+                                            <value>CDMMB</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>piechart</type>
+                                    <name>Query cache</name>
+                                    <x>15</x>
+                                    <width>15</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>7CB342</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Query Cache Hit Count</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.1.color</name>
+                                            <value>FF465C</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.1.items.0</name>
+                                            <value>Query Cache Miss Count</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>svggraph</type>
+                                    <name>Cache evictions</name>
+                                    <x>30</x>
+                                    <width>30</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>FF465C</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.fill</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Query Cache Evictions</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.1</name>
+                                            <value>Request Cache Evictions</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.2</name>
+                                            <value>Cache Evictions</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.3</name>
+                                            <value>FieldData Evictions</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>10</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_statistic</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>reference</name>
+                                            <value>VAFYP</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>svggraph</type>
+                                    <name>Query cache</name>
+                                    <x>34</x>
+                                    <y>5</y>
+                                    <width>34</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.color</name>
+                                            <value>FF465C</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.fill</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.0.items.0</name>
+                                            <value>Query Cache Miss Count</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.0.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.1.color</name>
+                                            <value>7CB342</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.1.fill</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>ds.1.items.0</name>
+                                            <value>Query Cache Hit Count</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>ds.1.width</name>
+                                            <value>3</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>lefty_min</name>
+                                            <value>0</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines</name>
+                                            <value>10</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_lines_mode</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>legend_statistic</name>
+                                            <value>1</value>
+                                        </field>
+                                        <field>
+                                            <type>STRING</type>
+                                            <name>reference</name>
+                                            <value>VFIPE</value>
+                                        </field>
+                                        <field>
+                                            <type>INTEGER</type>
+                                            <name>righty</name>
+                                            <value>0</value>
                                         </field>
                                     </fields>
                                 </widget>

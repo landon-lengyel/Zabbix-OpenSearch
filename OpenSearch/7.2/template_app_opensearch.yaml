@@ -196,6 +196,16 @@ zabbix_export:
               value: '{$OS.NAME}'
             - tag: Service
               value: OpenSearch
+          triggers:
+            - uuid: 45190de9d10d48ad8b69e4b622b50c84
+              expression: change(/OpenSearch/opensearch.breakers.field_data.tripped)>=1
+              name: 'OpenSearch: FieldData breaker tripped'
+              priority: WARNING
+              tags:
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
+                  value: OpenSearch
         - uuid: 649ce8e764bc4da19cd1cf8e574b2f3c
           name: 'In-Flight Requests Breakers: Estimated size'
           type: DEPENDENT
@@ -266,6 +276,16 @@ zabbix_export:
               value: '{$OS.NAME}'
             - tag: Service
               value: OpenSearch
+          triggers:
+            - uuid: 23ed8176935a44e4a3e3056cb48a0a36
+              expression: change(/OpenSearch/opensearch.breakers.in-flight_requests.tripped)>=1
+              name: 'OpenSearch: In-Flight Requests breaker tripped'
+              priority: WARNING
+              tags:
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
+                  value: OpenSearch
         - uuid: 47185f2095d845c29573262ef80e2981
           name: 'Parent Breakers: Estimated size'
           type: DEPENDENT
@@ -348,6 +368,23 @@ zabbix_export:
               value: '{$OS.NAME}'
             - tag: Service
               value: OpenSearch
+          triggers:
+            - uuid: a90c2c6f7aa543a0a9c08bb087790b65
+              expression: change(/OpenSearch/opensearch.breakers.parent.tripped)>=1
+              name: 'OpenSearch: Parent breaker tripped'
+              priority: WARNING
+              dependencies:
+                - name: 'OpenSearch: FieldData breaker tripped'
+                  expression: change(/OpenSearch/opensearch.breakers.field_data.tripped)>=1
+                - name: 'OpenSearch: In-Flight Requests breaker tripped'
+                  expression: change(/OpenSearch/opensearch.breakers.in-flight_requests.tripped)>=1
+                - name: 'OpenSearch: Request breaker tripped'
+                  expression: change(/OpenSearch/opensearch.breakers.request.tripped)>=1
+              tags:
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
+                  value: OpenSearch
         - uuid: 14ddac42ab3d4aa080144cc4fab9452e
           name: 'Request Breakers: Estimated size'
           type: DEPENDENT
@@ -418,6 +455,16 @@ zabbix_export:
               value: '{$OS.NAME}'
             - tag: Service
               value: OpenSearch
+          triggers:
+            - uuid: a87a5a885e7445d0b4aeadf351e663ce
+              expression: change(/OpenSearch/opensearch.breakers.request.tripped)>=1
+              name: 'OpenSearch: Request breaker tripped'
+              priority: WARNING
+              tags:
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
+                  value: OpenSearch
         - uuid: de6e0647c38543c08412a70e945f639e
           name: 'OpenSearch Cat Allocation'
           type: HTTP_AGENT
@@ -664,13 +711,15 @@ zabbix_export:
           triggers:
             - uuid: 676d3d78315e44a8afa606dc4223e8a5
               expression: 'nodata(/OpenSearch/opensearch.node.cpu,3m)=1'
-              name: 'Node is not responding'
+              name: 'OpenSearch: Node is not responding'
               priority: HIGH
               description: |
                 Attempted to reach the API on node, but hasn't been responding for at least 3 minutes.
                 
                 Failing API Endpoint: {$OS.PROTOCOL}://{$OS.HOSTNAME}:{$OS.PORT}/_cat/nodes
               tags:
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
                 - tag: OpenSearch
                   value: Health
                 - tag: Service
@@ -770,7 +819,7 @@ zabbix_export:
           triggers:
             - uuid: 1c975791d02d4f9d850a048747e593f1
               expression: 'last(/OpenSearch/opensearch.node.fielddata.evictions,#1)>={$OS.FIELDDATA.EVICTIONS.MAX}'
-              name: 'OpenSearch FieldData Evictions High'
+              name: 'OpenSearch: FieldData evictions are high'
               priority: WARNING
               description: |
                 OpenSearch node's FieldData Eviction operations are higher than configured threshold.
@@ -779,7 +828,9 @@ zabbix_export:
                 
                 Node Name: {$OS.NAME}
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: 13bbd2dfcf2a46bc8eb3d2151e8d5003
           name: 'FieldData Memory Size'
@@ -872,7 +923,7 @@ zabbix_export:
           triggers:
             - uuid: 1864144917a74df98a31ec4595a23ad9
               expression: 'last(/OpenSearch/opensearch.node.file_desc.percent,#1)>={$OS.FILEDESCRIPTORS.MAX}'
-              name: 'OpenSearch File Descriptors Availability Low'
+              name: 'OpenSearch: File descriptor availability is low'
               priority: WARNING
               description: |
                 OpenSearch node's available file descriptors have crossed below the defined threshold.
@@ -881,7 +932,9 @@ zabbix_export:
                 
                 Node Name: {$OS.NAME}
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: 33de76098b9a446cb83ef3642eb81bca
           name: 'Flush Changes'
@@ -1011,7 +1064,7 @@ zabbix_export:
           triggers:
             - uuid: 7c94857e34b244baa266af8efa3316c2
               expression: 'last(/OpenSearch/opensearch.node.get.current,#1)>={$OS.GET.CURRENT.MAX}'
-              name: 'OpenSearch Get Operations High'
+              name: 'OpenSearch: Get operations are high'
               priority: WARNING
               description: |
                 OpenSearch node's get operations are higher than configured threshold.
@@ -1020,7 +1073,9 @@ zabbix_export:
                 
                 Node Name: {$OS.NAME}
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: 85a47af065704bf995701ef768ea902d
           name: 'Get Exists Changes'
@@ -1320,7 +1375,7 @@ zabbix_export:
           triggers:
             - uuid: a541fb644fd9437ba64100aef5aff896
               expression: 'last(/OpenSearch/opensearch.node.heap.percent,#1)>={$OS.HEAP.MAX}'
-              name: 'OpenSearch JVM Heap Utilization High'
+              name: 'OpenSearch: JVM heap utilization is high'
               priority: WARNING
               description: |
                 OpenSearch node's JVM heap utilization is higher than configured threshold.
@@ -1329,7 +1384,9 @@ zabbix_export:
                 
                 Node Name: {$OS.NAME}
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: d5a2dcddfeed4711a248ada0b2ba5dc5
           name: 'HTTP Address'
@@ -1402,7 +1459,7 @@ zabbix_export:
           triggers:
             - uuid: 3048f85f6839422ba01a325a8ae000e5
               expression: 'last(/OpenSearch/opensearch.node.indexing.delete_current,#1)>={$OS.INDEXING.DELETE.MAX}'
-              name: 'OpenSearch Delete Operations High'
+              name: 'OpenSearch: Delete operations are high'
               priority: WARNING
               description: |
                 OpenSearch node's deletion operations are higher than configured threshold.
@@ -1411,7 +1468,9 @@ zabbix_export:
                 
                 Node Name: {$OS.NAME}
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: 2c1471493f5746eb93c7e3c8a923ef59
           name: 'Delete Time'
@@ -1475,7 +1534,7 @@ zabbix_export:
           triggers:
             - uuid: 2d47c6714d384246825cd255ef4ecdf7
               expression: 'last(/OpenSearch/opensearch.node.indexing.index_current,#1)>={$OS.INDEXING.INDEX.MAX}'
-              name: 'OpenSearch Indexing Operations High'
+              name: 'OpenSearch: Indexing operations are high'
               priority: WARNING
               description: |
                 OpenSearch node's indexing operations are higher than configured threshold.
@@ -1484,7 +1543,9 @@ zabbix_export:
                 
                 Node Name: {$OS.NAME}
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: 882b8f1d1d134c3e823038f8e2d471b1
           name: 'Indexing Total Failed'
@@ -1893,7 +1954,7 @@ zabbix_export:
             - uuid: 9d7493b7deda49b9b693c60470fccab9
               expression: 'last(/OpenSearch/opensearch.node.node.role,#2)<>last(/OpenSearch/opensearch.node.node.role,#1)'
               recovery_mode: NONE
-              name: 'OpenSearch Node Roles Changed'
+              name: 'OpenSearch: Node roles changed'
               priority: INFO
               description: |
                 OpenSearch node's assigned cluster roles have changed. 
@@ -1903,7 +1964,9 @@ zabbix_export:
                 Node Name: {$OS.NAME}
               manual_close: 'YES'
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: 8fe593e508644b459667a61b61f1b85c
           name: 'Node Roles'
@@ -1978,7 +2041,7 @@ zabbix_export:
             - uuid: edae02dfbf8048869a80b5eab422294a
               expression: 'last(/OpenSearch/opensearch.node.port,#2)<>last(/OpenSearch/opensearch.node.port,#1)'
               recovery_mode: NONE
-              name: 'OpenSearch Node Port Changed'
+              name: 'OpenSearch: Node port changed'
               priority: INFO
               description: |
                 OpenSearch node's service port has changed:
@@ -1988,7 +2051,9 @@ zabbix_export:
                 Node Name: {$OS.NAME}
               manual_close: 'YES'
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: aaf8c06606db4efea632eb2cc59dc55c
           name: 'Query Cache Evictions'
@@ -2355,7 +2420,7 @@ zabbix_export:
           triggers:
             - uuid: 07c3f57e76924d45bf3b8af75c17122e
               expression: 'last(/OpenSearch/opensearch.node.request_cache.evictions,#1)>={$OS.REQUESTCACHE.EVICTIONS.MAX}'
-              name: 'OpenSearch Request Cache Evictions High'
+              name: 'OpenSearch: Request cache evictions are high'
               priority: WARNING
               description: |
                 OpenSearch node's Request Cache Eviction operations are higher than configured threshold.
@@ -2364,7 +2429,9 @@ zabbix_export:
                 
                 Node Name: {$OS.NAME}
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: fe297b48b73c4e3da5a690fa0965cd2b
           name: 'Request Cache Hits'
@@ -2463,7 +2530,7 @@ zabbix_export:
           triggers:
             - uuid: 5dae922c65094d448c9cfcc4c96a943f
               expression: 'last(/OpenSearch/opensearch.node.request_cache.miss_count-change,#1)>={$OS.REQUESTCACHE.MISSCOUNT.MAX}'
-              name: 'OpenSearch Request Cache Miss Count High'
+              name: 'OpenSearch: Request cache miss count is high'
               priority: WARNING
               description: |
                 OpenSearch node's request cache miss count is higher than configured threshold.
@@ -2472,7 +2539,9 @@ zabbix_export:
                 
                 Node Name: {$OS.NAME}
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: 5058a156e8e64fc29e9fa2aa5352dc04
           name: 'Cache Evictions'
@@ -2560,14 +2629,16 @@ zabbix_export:
           triggers:
             - uuid: ad7342a6a8494f2f9e84111a1735820a
               expression: 'last(/OpenSearch/opensearch.node.script.compilation_limit_triggered,#1)>0'
-              name: 'OpenSearch Script Compilation Limit Reached'
+              name: 'OpenSearch: Script compilation limit tripped'
               priority: WARNING
               description: |
                 OpenSearch's script compilation limit was reached.
                 
                 Node Name: {$OS.NAME}
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: ff653f2a25704721951493341f27500d
           name: 'Search Concurrent Average Slice Count'
@@ -2592,7 +2663,7 @@ zabbix_export:
           triggers:
             - uuid: 7edef1063c8543f399bb212ce001770a
               expression: 'last(/OpenSearch/opensearch.node.search.concurrent_avg_slice_count,#1)>={$OS.SEARCH.CONCURRENT_AVG_SLICE_COUNT.MAX}'
-              name: 'OpenSearch Concurrent Average Slices High'
+              name: 'OpenSearch: Concurrent average slices are high'
               priority: WARNING
               description: |
                 OpenSearch node's concurrent average slice counter is higher than configured threshold.
@@ -2601,7 +2672,9 @@ zabbix_export:
                 
                 Node Name: {$OS.NAME}
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: ce7c4799631948128cb2ce4b84bca96f
           name: 'Search Concurrent Query Current'
@@ -2626,7 +2699,7 @@ zabbix_export:
           triggers:
             - uuid: 7108d22bd1fb417eb8d230690092d29b
               expression: 'last(/OpenSearch/opensearch.node.search.concurrent_query_current,#1)>={$OS.SEARCH.CONCURRENT_QUERY.MAX}'
-              name: 'OpenSearch Concurrent Query High'
+              name: 'OpenSearch: Concurrent query operations are high'
               priority: WARNING
               description: |
                 OpenSearch node's concurrent query's are higher than configured threshold.
@@ -2635,7 +2708,9 @@ zabbix_export:
                 
                 Node Name: {$OS.NAME}
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: bd51d33eae564f85bba266634da196af
           name: 'Search Concurrent Query Time'
@@ -2742,7 +2817,7 @@ zabbix_export:
           triggers:
             - uuid: 385f9bc74eb54f1c8a887a5abd5e4e34
               expression: 'last(/OpenSearch/opensearch.node.search.fetch_current,#1)>={$OS.SEARCH.FETCH_CURRENT.MAX}'
-              name: 'OpenSearch Fetch Operations High'
+              name: 'OpenSearch: Fetch operations are high'
               priority: WARNING
               description: |
                 OpenSearch node's Fetch Phase operations are higher than configured threshold.
@@ -2751,7 +2826,9 @@ zabbix_export:
                 
                 Node Name: {$OS.NAME}
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: 1f4d2bfcec3640bb91170adb88e418a3
           name: 'Search Fetch Time'
@@ -2835,7 +2912,7 @@ zabbix_export:
           triggers:
             - uuid: ce790a159c9c476c9b5bccb3bbb5a281
               expression: 'last(/OpenSearch/opensearch.node.search.open_contexts,#1)>={$OS.SEARCH.OPEN_CONTEXTS.MAX}'
-              name: 'OpenSearch Search Open Contexts High'
+              name: 'OpenSearch: Open search contexts are high'
               priority: WARNING
               description: |
                 OpenSearch node's open search context counter is higher than configured threshold.
@@ -2844,7 +2921,9 @@ zabbix_export:
                 
                 Node Name: {$OS.NAME}
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: f0eeb4b22fd24c8ba5208e9a9a831fd1
           name: 'Search Point in Time Current'
@@ -2964,7 +3043,7 @@ zabbix_export:
           triggers:
             - uuid: 888d928883b5402a9a1d36832f9ccf09
               expression: 'last(/OpenSearch/opensearch.node.search.query_current,#1)>={$OS.SEARCH.QUERY.MAX}'
-              name: 'OpenSearch Query Operations High'
+              name: 'OpenSearch: Query operations are high'
               priority: WARNING
               description: |
                 OpenSearch node's Search Query operations are higher than configured threshold.
@@ -2973,7 +3052,9 @@ zabbix_export:
                 
                 Node Name: {$OS.NAME}
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: b2d8c7475f1f49ecb4366fd6b35ab076
           name: 'Search Query Time'
@@ -3392,7 +3473,7 @@ zabbix_export:
             - uuid: 2debc382db374fe1b89c0d28e565a637
               expression: 'last(/OpenSearch/opensearch.node.version,#2)<>last(/OpenSearch/opensearch.node.version,#1)'
               recovery_mode: NONE
-              name: 'OpenSearch Node Version Changed'
+              name: 'OpenSearch: Node version changed'
               priority: INFO
               description: |
                 OpenSearch node's package version has changed:
@@ -3402,7 +3483,9 @@ zabbix_export:
                 Node Name: {$OS.NAME}
               manual_close: 'YES'
               tags:
-                - tag: Services
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
                   value: OpenSearch
         - uuid: 6fee06cf11cc4dafb24099bc444f0ba6
           name: 'OpenSearch Node Stats'
@@ -3469,6 +3552,20 @@ zabbix_export:
               value: OpenSearch
             - tag: Source
               value: Calculated
+          triggers:
+            - uuid: c3420980ce8d4a57837361fcff3fdbe7
+              expression: |
+                last(/OpenSearch/opensearch.node_stats.indexing_pressure.memory_util,#1)>80 and
+                last(/OpenSearch/opensearch.node_stats.indexing_pressure.memory_util,#2)>80 and
+                last(/OpenSearch/opensearch.node_stats.indexing_pressure.memory_util,#3)>80
+              name: 'OpenSearch: Indexing pressure is high'
+              priority: WARNING
+              description: 'Indexing pressure is using over 80% of the defined memory limit. If it reaches 100%, it will start dropping requests.'
+              tags:
+                - tag: 'Node Name'
+                  value: '{$OS.NAME}'
+                - tag: Service
+                  value: OpenSearch
         - uuid: 1f89db94bad64a539ad11a5dccb92b4b
           name: 'Search backpressure cancellation count'
           type: DEPENDENT
@@ -3821,7 +3918,7 @@ zabbix_export:
             - name: 'OS Performance'
               widgets:
                 - type: graph
-                  name: 'Node Operations {#NODE.NAME}'
+                  name: 'Node Operations'
                   width: '36'
                   height: '6'
                   fields:
@@ -4268,21 +4365,185 @@ zabbix_export:
                     - type: INTEGER
                       name: righty
                       value: '0'
-            - name: 'Page 3'
+            - name: Caches
               widgets:
-                - type: graph
-                  name: 'Search Metrics'
-                  width: '37'
-                  height: '6'
+                - type: piechart
+                  name: 'Request cache'
+                  width: '15'
+                  height: '5'
                   fields:
-                    - type: GRAPH
-                      name: graphid.0
-                      value:
-                        host: OpenSearch
-                        name: 'OpenSearch Node Search Metrics'
+                    - type: STRING
+                      name: ds.0.color
+                      value: 7CB342
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Request Cache Hits Total'
+                    - type: STRING
+                      name: ds.1.color
+                      value: FF465C
+                    - type: STRING
+                      name: ds.1.items.0
+                      value: 'Request Cache Miss Total'
+                - type: svggraph
+                  name: 'Request cache'
+                  'y': '5'
+                  width: '34'
+                  height: '5'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: FF465C
+                    - type: INTEGER
+                      name: ds.0.fill
+                      value: '1'
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Request Cache Misses'
+                    - type: INTEGER
+                      name: ds.0.width
+                      value: '3'
+                    - type: STRING
+                      name: ds.1.color
+                      value: 7CB342
+                    - type: INTEGER
+                      name: ds.1.fill
+                      value: '1'
+                    - type: STRING
+                      name: ds.1.items.0
+                      value: 'Request Cache Hits'
+                    - type: INTEGER
+                      name: ds.1.width
+                      value: '3'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '10'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: INTEGER
+                      name: legend_statistic
+                      value: '1'
                     - type: STRING
                       name: reference
-                      value: HLTVF
+                      value: CDMMB
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
+                - type: piechart
+                  name: 'Query cache'
+                  x: '15'
+                  width: '15'
+                  height: '5'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: 7CB342
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Query Cache Hit Count'
+                    - type: STRING
+                      name: ds.1.color
+                      value: FF465C
+                    - type: STRING
+                      name: ds.1.items.0
+                      value: 'Query Cache Miss Count'
+                - type: svggraph
+                  name: 'Cache evictions'
+                  x: '30'
+                  width: '30'
+                  height: '5'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: FF465C
+                    - type: INTEGER
+                      name: ds.0.fill
+                      value: '1'
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Query Cache Evictions'
+                    - type: STRING
+                      name: ds.0.items.1
+                      value: 'Request Cache Evictions'
+                    - type: STRING
+                      name: ds.0.items.2
+                      value: 'Cache Evictions'
+                    - type: STRING
+                      name: ds.0.items.3
+                      value: 'FieldData Evictions'
+                    - type: INTEGER
+                      name: ds.0.width
+                      value: '3'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '10'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: INTEGER
+                      name: legend_statistic
+                      value: '1'
+                    - type: STRING
+                      name: reference
+                      value: VAFYP
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
+                - type: svggraph
+                  name: 'Query cache'
+                  x: '34'
+                  'y': '5'
+                  width: '34'
+                  height: '5'
+                  fields:
+                    - type: STRING
+                      name: ds.0.color
+                      value: FF465C
+                    - type: INTEGER
+                      name: ds.0.fill
+                      value: '1'
+                    - type: STRING
+                      name: ds.0.items.0
+                      value: 'Query Cache Miss Count'
+                    - type: INTEGER
+                      name: ds.0.width
+                      value: '3'
+                    - type: STRING
+                      name: ds.1.color
+                      value: 7CB342
+                    - type: INTEGER
+                      name: ds.1.fill
+                      value: '1'
+                    - type: STRING
+                      name: ds.1.items.0
+                      value: 'Query Cache Hit Count'
+                    - type: INTEGER
+                      name: ds.1.width
+                      value: '3'
+                    - type: STRING
+                      name: lefty_min
+                      value: '0'
+                    - type: INTEGER
+                      name: legend_lines
+                      value: '10'
+                    - type: INTEGER
+                      name: legend_lines_mode
+                      value: '1'
+                    - type: INTEGER
+                      name: legend_statistic
+                      value: '1'
+                    - type: STRING
+                      name: reference
+                      value: VFIPE
+                    - type: INTEGER
+                      name: righty
+                      value: '0'
   graphs:
     - uuid: 32e91f6b9ac44d11b6e845b419d590d2
       name: 'OpenSearch Node Heap Utilization'
