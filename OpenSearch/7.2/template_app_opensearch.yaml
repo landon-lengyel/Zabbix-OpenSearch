@@ -1063,7 +1063,10 @@ zabbix_export:
               value: OpenSearch
           triggers:
             - uuid: 7c94857e34b244baa266af8efa3316c2
-              expression: 'last(/OpenSearch/opensearch.node.get.current,#1)>={$OS.GET.CURRENT.MAX}'
+              expression: |
+                last(/OpenSearch/opensearch.node.get.current,#1)>={$OS.GET.CURRENT.MAX} and
+                last(/OpenSearch/opensearch.node.get.current,#2)>={$OS.GET.CURRENT.MAX} and
+                last(/OpenSearch/opensearch.node.get.current,#3)>={$OS.GET.CURRENT.MAX}
               name: 'OpenSearch: Get operations are high'
               priority: WARNING
               description: |
@@ -1458,7 +1461,10 @@ zabbix_export:
               value: OpenSearch
           triggers:
             - uuid: 3048f85f6839422ba01a325a8ae000e5
-              expression: 'last(/OpenSearch/opensearch.node.indexing.delete_current,#1)>={$OS.INDEXING.DELETE.MAX}'
+              expression: |
+                last(/OpenSearch/opensearch.node.indexing.delete_current,#1)>={$OS.INDEXING.DELETE.MAX} and
+                last(/OpenSearch/opensearch.node.indexing.delete_current,#2)>={$OS.INDEXING.DELETE.MAX} and
+                last(/OpenSearch/opensearch.node.indexing.delete_current,#3)>={$OS.INDEXING.DELETE.MAX}
               name: 'OpenSearch: Delete operations are high'
               priority: WARNING
               description: |
@@ -1533,7 +1539,10 @@ zabbix_export:
               value: OpenSearch
           triggers:
             - uuid: 2d47c6714d384246825cd255ef4ecdf7
-              expression: 'last(/OpenSearch/opensearch.node.indexing.index_current,#1)>={$OS.INDEXING.INDEX.MAX}'
+              expression: |
+                last(/OpenSearch/opensearch.node.indexing.index_current,#1)>={$OS.INDEXING.INDEX.MAX} and
+                last(/OpenSearch/opensearch.node.indexing.index_current,#2)>={$OS.INDEXING.INDEX.MAX} and
+                last(/OpenSearch/opensearch.node.indexing.index_current,#3)>={$OS.INDEXING.INDEX.MAX}
               name: 'OpenSearch: Indexing operations are high'
               priority: WARNING
               description: |
@@ -2784,7 +2793,10 @@ zabbix_export:
               value: OpenSearch
           triggers:
             - uuid: 7108d22bd1fb417eb8d230690092d29b
-              expression: 'last(/OpenSearch/opensearch.node.search.concurrent_query_current,#1)>={$OS.SEARCH.CONCURRENT_QUERY.MAX}'
+              expression: |
+                last(/OpenSearch/opensearch.node.search.concurrent_query_current,#1)>={$OS.SEARCH.CONCURRENT_QUERY.MAX} and
+                last(/OpenSearch/opensearch.node.search.concurrent_query_current,#2)>={$OS.SEARCH.CONCURRENT_QUERY.MAX} and
+                last(/OpenSearch/opensearch.node.search.concurrent_query_current,#3)>={$OS.SEARCH.CONCURRENT_QUERY.MAX}
               name: 'OpenSearch: Concurrent query operations are high'
               priority: WARNING
               description: |
@@ -2902,7 +2914,10 @@ zabbix_export:
               value: OpenSearch
           triggers:
             - uuid: 385f9bc74eb54f1c8a887a5abd5e4e34
-              expression: 'last(/OpenSearch/opensearch.node.search.fetch_current,#1)>={$OS.SEARCH.FETCH_CURRENT.MAX}'
+              expression: |
+                last(/OpenSearch/opensearch.node.search.fetch_current,#1)>={$OS.SEARCH.FETCH_CURRENT.MAX} and
+                last(/OpenSearch/opensearch.node.search.fetch_current,#2)>={$OS.SEARCH.FETCH_CURRENT.MAX} and
+                last(/OpenSearch/opensearch.node.search.fetch_current,#3)>={$OS.SEARCH.FETCH_CURRENT.MAX}
               name: 'OpenSearch: Fetch operations are high'
               priority: WARNING
               description: |
@@ -3128,7 +3143,10 @@ zabbix_export:
               value: OpenSearch
           triggers:
             - uuid: 888d928883b5402a9a1d36832f9ccf09
-              expression: 'last(/OpenSearch/opensearch.node.search.query_current,#1)>={$OS.SEARCH.QUERY.MAX}'
+              expression: |
+                last(/OpenSearch/opensearch.node.search.query_current,#1)>={$OS.SEARCH.QUERY.MAX} and
+                last(/OpenSearch/opensearch.node.search.query_current,#2)>={$OS.SEARCH.QUERY.MAX} and
+                last(/OpenSearch/opensearch.node.search.query_current,#3)>={$OS.SEARCH.QUERY.MAX}
               name: 'OpenSearch: Query operations are high'
               priority: WARNING
               description: |

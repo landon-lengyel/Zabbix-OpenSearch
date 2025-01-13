@@ -1736,7 +1736,9 @@ else {
                     <triggers>
                         <trigger>
                             <uuid>7c94857e34b244baa266af8efa3316c2</uuid>
-                            <expression>last(/OpenSearch/opensearch.node.get.current,#1)&gt;={$OS.GET.CURRENT.MAX}</expression>
+                            <expression>last(/OpenSearch/opensearch.node.get.current,#1)&gt;={$OS.GET.CURRENT.MAX} and
+last(/OpenSearch/opensearch.node.get.current,#2)&gt;={$OS.GET.CURRENT.MAX} and
+last(/OpenSearch/opensearch.node.get.current,#3)&gt;={$OS.GET.CURRENT.MAX}</expression>
                             <name>OpenSearch: Get operations are high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's get operations are higher than configured threshold.
@@ -2364,7 +2366,9 @@ Node Name: {$OS.NAME}</description>
                     <triggers>
                         <trigger>
                             <uuid>3048f85f6839422ba01a325a8ae000e5</uuid>
-                            <expression>last(/OpenSearch/opensearch.node.indexing.delete_current,#1)&gt;={$OS.INDEXING.DELETE.MAX}</expression>
+                            <expression>last(/OpenSearch/opensearch.node.indexing.delete_current,#1)&gt;={$OS.INDEXING.DELETE.MAX} and
+last(/OpenSearch/opensearch.node.indexing.delete_current,#2)&gt;={$OS.INDEXING.DELETE.MAX} and
+last(/OpenSearch/opensearch.node.indexing.delete_current,#3)&gt;={$OS.INDEXING.DELETE.MAX}</expression>
                             <name>OpenSearch: Delete operations are high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's deletion operations are higher than configured threshold.
@@ -2475,7 +2479,9 @@ else {
                     <triggers>
                         <trigger>
                             <uuid>2d47c6714d384246825cd255ef4ecdf7</uuid>
-                            <expression>last(/OpenSearch/opensearch.node.indexing.index_current,#1)&gt;={$OS.INDEXING.INDEX.MAX}</expression>
+                            <expression>last(/OpenSearch/opensearch.node.indexing.index_current,#1)&gt;={$OS.INDEXING.INDEX.MAX} and
+last(/OpenSearch/opensearch.node.indexing.index_current,#2)&gt;={$OS.INDEXING.INDEX.MAX} and
+last(/OpenSearch/opensearch.node.indexing.index_current,#3)&gt;={$OS.INDEXING.INDEX.MAX}</expression>
                             <name>OpenSearch: Indexing operations are high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's indexing operations are higher than configured threshold.
@@ -4534,7 +4540,9 @@ Node Name: {$OS.NAME}</description>
                     <triggers>
                         <trigger>
                             <uuid>7108d22bd1fb417eb8d230690092d29b</uuid>
-                            <expression>last(/OpenSearch/opensearch.node.search.concurrent_query_current,#1)&gt;={$OS.SEARCH.CONCURRENT_QUERY.MAX}</expression>
+                            <expression>last(/OpenSearch/opensearch.node.search.concurrent_query_current,#1)&gt;={$OS.SEARCH.CONCURRENT_QUERY.MAX} and
+last(/OpenSearch/opensearch.node.search.concurrent_query_current,#2)&gt;={$OS.SEARCH.CONCURRENT_QUERY.MAX} and
+last(/OpenSearch/opensearch.node.search.concurrent_query_current,#3)&gt;={$OS.SEARCH.CONCURRENT_QUERY.MAX}</expression>
                             <name>OpenSearch: Concurrent query operations are high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's concurrent query's are higher than configured threshold.
@@ -4722,7 +4730,9 @@ else {
                     <triggers>
                         <trigger>
                             <uuid>385f9bc74eb54f1c8a887a5abd5e4e34</uuid>
-                            <expression>last(/OpenSearch/opensearch.node.search.fetch_current,#1)&gt;={$OS.SEARCH.FETCH_CURRENT.MAX}</expression>
+                            <expression>last(/OpenSearch/opensearch.node.search.fetch_current,#1)&gt;={$OS.SEARCH.FETCH_CURRENT.MAX} and
+last(/OpenSearch/opensearch.node.search.fetch_current,#2)&gt;={$OS.SEARCH.FETCH_CURRENT.MAX} and
+last(/OpenSearch/opensearch.node.search.fetch_current,#3)&gt;={$OS.SEARCH.FETCH_CURRENT.MAX}</expression>
                             <name>OpenSearch: Fetch operations are high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's Fetch Phase operations are higher than configured threshold.
@@ -5084,7 +5094,9 @@ else {
                     <triggers>
                         <trigger>
                             <uuid>888d928883b5402a9a1d36832f9ccf09</uuid>
-                            <expression>last(/OpenSearch/opensearch.node.search.query_current,#1)&gt;={$OS.SEARCH.QUERY.MAX}</expression>
+                            <expression>last(/OpenSearch/opensearch.node.search.query_current,#1)&gt;={$OS.SEARCH.QUERY.MAX} and
+last(/OpenSearch/opensearch.node.search.query_current,#2)&gt;={$OS.SEARCH.QUERY.MAX} and
+last(/OpenSearch/opensearch.node.search.query_current,#3)&gt;={$OS.SEARCH.QUERY.MAX}</expression>
                             <name>OpenSearch: Query operations are high</name>
                             <priority>WARNING</priority>
                             <description>OpenSearch node's Search Query operations are higher than configured threshold.
