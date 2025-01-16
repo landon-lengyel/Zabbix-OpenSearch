@@ -2647,6 +2647,24 @@ else {
                     </tags>
                 </item>
                 <item>
+                    <uuid>172039a88ab04604a0e813604d477bc0</uuid>
+                    <name>Indexing docs accepted (last minute)</name>
+                    <type>CALCULATED</type>
+                    <key>opensearch.node.indexing.status_2xx.change</key>
+                    <params>change(//opensearch.node.indexing.status_2xx)</params>
+                    <description>Zabbix calculated field based on rate of change for the total documents accepted for indexing. Accepted means an HTTP status code of 2xx</description>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
                     <uuid>1c97dfd8d0394744951ecedd085faf0d</uuid>
                     <name>Indexing total docs client errors</name>
                     <type>DEPENDENT</type>
@@ -2675,6 +2693,24 @@ else {
                     </tags>
                 </item>
                 <item>
+                    <uuid>a5a1fb7ad2b148199f0b8b3689d9b06c</uuid>
+                    <name>Indexing docs client errors (last minute)</name>
+                    <type>CALCULATED</type>
+                    <key>opensearch.node.indexing.status_4xx.change</key>
+                    <params>change(//opensearch.node.indexing.status_4xx)</params>
+                    <description>Zabbix calculated field based on rate of change for the total documents rejected due to something invalid on the client side. Rejected means an HTTP status code of 4xx</description>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
                     <uuid>910fb53613044eac8f4b22a9f3b0f515</uuid>
                     <name>Indexing total docs server errors</name>
                     <type>DEPENDENT</type>
@@ -2691,6 +2727,24 @@ else {
                     <master_item>
                         <key>opensearch.node_stats</key>
                     </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Node Name</tag>
+                            <value>{$OS.NAME}</value>
+                        </tag>
+                        <tag>
+                            <tag>Service</tag>
+                            <value>OpenSearch</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>a15b786a58e24e239c845eaa716fe7c3</uuid>
+                    <name>Indexing docs server errors (last minute)</name>
+                    <type>CALCULATED</type>
+                    <key>opensearch.node.indexing.status_5xx.change</key>
+                    <params>change(//opensearch.node.indexing.status_5xx)</params>
+                    <description>Zabbix calculated field based on rate of change for the total documents rejected due to something invalid on the server (OpenSearch) side. Rejected means an HTTP status code of 5xx</description>
                     <tags>
                         <tag>
                             <tag>Node Name</tag>

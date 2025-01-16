@@ -1644,6 +1644,17 @@ zabbix_export:
               value: '{$OS.NAME}'
             - tag: Service
               value: OpenSearch
+        - uuid: 172039a88ab04604a0e813604d477bc0
+          name: 'Indexing docs accepted (last minute)'
+          type: CALCULATED
+          key: opensearch.node.indexing.status_2xx.change
+          params: change(//opensearch.node.indexing.status_2xx)
+          description: 'Zabbix calculated field based on rate of change for the total documents accepted for indexing. Accepted means an HTTP status code of 2xx'
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
         - uuid: 1c97dfd8d0394744951ecedd085faf0d
           name: 'Indexing total docs client errors'
           type: DEPENDENT
@@ -1660,6 +1671,17 @@ zabbix_export:
               value: '{$OS.NAME}'
             - tag: Service
               value: OpenSearch
+        - uuid: a5a1fb7ad2b148199f0b8b3689d9b06c
+          name: 'Indexing docs client errors (last minute)'
+          type: CALCULATED
+          key: opensearch.node.indexing.status_4xx.change
+          params: change(//opensearch.node.indexing.status_4xx)
+          description: 'Zabbix calculated field based on rate of change for the total documents rejected due to something invalid on the client side. Rejected means an HTTP status code of 4xx'
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
         - uuid: 910fb53613044eac8f4b22a9f3b0f515
           name: 'Indexing total docs server errors'
           type: DEPENDENT
@@ -1671,6 +1693,17 @@ zabbix_export:
                 - $.indices.indexing.doc_status.5xx
           master_item:
             key: opensearch.node_stats
+          tags:
+            - tag: 'Node Name'
+              value: '{$OS.NAME}'
+            - tag: Service
+              value: OpenSearch
+        - uuid: a15b786a58e24e239c845eaa716fe7c3
+          name: 'Indexing docs server errors (last minute)'
+          type: CALCULATED
+          key: opensearch.node.indexing.status_5xx.change
+          params: change(//opensearch.node.indexing.status_5xx)
+          description: 'Zabbix calculated field based on rate of change for the total documents rejected due to something invalid on the server (OpenSearch) side. Rejected means an HTTP status code of 5xx'
           tags:
             - tag: 'Node Name'
               value: '{$OS.NAME}'
