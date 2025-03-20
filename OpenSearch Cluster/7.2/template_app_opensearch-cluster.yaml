@@ -755,6 +755,7 @@ zabbix_export:
                 - uuid: 98a14d30b29548e2a29f5c05a55cd036
                   expression: 'last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#1)="red" and last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#2)="red" and last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#3)="red"'
                   name: 'Index Health is Red - {#INDEX.NAME}'
+                  status: DISABLED
                   priority: AVERAGE
                   description: |
                     Index health is red. Primary and secondary shards are offline. Index data is unavailable.
@@ -781,6 +782,7 @@ zabbix_export:
                 - uuid: f9b690d1ea6a417096fa6ee8028e7e40
                   expression: 'last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#1)="yellow" and last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#2)="yellow" and last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#3)="yellow"'
                   name: 'Index Health is Yellow - {#INDEX.NAME}'
+                  status: DISABLED
                   priority: WARNING
                   description: |
                     Index health is yellow. All primary shards are still online, but secondary shards are unavailable. Data is still accessible.

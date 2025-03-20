@@ -1180,6 +1180,7 @@ return true;</parameter>
                                     <uuid>98a14d30b29548e2a29f5c05a55cd036</uuid>
                                     <expression>last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#1)=&quot;red&quot; and last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#2)=&quot;red&quot; and last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#3)=&quot;red&quot;</expression>
                                     <name>Index Health is Red - {#INDEX.NAME}</name>
+                                    <status>DISABLED</status>
                                     <priority>AVERAGE</priority>
                                     <description>Index health is red. Primary and secondary shards are offline. Index data is unavailable.
 
@@ -1217,6 +1218,7 @@ last(/OpenSearch-Cluster/opensearch.cluster.health,#3)=&quot;yellow&quot;</expre
                                     <uuid>f9b690d1ea6a417096fa6ee8028e7e40</uuid>
                                     <expression>last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#1)=&quot;yellow&quot; and last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#2)=&quot;yellow&quot; and last(/OpenSearch-Cluster/opensearchcluster.index.health[{#INDEX.NAME}],#3)=&quot;yellow&quot;</expression>
                                     <name>Index Health is Yellow - {#INDEX.NAME}</name>
+                                    <status>DISABLED</status>
                                     <priority>WARNING</priority>
                                     <description>Index health is yellow. All primary shards are still online, but secondary shards are unavailable. Data is still accessible.
 
