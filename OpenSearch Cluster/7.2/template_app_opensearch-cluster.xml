@@ -1060,6 +1060,15 @@ return true;</parameter>
                     <name>OpenSearch Cluster Cat Indices Discovery</name>
                     <type>DEPENDENT</type>
                     <key>opensearchcluster.cat_indices-discover</key>
+                    <filter>
+                        <conditions>
+                            <condition>
+                                <macro>{#INDEX.NAME}</macro>
+                                <value>^.ds-.*</value>
+                                <operator>NOT_MATCHES_REGEX</operator>
+                            </condition>
+                        </conditions>
+                    </filter>
                     <item_prototypes>
                         <item_prototype>
                             <uuid>632d9ff2abc24245981c75287c72c9f8</uuid>

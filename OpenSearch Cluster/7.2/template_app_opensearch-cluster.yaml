@@ -681,6 +681,11 @@ zabbix_export:
           name: 'OpenSearch Cluster Cat Indices Discovery'
           type: DEPENDENT
           key: opensearchcluster.cat_indices-discover
+          filter:
+            conditions:
+              - macro: '{#INDEX.NAME}'
+                value: '^.ds-.*'
+                operator: NOT_MATCHES_REGEX
           item_prototypes:
             - uuid: 632d9ff2abc24245981c75287c72c9f8
               name: 'Index Docs Count - {#INDEX.NAME}'
