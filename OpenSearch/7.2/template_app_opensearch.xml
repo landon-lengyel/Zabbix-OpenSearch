@@ -999,6 +999,38 @@ https://opensearch.org/docs/latest/api-reference/cat/cat-allocation/</descriptio
                     </tags>
                 </item>
                 <item>
+                    <uuid>5ed57e1ca67841eba2ff4c6c535a3e0c</uuid>
+                    <name>OpenSearch newest available version</name>
+                    <type>HTTP_AGENT</type>
+                    <key>opensearch.newest_version</key>
+                    <delay>1d</delay>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$[?(@.draft == &quot;false&quot; &amp;&amp; @.prerelease == &quot;false&quot;)].tag_name.first()</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>REGEX</type>
+                            <parameters>
+                                <parameter>(\d|\.)+</parameter>
+                                <parameter>\0</parameter>
+                            </parameters>
+                            <error_handler>DISCARD_VALUE</error_handler>
+                        </step>
+                    </preprocessing>
+                    <url>https://api.github.com/repos/opensearch-project/OpenSearch/releases</url>
+                    <posts>{&quot;per_page&quot;: 3}</posts>
+                    <headers>
+                        <header>
+                            <name>User-Agent</name>
+                            <value>zabbix</value>
+                        </header>
+                    </headers>
+                </item>
+                <item>
                     <uuid>f97c7d8dbad44811b696ad19d298289e</uuid>
                     <name>Package Build Number</name>
                     <type>DEPENDENT</type>
@@ -6657,7 +6689,7 @@ The average service time is a factor in determining rank.</description>
                 </macro>
                 <macro>
                     <macro>{$OS.HEAP.MAX}</macro>
-                    <value>85</value>
+                    <value>95</value>
                     <description>JVM Heap utilization percentage to throw alert at.</description>
                 </macro>
                 <macro>
@@ -8088,6 +8120,18 @@ The average service time is a factor in determining rank.</description>
             </dashboards>
         </template>
     </templates>
+    <triggers>
+        <trigger>
+            <uuid>58e5cc6a46074637941803b344a8175b</uuid>
+            <expression>last(/OpenSearch/opensearch.node.version)&lt;&gt;last(/OpenSearch/opensearch.newest_version)</expression>
+            <name>OpenSearch Update Available</name>
+            <priority>WARNING</priority>
+            <description>An update is available for OpenSearch.
+
+Currently installed version: {ITEM.LASTVALUE1}
+Newest version: {ITEM.LASTVALUE2}</description>
+        </trigger>
+    </triggers>
     <graphs>
         <graph>
             <uuid>32e91f6b9ac44d11b6e845b419d590d2</uuid>

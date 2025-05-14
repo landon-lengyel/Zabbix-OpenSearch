@@ -612,6 +612,26 @@ zabbix_export:
               value: OpenSearch
             - tag: Source
               value: Calculated
+        - uuid: 5ed57e1ca67841eba2ff4c6c535a3e0c
+          name: 'OpenSearch newest available version'
+          type: HTTP_AGENT
+          key: opensearch.newest_version
+          delay: 1d
+          value_type: TEXT
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$[?(@.draft == "false" && @.prerelease == "false")].tag_name.first()'
+            - type: REGEX
+              parameters:
+                - (\d|\.)+
+                - \0
+              error_handler: DISCARD_VALUE
+          url: 'https://api.github.com/repos/opensearch-project/OpenSearch/releases'
+          posts: '{"per_page": 3}'
+          headers:
+            - name: User-Agent
+              value: zabbix
         - uuid: f97c7d8dbad44811b696ad19d298289e
           name: 'Package Build Number'
           type: DEPENDENT
@@ -4103,7 +4123,7 @@ zabbix_export:
           value: CUSTOMIZE
           description: 'Maximum Get operations on node to throw alert at.'
         - macro: '{$OS.HEAP.MAX}'
-          value: '85'
+          value: '95'
           description: 'JVM Heap utilization percentage to throw alert at.'
         - macro: '{$OS.HOSTNAME}'
           value: CHANGE_ME
@@ -4973,6 +4993,16 @@ zabbix_export:
                     - type: INTEGER
                       name: righty
                       value: '0'
+  triggers:
+    - uuid: 58e5cc6a46074637941803b344a8175b
+      expression: last(/OpenSearch/opensearch.node.version)<>last(/OpenSearch/opensearch.newest_version)
+      name: 'OpenSearch Update Available'
+      priority: WARNING
+      description: |
+        An update is available for OpenSearch.
+        
+        Currently installed version: {ITEM.LASTVALUE1}
+        Newest version: {ITEM.LASTVALUE2}
   graphs:
     - uuid: 32e91f6b9ac44d11b6e845b419d590d2
       name: 'OpenSearch Node Heap Utilization'
